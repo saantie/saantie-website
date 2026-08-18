@@ -160,6 +160,12 @@
   .contact.line svg { fill: #06C755; }
   .contact.line:hover { border-color: #06C755; transform: translateY(-2px); }
 
+  /* ข้อความยืนยันการคัดลอก — ใช้ display สลับ ไม่ใช่ opacity เพราะถ้าใช้ opacity
+     ตัวมันจะยังกินพื้นที่ในเลย์เอาต์ตลอดเวลา ทำให้มีช่องว่างค้างใต้ปุ่มตั้งแต่เปิดหน้า */
+  .copied { display: none; margin: 14px 0 0; font-size: .9em; color: var(--accent); }
+  .copied.show { display: block; animation: copiedin .3s ease; }
+  @keyframes copiedin { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
   footer {
     border-top: 1px solid var(--border); margin-top: 64px; padding-top: 26px;
     color: var(--muted); font-size: .88em;
@@ -310,6 +316,15 @@
         <span>LINE</span>
       </a>
     </div>
+
+    <p class="copied" id="copied-ok" role="status" aria-live="polite">
+      <span data-lang="th">คัดลอกอีเมลแล้ว — ถ้าโปรแกรมอีเมลไม่เปิดขึ้นมาเอง วางที่ Gmail ได้เลย</span>
+      <span data-lang="en">Email address copied — if no mail app opened, just paste it anywhere.</span>
+    </p>
+    <p class="copied" id="copied-fail" role="status" aria-live="polite">
+      <span data-lang="th">เลือกที่อยู่อีเมลไว้ให้แล้ว — กด Ctrl+C หรือแตะค้างแล้วเลือก "คัดลอก"</span>
+      <span data-lang="en">Email address selected — press Ctrl+C, or long-press and choose Copy.</span>
+    </p>
   </div>
 
   <footer class="reveal">
@@ -382,6 +397,73 @@
       // อะไรพลาดก็ตาม ต้องไม่ทำให้ผู้ใช้เห็นหน้าว่าง
       showAll();
     }
+  })();
+
+  // ---------- ปุ่มอีเมล ----------
+  // ⚠️ ลิงก์ mailto: "เงียบสนิท" ถ้าเครื่องผู้ใช้ไม่ได้ตั้งโปรแกรมอีเมลเริ่มต้นไว้ —
+  // คลิกแล้วไม่มีอะไรเกิดขึ้นเลย ไม่มี error ไม่มีแท็บใหม่ ผู้ใช้เจอกับตัวมาแล้วบน Windows 10
+  // (โปรแกรมเดสก์ท็อปเจอกับดักเดียวกันจนต้องมี BROWSER_MAILTO_PROGIDS ไว้เปิดผ่านเว็บเมลแทน)
+  // จึงคัดลอกที่อยู่ให้เสมอเป็นตาข่ายรอง โดย **ไม่** preventDefault เพราะคนที่มีโปรแกรมอีเมล
+  // ต้องยังเปิดได้ตามปกติ
+  (function () {
+    var mail = document.querySelector(".contact.mail");
+    var okNote = document.getElementById("copied-ok");
+    var failNote = document.getElementById("copied-fail");
+    if (!mail || !okNote || !failNote) return;
+    var addr = (mail.getAttribute("href") || "").replace(/^mailto:/, "");
+    if (!addr) return;
+    var timer = null;
+
+    function show(note) {
+      okNote.classList.remove("show");
+      failNote.classList.remove("show");
+      note.classList.add("show");
+      clearTimeout(timer);
+      timer = setTimeout(function () { note.classList.remove("show"); }, 7000);
+    }
+
+    // คัดลอกไม่สำเร็จ = ห้ามขึ้นว่า "คัดลอกแล้ว" เด็ดขาด ผู้ใช้จะไปวางแล้วได้ของว่าง
+    // ทางออกที่ยังช่วยได้จริงคือ "เลือก" ข้อความที่อยู่ไว้ให้ แล้วบอกให้กด Ctrl+C เอง
+    function selectAddress() {
+      try {
+        var span = mail.querySelector("span");
+        var range = document.createRange();
+        range.selectNodeContents(span);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch (e) { /* เลือกไม่ได้ก็ยังมีที่อยู่เป็นตัวหนังสือบนปุ่มให้พิมพ์ตาม */ }
+      show(failNote);
+    }
+
+    function legacyCopy() {
+      // clipboard API ใช้ได้เฉพาะ https และเฉพาะตอนหน้าเว็บมีโฟกัส — นอกนั้นต้องมาทางนี้
+      var ok = false;
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = addr;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand("copy");   // คืน false ได้โดยไม่โยน error — ต้องเช็คค่าที่คืนมา
+        document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      if (ok) { show(okNote); } else { selectAddress(); }
+    }
+
+    mail.addEventListener("click", function () {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(addr).then(function () { show(okNote); }, legacyCopy);
+        } else {
+          legacyCopy();
+        }
+      } catch (e) {
+        legacyCopy();
+      }
+    });
   })();
 </script>
 
