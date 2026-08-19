@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>นโยบายความเป็นส่วนตัว — 8Hrs Posture Monitor</title>
+<title>นโยบายความเป็นส่วนตัว | Privacy Policy — 8Hrs Posture Monitor</title>
 <style>
   :root {
     --bg: #F8FAFC; --card: #FFFFFF; --text: #1E293B; --muted: #64748B;
@@ -28,22 +28,41 @@
     background: var(--highlight); border-left: 4px solid var(--accent);
     padding: 14px 18px; border-radius: 6px; margin: 16px 0;
   }
-  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.94em; }
+  /* จอแคบ (มือถือ) ตารางกว้างเกินจะดันหน้าล้นแนวนอนทั้งหน้า — ครอบด้วยกล่องเลื่อนของตัวเองแทน
+     (เจอจริงตอนทดสอบที่ 375px กว้าง) */
+  .table-wrap { overflow-x: auto; margin: 12px 0; }
+  table { width: 100%; min-width: 480px; border-collapse: collapse; font-size: 0.94em; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
   th { background: #F1F5F9; color: var(--muted); font-weight: 600; }
   ul { padding-left: 22px; }
   li { margin: 6px 0; }
   a { color: var(--accent); }
-  .lang-sep { text-align: center; color: var(--muted); margin: 32px 0 8px; font-size: 0.85em; letter-spacing: .08em; }
+  code { word-break: break-all; }  /* path ยาวๆ อย่าง %LOCALAPPDATA%\...\posture_history.db ก็ล้นได้เหมือนกัน */
   @media (max-width: 640px) { .card { padding: 20px; } body { padding: 16px 10px; } }
+
+  /* ---------- ปุ่มสลับภาษา (ค่าเดียวกับ index.html — ดู script ท้ายไฟล์) ---------- */
+  .langbar { max-width: 760px; margin: 0 auto; padding: 0 0 14px; text-align: right; }
+  .langbtn {
+    background: #FFFFFF; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 18px; font: inherit; font-size: .85em;
+    cursor: pointer; transition: .2s;
+  }
+  .langbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* แสดงทีละภาษา สลับด้วย document.documentElement.lang (เหมือน index.html ทุกประการ
+     เพื่อให้ค่าที่เลือกไว้จาก localStorage ตัวเดียวกันใช้ร่วมกันได้ทั้งเว็บ) */
+  [data-lang] { display: none; }
+  html[lang="th"] [data-lang="th"], html[lang="en"] [data-lang="en"] { display: block; }
 </style>
 </head>
 <body>
 <main>
 
-  <div class="card">
+  <div class="langbar"><button class="langbtn" id="langbtn" type="button"></button></div>
+
+  <div class="card" data-lang="th">
     <h1>นโยบายความเป็นส่วนตัว</h1>
-    <p class="muted">8Hrs Posture Monitor · ปรับปรุงล่าสุด 8 สิงหาคม 2569</p>
+    <p class="muted">8Hrs Posture Monitor · ปรับปรุงล่าสุด 19 สิงหาคม 2569</p>
 
     <div class="key">
       <b>สรุปสั้นที่สุด:</b> ภาพจากกล้องและข้อมูลท่านั่งของคุณ<b>ไม่เคยออกจากเครื่อง</b>
@@ -55,18 +74,18 @@
       <li><b>ภาพจากกล้อง</b> — ใช้ตรวจจับตำแหน่งไหล่และตาแบบเรียลไทม์ <b>ไม่มีการบันทึกเป็นไฟล์ ไม่มีการส่งขึ้นเซิร์ฟเวอร์ใดๆ</b> ภาพแต่ละเฟรมถูกทิ้งทันทีหลังประมวลผลเสร็จ</li>
       <li><b>สถิติท่านั่งรายวัน</b> — จำนวนวินาทีที่ท่านั่งดี/เตือน/แย่ในแต่ละวัน เก็บในไฟล์ฐานข้อมูลบนเครื่องคุณที่
         <code>%LOCALAPPDATA%\PostureMonitor\posture_history.db</code></li>
-      <li><b>ค่าตั้งค่าต่างๆ</b> — ค่าปรับเทียบท่านั่ง ค่าซูมกล้อง กล้องที่เลือก เก็บบนเครื่องเช่นกัน</li>
+      <li><b>ค่าตั้งค่าต่างๆ</b> — ค่าปรับเทียบท่านั่ง กล้องที่เลือก เก็บบนเครื่องเช่นกัน</li>
     </ul>
     <p>ข้อมูลทั้งหมดในหัวข้อนี้ลบได้เองโดยลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code> หรือถอนการติดตั้งโปรแกรม</p>
 
     <h2>2. ข้อมูลที่ส่งออกจากเครื่อง (เฉพาะเมื่อเข้าสู่ระบบ)</h2>
     <p>โปรแกรมใช้งานฟีเจอร์พื้นฐานได้โดย<b>ไม่ต้องเข้าสู่ระบบ</b> ซึ่งกรณีนั้นจะไม่มีข้อมูลใดออกจากเครื่องเลย
        หากคุณเลือกสมัครสมาชิกหรือเข้าสู่ระบบ จะมีการส่งข้อมูลต่อไปนี้:</p>
-    <table>
+    <div class="table-wrap"><table>
       <tr><th>ข้อมูล</th><th>ส่งไปที่ไหน</th><th>เพื่ออะไร</th></tr>
-      <tr><td>อีเมล และรหัสผ่าน (หรือการยืนยันตัวตนผ่านบัญชี Google)</td><td>Firebase Authentication (Google LLC)</td><td>ยืนยันตัวตนเพื่อเข้าสู่ระบบ</td></tr>
+      <tr><td>อีเมล และรหัสผ่าน</td><td>Firebase Authentication (Google LLC)</td><td>ยืนยันตัวตนเพื่อเข้าสู่ระบบ</td></tr>
       <tr><td>อีเมล และวันหมดอายุสมาชิก</td><td>Cloud Firestore (Google LLC)</td><td>ตรวจสอบสิทธิ์สมาชิกแบบโปร</td></tr>
-    </table>
+    </table></div>
     <p class="muted">เราไม่ส่งภาพ ไม่ส่งข้อมูลท่านั่ง ไม่ส่งสถิติการใช้งาน และไม่มีระบบติดตามพฤติกรรมหรือโฆษณาใดๆ ในโปรแกรม</p>
 
     <h2>3. การชำระเงิน</h2>
@@ -114,11 +133,9 @@
        LINE: <code>@341jvvzy</code></p>
   </div>
 
-  <div class="lang-sep">— ENGLISH —</div>
-
-  <div class="card">
+  <div class="card" data-lang="en">
     <h1>Privacy Policy</h1>
-    <p class="muted">8Hrs Posture Monitor · Last updated 8 August 2026</p>
+    <p class="muted">8Hrs Posture Monitor · Last updated 19 August 2026</p>
 
     <div class="key">
       <b>In short:</b> Your camera images and posture data <b>never leave your computer</b>.
@@ -132,18 +149,18 @@
         <b>Never saved to disk, never uploaded anywhere.</b> Each frame is discarded immediately after processing.</li>
       <li><b>Daily posture statistics</b> — seconds spent in good/warning/bad posture per day, stored locally at
         <code>%LOCALAPPDATA%\PostureMonitor\posture_history.db</code></li>
-      <li><b>Settings</b> — posture calibration, camera zoom, selected camera. Also stored locally.</li>
+      <li><b>Settings</b> — posture calibration, selected camera. Also stored locally.</li>
     </ul>
     <p>You can delete all of the above by removing the <code>%LOCALAPPDATA%\PostureMonitor</code> folder or uninstalling the app.</p>
 
     <h2>2. Data sent off your device (only when signed in)</h2>
     <p>The app's core features work <b>without signing in</b>, in which case no data leaves your device at all.
        If you choose to create an account or sign in, the following is transmitted:</p>
-    <table>
+    <div class="table-wrap"><table>
       <tr><th>Data</th><th>Sent to</th><th>Purpose</th></tr>
-      <tr><td>Email address and password (or Google account authentication)</td><td>Firebase Authentication (Google LLC)</td><td>Account authentication</td></tr>
+      <tr><td>Email address and password</td><td>Firebase Authentication (Google LLC)</td><td>Account authentication</td></tr>
       <tr><td>Email address and membership expiry date</td><td>Cloud Firestore (Google LLC)</td><td>Verifying Pro membership</td></tr>
-    </table>
+    </table></div>
     <p class="muted">We do not transmit images, posture data, or usage analytics. The app contains no tracking and no advertising.</p>
 
     <h2>3. Payments</h2>
@@ -194,5 +211,25 @@
   </div>
 
 </main>
+
+<script>
+  // ใช้กลไก+key เดียวกับ index.html (saantie-lang) ตัวเลือกภาษาจึงติดตามผู้ใช้ข้ามหน้าในเว็บนี้ได้ทั้งเว็บ
+  (function () {
+    var KEY = "saantie-lang";
+    var btn = document.getElementById("langbtn");
+    function apply(lang) {
+      document.documentElement.lang = lang;
+      btn.textContent = lang === "th" ? "English" : "ภาษาไทย";
+    }
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    apply(saved || ((navigator.language || "").toLowerCase().indexOf("th") === 0 ? "th" : "en"));
+    btn.addEventListener("click", function () {
+      var next = document.documentElement.lang === "th" ? "en" : "th";
+      apply(next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+    });
+  })();
+</script>
 </body>
 </html>
