@@ -334,27 +334,8 @@
 
 </div>
 
+<script src="/assets/lang-toggle.js"></script>
 <script>
-  // ---------- สลับภาษา ----------
-  // เลือกจาก 3 ทางตามลำดับ: ที่ผู้ใช้เคยเลือกไว้ -> ภาษาเบราว์เซอร์ -> อังกฤษ
-  // (อังกฤษเป็นค่าตั้งต้น เพราะโดเมนนี้เปิดรับผู้เข้าชมทั่วโลก ไม่ใช่เฉพาะไทย)
-  (function () {
-    var KEY = "saantie-lang";
-    var btn = document.getElementById("langbtn");
-    function apply(lang) {
-      document.documentElement.lang = lang;
-      btn.textContent = lang === "th" ? "English" : "ภาษาไทย";
-    }
-    var saved = null;
-    try { saved = localStorage.getItem(KEY); } catch (e) {}
-    apply(saved || ((navigator.language || "").toLowerCase().indexOf("th") === 0 ? "th" : "en"));
-    btn.addEventListener("click", function () {
-      var next = document.documentElement.lang === "th" ? "en" : "th";
-      apply(next);
-      try { localStorage.setItem(KEY, next); } catch (e) {}
-    });
-  })();
-
   // ---------- ให้เนื้อหาค่อยๆ ปรากฏตอนเลื่อนถึง ----------
   //
   // ⚠️ animation นี้เป็นแค่ "ของแถม" — ความมองเห็นของเนื้อหาห้ามขึ้นอยู่กับมันเด็ดขาด

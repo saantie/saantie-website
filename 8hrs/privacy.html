@@ -212,24 +212,6 @@
 
 </main>
 
-<script>
-  // ใช้กลไก+key เดียวกับ index.html (saantie-lang) ตัวเลือกภาษาจึงติดตามผู้ใช้ข้ามหน้าในเว็บนี้ได้ทั้งเว็บ
-  (function () {
-    var KEY = "saantie-lang";
-    var btn = document.getElementById("langbtn");
-    function apply(lang) {
-      document.documentElement.lang = lang;
-      btn.textContent = lang === "th" ? "English" : "ภาษาไทย";
-    }
-    var saved = null;
-    try { saved = localStorage.getItem(KEY); } catch (e) {}
-    apply(saved || ((navigator.language || "").toLowerCase().indexOf("th") === 0 ? "th" : "en"));
-    btn.addEventListener("click", function () {
-      var next = document.documentElement.lang === "th" ? "en" : "th";
-      apply(next);
-      try { localStorage.setItem(KEY, next); } catch (e) {}
-    });
-  })();
-</script>
+<script src="/assets/lang-toggle.js"></script>
 </body>
 </html>
