@@ -145,7 +145,7 @@
 
   .note { color: var(--muted); font-size: .92em; margin-top: 20px; }
 
-  /* ---------- ปุ่มติดต่อ ---------- */
+  /* ---------- ปุ่มติดต่อ (LINE) ---------- */
   .contacts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
   .contact {
     display: inline-flex; align-items: center; gap: 10px;
@@ -153,18 +153,39 @@
     font-size: .95em; font-weight: 500; transition: .25s; border: 1px solid transparent;
   }
   .contact svg { width: 19px; height: 19px; flex-shrink: 0; }
-  .contact.mail { background: var(--accent); color: #06121F; }
-  .contact.mail svg { fill: #06121F; }
-  .contact.mail:hover { box-shadow: 0 0 0 4px var(--accent-soft); transform: translateY(-2px); }
   .contact.line { background: var(--surface-2); border-color: var(--border); color: var(--text); }
   .contact.line svg { fill: #06C755; }
   .contact.line:hover { border-color: #06C755; transform: translateY(-2px); }
 
-  /* ข้อความยืนยันการคัดลอก — ใช้ display สลับ ไม่ใช่ opacity เพราะถ้าใช้ opacity
-     ตัวมันจะยังกินพื้นที่ในเลย์เอาต์ตลอดเวลา ทำให้มีช่องว่างค้างใต้ปุ่มตั้งแต่เปิดหน้า */
-  .copied { display: none; margin: 14px 0 0; font-size: .9em; color: var(--accent); }
-  .copied.show { display: block; animation: copiedin .3s ease; }
-  @keyframes copiedin { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  /* ---------- ฟอร์มติดต่อ (ส่งจริงผ่าน Cloud Function — ดู CLAUDE.md) ---------- */
+  .contact-form { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; max-width: 480px; }
+  .cf-field { display: flex; flex-direction: column; gap: 6px; }
+  .cf-field span { font-size: .85em; color: var(--muted); }
+  .contact-form input[type="text"], .contact-form input[type="email"], .contact-form textarea {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px;
+    padding: 11px 14px; font: inherit; font-size: .95em; color: var(--text);
+    resize: vertical; transition: border-color .2s;
+  }
+  .contact-form input:focus, .contact-form textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  /* honeypot กันบอท — ซ่อนด้วยตำแหน่งนอกจอ ไม่ใช่ display:none เพราะบอทบางตัวข้าม display:none
+     โดยเฉพาะ คนจริง/screen reader ไม่มีทางไปเจอเข้า (aria-hidden + tabindex="-1" กันด้วยอีกชั้น) */
+  .cf-hp { position: absolute; left: -9999px; top: -9999px; }
+  .cf-submit {
+    align-self: flex-start; background: var(--accent); color: #06121F; border: none;
+    border-radius: 999px; padding: 12px 26px; font: inherit; font-size: .95em; font-weight: 600;
+    cursor: pointer; transition: .25s;
+  }
+  .cf-submit:hover:not(:disabled) { box-shadow: 0 0 0 4px var(--accent-soft); transform: translateY(-2px); }
+  .cf-submit:disabled { opacity: .6; cursor: default; }
+  /* ใช้ display คุมการแสดง/ซ่อน ไม่ใช่ opacity เพราะถ้าใช้ opacity ตัวมันจะยังกินพื้นที่ในเลย์เอาต์
+     ตลอดเวลา ทำให้มีช่องว่างค้างใต้ปุ่มตั้งแต่เปิดหน้า (บทเรียนจากปุ่มคัดลอกอีเมลเวอร์ชันก่อน) */
+  .cf-status { display: none; margin: 0; font-size: .9em; }
+  .cf-status.show { display: block; animation: cfstatusin .3s ease; }
+  .cf-status.ok { color: var(--accent); }
+  .cf-status.err { color: #F87171; }
+  @keyframes cfstatusin { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
   footer {
     border-top: 1px solid var(--border); margin-top: 64px; padding-top: 26px;
@@ -305,10 +326,6 @@
     <div data-lang="en"><p>Questions, problems, or ideas — get in touch.</p></div>
 
     <div class="contacts">
-      <a class="contact mail" href="mailto:contact@saantie.com">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Zm2.2-.5 6.8 5.2L18.8 6H5.2ZM19 7.7l-6.4 4.9a1 1 0 0 1-1.2 0L5 7.7v9.8c0 .3.2.5.5.5h13c.3 0 .5-.2.5-.5V7.7Z"/></svg>
-        <span>contact@saantie.com</span>
-      </a>
       <!-- ใช้ไอคอนกล่องข้อความทั่วไป ไม่ใช่โลโก้ LINE ของจริง — การวาดโลโก้บริษัทอื่นเองมีความเสี่ยง
            เรื่องเครื่องหมายการค้า ถ้าต้องการปุ่มทางการต้องโหลดไฟล์จากหน้า brand ของ LINE -->
       <a class="contact line" href="https://line.me/R/ti/p/%40341jvvzy" target="_blank" rel="noopener">
@@ -317,14 +334,31 @@
       </a>
     </div>
 
-    <p class="copied" id="copied-ok" role="status" aria-live="polite">
-      <span data-lang="th">คัดลอกอีเมลแล้ว — ถ้าโปรแกรมอีเมลไม่เปิดขึ้นมาเอง วางที่ Gmail ได้เลย</span>
-      <span data-lang="en">Email address copied — if no mail app opened, just paste it anywhere.</span>
-    </p>
-    <p class="copied" id="copied-fail" role="status" aria-live="polite">
-      <span data-lang="th">เลือกที่อยู่อีเมลไว้ให้แล้ว — กด Ctrl+C หรือแตะค้างแล้วเลือก "คัดลอก"</span>
-      <span data-lang="en">Email address selected — press Ctrl+C, or long-press and choose Copy.</span>
-    </p>
+    <!-- ฟอร์มติดต่อ — ส่งจริงผ่าน Cloud Function "contactForm" (functions/index.js ในโปรเจกต์
+         posture-monitor-program) แทนที่การพึ่ง mailto: ล้วนๆ ซึ่งเงียบสนิทถ้าเครื่องผู้เข้าชมไม่ได้ตั้ง
+         โปรแกรมอีเมลเริ่มต้นไว้ (ดู CLAUDE.md หัวข้อ "งานค้าง" ถ้า endpoint ยังไม่ได้ deploy) -->
+    <form class="contact-form" id="contact-form" novalidate>
+      <label class="cf-field">
+        <span data-lang="th">ชื่อ (ไม่บังคับ)</span><span data-lang="en">Name (optional)</span>
+        <input type="text" name="name" id="cf-name" autocomplete="name" maxlength="200">
+      </label>
+      <label class="cf-field">
+        <span data-lang="th">อีเมล</span><span data-lang="en">Email</span>
+        <input type="email" name="email" id="cf-email" autocomplete="email" required maxlength="320">
+      </label>
+      <label class="cf-field">
+        <span data-lang="th">ข้อความ</span><span data-lang="en">Message</span>
+        <textarea name="message" id="cf-message" rows="5" required maxlength="5000"></textarea>
+      </label>
+      <!-- honeypot: คนจริงมองไม่เห็นเลย (ซ่อนด้วย CSS นอกจอ) บอทที่กรอกทุกช่องอัตโนมัติจะกรอกช่องนี้ด้วย -->
+      <div class="cf-hp" aria-hidden="true">
+        <label>Website<input type="text" name="website" id="cf-website" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <button type="submit" class="cf-submit" id="cf-submit">
+        <span data-lang="th">ส่งข้อความ</span><span data-lang="en">Send message</span>
+      </button>
+      <p class="cf-status" id="cf-status" role="status" aria-live="polite"></p>
+    </form>
   </div>
 
   <footer class="reveal">
@@ -380,70 +414,59 @@
     }
   })();
 
-  // ---------- ปุ่มอีเมล ----------
-  // ⚠️ ลิงก์ mailto: "เงียบสนิท" ถ้าเครื่องผู้ใช้ไม่ได้ตั้งโปรแกรมอีเมลเริ่มต้นไว้ —
-  // คลิกแล้วไม่มีอะไรเกิดขึ้นเลย ไม่มี error ไม่มีแท็บใหม่ ผู้ใช้เจอกับตัวมาแล้วบน Windows 10
-  // (โปรแกรมเดสก์ท็อปเจอกับดักเดียวกันจนต้องมี BROWSER_MAILTO_PROGIDS ไว้เปิดผ่านเว็บเมลแทน)
-  // จึงคัดลอกที่อยู่ให้เสมอเป็นตาข่ายรอง โดย **ไม่** preventDefault เพราะคนที่มีโปรแกรมอีเมล
-  // ต้องยังเปิดได้ตามปกติ
+  // ---------- ฟอร์มติดต่อ ----------
+  // เดิมใช้ mailto: ล้วนๆ ซึ่ง "เงียบสนิท" ถ้าเครื่องผู้ใช้ไม่ได้ตั้งโปรแกรมอีเมลเริ่มต้นไว้ — คลิกแล้ว
+  // ไม่มีอะไรเกิดขึ้นเลย ไม่มี error ไม่มีแท็บใหม่ (ลองใช้คัดลอกคลิปบอร์ดเป็นตาข่ายรองไปรอบหนึ่งแล้ว
+  // แต่ยังไม่สะดวกพอ) เปลี่ยนมาใช้ฟอร์มส่งจริงผ่าน Cloud Function "contactForm" แทน — ไม่ต้องพึ่ง
+  // โปรแกรมอีเมลของผู้เข้าชมเลย (ดู functions/index.js ในโปรเจกต์ posture-monitor-program)
   (function () {
-    var mail = document.querySelector(".contact.mail");
-    var okNote = document.getElementById("copied-ok");
-    var failNote = document.getElementById("copied-fail");
-    if (!mail || !okNote || !failNote) return;
-    var addr = (mail.getAttribute("href") || "").replace(/^mailto:/, "");
-    if (!addr) return;
-    var timer = null;
+    var CONTACT_ENDPOINT = "https://asia-southeast1-posture-monitor-program.cloudfunctions.net/contactForm";
+    var form = document.getElementById("contact-form");
+    if (!form) return;
+    var submitBtn = document.getElementById("cf-submit");
+    var statusEl = document.getElementById("cf-status");
+    var nameEl = document.getElementById("cf-name");
+    var emailEl = document.getElementById("cf-email");
+    var messageEl = document.getElementById("cf-message");
+    var websiteEl = document.getElementById("cf-website"); // honeypot — คนจริงต้องว่างเปล่าเสมอ
 
-    function show(note) {
-      okNote.classList.remove("show");
-      failNote.classList.remove("show");
-      note.classList.add("show");
-      clearTimeout(timer);
-      timer = setTimeout(function () { note.classList.remove("show"); }, 7000);
+    function setStatus(kind, thText, enText) {
+      statusEl.className = "cf-status show " + kind;
+      statusEl.innerHTML =
+        '<span data-lang="th">' + thText + '</span><span data-lang="en">' + enText + "</span>";
     }
 
-    // คัดลอกไม่สำเร็จ = ห้ามขึ้นว่า "คัดลอกแล้ว" เด็ดขาด ผู้ใช้จะไปวางแล้วได้ของว่าง
-    // ทางออกที่ยังช่วยได้จริงคือ "เลือก" ข้อความที่อยู่ไว้ให้ แล้วบอกให้กด Ctrl+C เอง
-    function selectAddress() {
-      try {
-        var span = mail.querySelector("span");
-        var range = document.createRange();
-        range.selectNodeContents(span);
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-      } catch (e) { /* เลือกไม่ได้ก็ยังมีที่อยู่เป็นตัวหนังสือบนปุ่มให้พิมพ์ตาม */ }
-      show(failNote);
-    }
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!form.reportValidity()) return; // required/type=email ของเบราว์เซอร์เช็คให้ก่อนชั้นหนึ่ง
 
-    function legacyCopy() {
-      // clipboard API ใช้ได้เฉพาะ https และเฉพาะตอนหน้าเว็บมีโฟกัส — นอกนั้นต้องมาทางนี้
-      var ok = false;
-      try {
-        var ta = document.createElement("textarea");
-        ta.value = addr;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "fixed";
-        ta.style.top = "-1000px";
-        document.body.appendChild(ta);
-        ta.select();
-        ok = document.execCommand("copy");   // คืน false ได้โดยไม่โยน error — ต้องเช็คค่าที่คืนมา
-        document.body.removeChild(ta);
-      } catch (e) { ok = false; }
-      if (ok) { show(okNote); } else { selectAddress(); }
-    }
+      submitBtn.disabled = true;
+      setStatus("ok", "กำลังส่ง...", "Sending...");
 
-    mail.addEventListener("click", function () {
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(addr).then(function () { show(okNote); }, legacyCopy);
-        } else {
-          legacyCopy();
-        }
-      } catch (e) {
-        legacyCopy();
-      }
+      fetch(CONTACT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameEl.value.trim(),
+          email: emailEl.value.trim(),
+          message: messageEl.value.trim(),
+          website: websiteEl.value, // honeypot ส่งไปด้วยเสมอ ให้ backend เป็นคนตัดสินใจ ไม่กรองฝั่งนี้
+        }),
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          form.reset();
+          setStatus("ok", "ส่งข้อความแล้ว ขอบคุณครับ จะติดต่อกลับทางอีเมลโดยเร็วที่สุด",
+                     "Message sent — thank you! I'll get back to you by email soon.");
+        })
+        .catch(function () {
+          // ไม่บอกรายละเอียด error ทางเทคนิค แค่แนะนำทางเลือกสำรองที่ยังใช้ได้เสมอ
+          setStatus("err", "ส่งไม่สำเร็จ ลองใหม่อีกครั้ง หรืออีเมลมาที่ contact@saantie.com โดยตรง",
+                     "Couldn't send that — please try again, or email contact@saantie.com directly.");
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+        });
     });
   })();
 </script>

@@ -18,7 +18,7 @@
 | Repo | `github.com/saantie/saantie-website` | `git remote -v` ยืนยันแล้ว |
 | โดเมน + DNS | **Cloudflare** (ซื้อโดเมนที่นี่ด้วย) | `saantie.com` เป็นโดเมนหลัก, `www.saantie.com` redirect มาหา (มีไฟล์ `CNAME` เดิมจาก GitHub Pages หลงเหลืออยู่ — ไม่มีผลอะไรตราบใดที่ยังใช้ Cloudflare Pages เป็นตัว serve จริง) |
 | รับอีเมล | **Cloudflare Email Routing** | `contact@saantie.com` ยืนยันแล้วว่า MX ชี้มาที่ Cloudflare จริง (`route1/2/3.mx.cloudflare.net`) |
-| ส่งอีเมลจากฟอร์มติดต่อ | **ยังไม่มี** | ดูหัวข้อ "งานค้าง" ด้านล่าง |
+| ส่งอีเมลจากฟอร์มติดต่อ | **Firebase Cloud Functions** (`contactForm`) + **Resend** | โค้ดอยู่ที่ `F:\posture_monitor\posture_monitor\functions\index.js` โปรเจกต์ `posture-monitor-program` เดียวกับ 8Hrs — ยังไม่ได้ deploy/ตั้ง secret ดูหัวข้อ "งานค้าง" ด้านล่าง |
 | Firebase project ของ 8Hrs | `posture-monitor-program` | **ไม่ได้เชื่อมกับเว็บนี้โดยตรง** เว็บนี้แค่ลิงก์ไปหน้านโยบาย ตัว auth/Firestore ทั้งหมดอยู่ในตัวโปรแกรม `posture_monitor.py` คนละที่ |
 
 ## โครงสร้างไฟล์ปัจจุบัน
@@ -74,10 +74,24 @@ Security Rules ซึ่งล็อกไว้แล้ว แต่ไม่�
 
 - **`8hrs/index.html`** (landing page ตัวโปรแกรม 8Hrs) — ยังไม่สร้าง ร่างเนื้อหาอยู่ที่
   `F:\posture_monitor\posture_monitor\LANDING_PAGE_DRAFT.md`
-- **ฟอร์มติดต่อที่ส่งอีเมลจริง** — ปุ่มอีเมลหน้าหลักตอนนี้ใช้ `mailto:` + คัดลอกคลิปบอร์ดเป็นตาข่ายรอง
-  (ใช้ได้แต่ไม่มืออาชีพเท่าฟอร์มจริง) **ตัดสินใจแล้วว่าจะทำผ่าน Firebase Cloud Functions** ของโปรเจกต์
-  `posture-monitor-program` (โปรเจกต์เดียวกับที่ 8Hrs ใช้อยู่แล้ว บน Blaze plan) เพิ่ม HTTPS endpoint ใหม่
-  รับข้อมูลฟอร์มแล้วส่งอีเมลผ่านผู้ให้บริการส่งอีเมล (ยังไม่ได้เลือกผู้ให้บริการ/ยังไม่มี credential)
+
+- **ฟอร์มติดต่อ** — เขียนโค้ดครบแล้วทั้ง 2 ฝั่ง (ฟอร์มในหน้าเว็บ `index.html` + Cloud Function
+  `contactForm` ที่ `functions/index.js`) แต่ **ยังใช้งานจริงไม่ได้** จนกว่าจะทำ 3 ขั้นตอนนี้ให้ครบ
+  (ต้องเป็นเจ้าของบัญชีทำเอง — Claude แตะ credential ให้ไม่ได้ตามกฎที่ตั้งไว้):
+
+  1. สมัคร [resend.com](https://resend.com) (ฟรี ไม่ต้องผูกบัตร) แล้ว verify โดเมน `saantie.com`
+     (เพิ่ม DNS record ที่ Resend บอกไว้ที่ Cloudflare DNS — ไม่งั้นส่งจาก `contact@saantie.com`
+     ไม่ได้จริง ส่งได้แค่ที่อยู่ทดสอบของ Resend เอง)
+  2. สร้าง API key ที่ Resend แล้วรันคำสั่งนี้เอง (จะถาม prompt ให้วางค่า key — ห้ามส่งค่า key ให้ Claude
+     ไม่ว่าทางไหน):
+     ```
+     cd F:\posture_monitor\posture_monitor\functions
+     firebase functions:secrets:set RESEND_API_KEY
+     ```
+  3. Deploy: `firebase deploy --only functions:contactForm`
+
+  หลัง deploy เสร็จ ทดสอบจริงโดยกรอกฟอร์มที่ saantie.com แล้วเช็คว่าอีเมลไปถึง `contact@saantie.com`
+  จริง (และเช็ค collection `contact_messages` ใน Firestore ว่ามีสำเนาบันทึกไว้ด้วย)
 
 ## จะโตแล้วทำยังไง (ถ้าจำนวนหน้าเยอะขึ้นมาก)
 
