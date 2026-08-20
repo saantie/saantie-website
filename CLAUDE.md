@@ -18,7 +18,7 @@
 | Repo | `github.com/saantie/saantie-website` | `git remote -v` ยืนยันแล้ว |
 | โดเมน + DNS | **Cloudflare** (ซื้อโดเมนที่นี่ด้วย) | `saantie.com` เป็นโดเมนหลัก, `www.saantie.com` redirect มาหา (มีไฟล์ `CNAME` เดิมจาก GitHub Pages หลงเหลืออยู่ — ไม่มีผลอะไรตราบใดที่ยังใช้ Cloudflare Pages เป็นตัว serve จริง) |
 | รับอีเมล | **Cloudflare Email Routing** | `contact@saantie.com` ยืนยันแล้วว่า MX ชี้มาที่ Cloudflare จริง (`route1/2/3.mx.cloudflare.net`) |
-| ส่งอีเมลจากฟอร์มติดต่อ | **Firebase Cloud Functions** (`contactForm`) + **Gmail SMTP** (nodemailer) | โค้ดอยู่ที่ `F:\posture_monitor\posture_monitor\functions\index.js` โปรเจกต์ `posture-monitor-program` เดียวกับ 8Hrs — ใช้บัญชี Gmail ที่มีอยู่แล้วส่ง ไม่ต้องสมัครบริการใหม่ — ยังไม่ได้ deploy/ตั้ง secret ดูหัวข้อ "งานค้าง" ด้านล่าง |
+| ส่งอีเมลจากฟอร์มติดต่อ | **Firebase Cloud Functions** (`contactForm`) + **Gmail SMTP** (nodemailer) | ✅ deploy แล้ว ทดสอบส่งจริงสำเร็จ (ส.ค. 2569) — โค้ดอยู่ที่ `F:\posture_monitor\posture_monitor\functions\index.js` โปรเจกต์ `posture-monitor-program` เดียวกับ 8Hrs ดูหัวข้อ "ระบบอีเมลของฟอร์มติดต่อ" ด้านล่าง |
 | Firebase project ของ 8Hrs | `posture-monitor-program` | **ไม่ได้เชื่อมกับเว็บนี้โดยตรง** เว็บนี้แค่ลิงก์ไปหน้านโยบาย ตัว auth/Firestore ทั้งหมดอยู่ในตัวโปรแกรม `posture_monitor.py` คนละที่ |
 
 ## โครงสร้างไฟล์ปัจจุบัน
@@ -70,63 +70,47 @@ Security Rules ซึ่งล็อกไว้แล้ว แต่ไม่�
 ใหม่ที่ Firebase Console → Authentication → Settings → Authorized domains ก่อน ไม่งั้นปุ่มล็อกอิน Google
 จะถูกปฏิเสธ
 
+## ระบบอีเมลของฟอร์มติดต่อ (deploy สำเร็จแล้ว — ส.ค. 2569)
+
+ฟอร์มใน `index.html` (หัวข้อ "ติดต่อ") ส่งจริงผ่าน Cloud Function `contactForm` แล้ว — **ทดสอบส่งจริง
+จากหน้าเว็บสำเร็จ ยืนยันจากเจ้าของเว็บเอง** ไม่ต้องทำอะไรเพิ่มฝั่งนี้แล้ว
+
+**กลไก**: ฟอร์ม → `fetch()` ไปที่
+`https://asia-southeast1-posture-monitor-program.cloudfunctions.net/contactForm` → ฟังก์ชันตรวจ
+honeypot/validation → ส่งอีเมลจริงผ่าน Gmail SMTP (`nodemailer`) ไปที่ **`contact@saantie.com`**
+(ที่อยู่รับของฟอร์มเว็บไซต์ — คนละที่อยู่กับ `8hrs@saantie.com` ที่ตัวโปรแกรม 8Hrs ใช้เอง) พร้อม
+`reply_to` เป็นอีเมลผู้กรอกฟอร์ม (กด Reply แล้วไปหาผู้ส่งจริง ไม่ใช่ Gmail ที่ใช้ส่ง) และบันทึกสำเนาลง
+Firestore collection `contact_messages` เผื่ออีเมลตกสแปม
+
+**ค่าที่ตั้งไว้แล้วในโปรเจกต์ `posture-monitor-program`**:
+- Secret (Secret Manager — ความลับจริง): `GMAIL_APP_PASSWORD`
+- Param ธรรมดา (ไม่ใช่ความลับ เก็บใน `functions/.env.posture-monitor-program`): `GMAIL_USER`
+  (ที่อยู่ Gmail ที่ใช้ยิง SMTP ออก)
+- เปลี่ยนบัญชี Gmail ที่ใช้ส่งทีหลัง: ต้องสร้าง App Password ใหม่ของบัญชีนั้น (ผ่าน
+  https://myaccount.google.com/apppasswords ต้องเปิด 2-Step Verification ก่อน) แล้ว
+  `firebase functions:secrets:set GMAIL_APP_PASSWORD` ทับของเดิม + แก้ค่าใน `.env.posture-monitor-program`
+  ให้ตรงกัน แล้ว deploy ใหม่
+
+**ปัญหาที่เจอจริงระหว่าง deploy ครั้งแรก (จดไว้กันเจอซ้ำ)**:
+1. **`firebase deploy --only functions:contactForm` ยังวิเคราะห์ทั้งไฟล์ `index.js` เสมอ** แม้จะเจาะจง
+   ฟังก์ชันเดียว — ถ้ามี secret ของฟังก์ชัน**อื่น**ในไฟล์เดียวกันที่ยังไม่เคยตั้งค่า (ตอนนั้นคือ
+   `PAYPAL_CLIENT_ID/CLIENT_SECRET/WEBHOOK_ID` ของ `paypalWebhook` ที่ไม่ได้ใช้งานจริงแล้ว) จะถูกถามให้
+   กรอกด้วย ทั้งที่ไม่เกี่ยวกับฟังก์ชันที่กำลัง deploy เลย — แก้โดยตั้งค่า placeholder ให้ 3 ตัวนั้นไปเลย
+   (`firebase functions:secrets:set PAYPAL_CLIENT_ID` ฯลฯ ใส่ค่าอะไรก็ได้ เช่น `not_used`)
+2. **ค่า param ที่ไม่มี default (เช่น `GMAIL_USER`) ถ้ากด Enter เปล่าตอนถูกถามระหว่าง deploy จะถูก
+   บันทึกเป็นค่าว่างเงียบๆ** ไม่ error ทันที แต่ทำให้ฟังก์ชันพังตอนรันจริงด้วย
+   `Error: Missing credentials for "PLAIN"` (nodemailer หา user/pass ไม่เจอ) — เช็คได้จาก
+   `functions/.env.posture-monitor-program` (ไฟล์นี้ไม่ใช่ความลับ เปิดดู/แก้ตรงๆ ได้เลย) ถ้าเจอค่าว่าง
+   แก้ไฟล์ตรงนั้นแล้ว deploy ใหม่ ไม่ต้องผ่าน prompt อีกรอบ
+3. **`Cannot determine backend specification. Timeout after 10000` ตอน deploy คือปัญหาชั่วคราว** ไม่ใช่
+   โค้ดผิด (เจอทั้งตอนรัน emulator ในเครื่องและตอน deploy จริง) — ลองรันคำสั่งเดิมซ้ำมักจะผ่าน
+4. **การแก้ไฟล์ `.env.posture-monitor-program` อย่างเดียวไม่มีผลจนกว่าจะ `firebase deploy` ใหม่จริงๆ**
+   ต้อง deploy ทุกครั้งหลังแก้ค่า ไม่ใช่แค่บันทึกไฟล์
+
 ## งานค้าง
 
 - **`8hrs/index.html`** (landing page ตัวโปรแกรม 8Hrs) — ยังไม่สร้าง ร่างเนื้อหาอยู่ที่
   `F:\posture_monitor\posture_monitor\LANDING_PAGE_DRAFT.md`
-
-- **ฟอร์มติดต่อ** — เขียนโค้ดครบแล้วทั้ง 2 ฝั่ง (ฟอร์มในหน้าเว็บ `index.html` + Cloud Function
-  `contactForm` ที่ `functions/index.js`, ส่งผ่าน Gmail SMTP ด้วย `nodemailer`) แต่ **ยังใช้งานจริงไม่ได้**
-  จนกว่าเจ้าของบัญชีจะทำ 5 ขั้นตอนนี้เอง — Claude แตะ credential ให้ไม่ได้ตามกฎที่ตั้งไว้ ทุกขั้นตอนที่ต้อง
-  พิมพ์รหัส/วางค่าลับ **ให้เจ้าของบัญชีเป็นคนพิมพ์เองเท่านั้น**
-
-  **ขั้นที่ 1 — เปิด 2-Step Verification ของบัญชี Gmail ที่จะใช้ส่ง** (ถ้ายังไม่เปิด จะสร้าง App
-  Password ในขั้นถัดไปไม่ได้เลย)
-  1. เข้า https://myaccount.google.com/security
-  2. หาหัวข้อ "2-Step Verification" (การยืนยันแบบ 2 ขั้นตอน) กดเข้าไปเปิดใช้งาน ทำตามขั้นตอนที่ Google
-     กำหนด (มักต้องยืนยันผ่านเบอร์โทรศัพท์)
-
-  **ขั้นที่ 2 — สร้าง App Password** (รหัสผ่าน 16 หลัก ใช้แทนรหัสผ่านจริง เฉพาะให้แอปนี้ใช้ ยกเลิกได้
-  ทีหลังโดยไม่กระทบรหัสผ่านจริงของบัญชี)
-  1. เข้า https://myaccount.google.com/apppasswords (เข้าได้ก็ต่อเมื่อเปิด 2-Step Verification แล้วเท่านั้น)
-  2. ช่อง "App name" พิมพ์อะไรก็ได้ที่จำได้ เช่น `saantie contact form`
-  3. กด "Create" / "สร้าง" — จะได้รหัส 16 หลัก (มีเว้นวรรคเป็น 4 ชุด เช่น `abcd efgh ijkl mnop`)
-     **คัดลอกเก็บไว้ก่อน หน้านี้จะไม่โชว์รหัสนี้ซ้ำอีก**
-
-  **ขั้นที่ 3 — ตั้งค่า secret ผ่าน Firebase CLI เอง** (เปิด terminal เอง พิมพ์เอง — ห้ามบอกรหัสนี้กับ
-  Claude ไม่ว่าทางไหน แม้จะขอให้ช่วย debug ก็ตาม)
-  ```
-  cd F:\posture_monitor\posture_monitor\functions
-  firebase functions:secrets:set GMAIL_APP_PASSWORD
-  ```
-  พอรันแล้วจะมีข้อความถามให้วางค่า (paste value) — **วาง App Password 16 หลักจากขั้นที่ 2** (จะวางแบบ
-  มีช่องว่างคั่นหรือไม่มีก็ได้ Google รับทั้ง 2 แบบ) กด Enter
-
-  **ขั้นที่ 4 — Deploy**
-  ```
-  cd F:\posture_monitor\posture_monitor\functions
-  firebase deploy --only functions:contactForm
-  ```
-  รอบแรกที่ deploy ถ้ายังไม่เคยตั้งค่า `GMAIL_USER` มาก่อน จะมีข้อความถามในหน้าจอ (ไม่ใช่ความลับ พิมพ์
-  ได้ปกติ ไม่ต้องระวังเป็นพิเศษ):
-  ```
-  ? Enter a string value for GMAIL_USER:
-  ```
-  พิมพ์ **ที่อยู่อีเมล Gmail เต็มๆ** ของบัญชีที่สร้าง App Password ไว้ในขั้นที่ 2 (เช่น
-  `saantie@gmail.com`) แล้ว Enter — deploy จะใช้เวลาสักครู่ เสร็จแล้วจะมี URL ของฟังก์ชันโชว์ในหน้าจอ
-
-  **ขั้นที่ 5 — ทดสอบจริง**
-  1. เปิด https://saantie.com เลื่อนไปหัวข้อ "ติดต่อ" กรอกฟอร์มด้วยอีเมลตัวเอง ส่งทดสอบดู
-  2. เช็คกล่องจดหมายที่ `contact@saantie.com` (หรือที่ Cloudflare Email Routing forward ไปให้) ว่าอีเมล
-     มาถึงจริง — เนื้อความควรมีชื่อ+อีเมลที่กรอก และกดตอบกลับ (Reply) แล้วต้องไปหาอีเมลที่กรอกในฟอร์ม
-     ไม่ใช่กลับไปหา Gmail ที่ใช้ส่ง (เช็ค reply-to ทำงานถูกต้อง)
-  3. เข้า Firebase Console → Firestore → collection `contact_messages` เช็คว่ามีสำเนาข้อความบันทึกไว้
-     ด้วย (เผื่ออีเมลตกสแปมภายหลัง ยังมีที่ตามดูย้อนหลังได้)
-
-  **ถ้าอีเมลไปไม่ถึง / ค้าง**: เช็ค log ด้วย `firebase functions:log --only contactForm` — ข้อผิดพลาด
-  ที่เจอบ่อยคือ (ก) ยังไม่ได้เปิด 2-Step Verification ก่อนสร้าง App Password (ข) พิมพ์ App Password ผิด
-  ตอนตั้ง secret (ลบแล้วตั้งใหม่ได้ด้วยคำสั่งเดิมในขั้นที่ 3 ซ้ำอีกรอบ) (ค) Gmail จำกัดส่งได้ 500
-  อีเมล/วัน ถ้าทดสอบถี่เกินไปอาจโดนบล็อกชั่วคราว
 
 ## จะโตแล้วทำยังไง (ถ้าจำนวนหน้าเยอะขึ้นมาก)
 
