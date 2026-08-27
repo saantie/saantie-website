@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คู่มือการใช้งาน 8Hrs | 8Hrs Posture Monitor — User guide</title>
+<meta name="description" content="เริ่มใช้ 8Hrs Posture Monitor ตั้งแต่ติดตั้งจนถึงอ่านรายงานท่านั่งย้อนหลัง — Getting started with 8Hrs Posture Monitor, from install to reading your posture reports.">
+<meta name="theme-color" content="#070C18">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Ctext x='32' y='46' font-family='Segoe UI,sans-serif' font-size='40' font-weight='700' fill='%2338BDF8' text-anchor='middle'%3E8%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    /* โทนสีชุดเดียวกับ index.html / 8hrs/index.html (คัดลอกไว้ในแต่ละไฟล์ตามที่ CLAUDE.md ระบุ) */
+    --bg: #070C18;
+    --bg-soft: #0B1224;
+    --surface: #0E1730;
+    --surface-2: #121D3A;
+    --border: #1D2B4D;
+    --border-lit: #2E4374;
+    --text: #E9EFFA;
+    --muted: #8DA2C8;
+    --accent: #38BDF8;
+    --accent-soft: rgba(56, 189, 248, 0.12);
+    /* สีสถานะท่านั่ง — hex ตรงกับ COLOR_GOOD/WARN/CRIT ใน posture_monitor.py */
+    --good: #22C55E;
+    --warn: #FF9F45;
+    --crit: #FF4438;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", "Sarabun", -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  code {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1px 6px; font-size: .9em; word-break: break-word;
+  }
+
+  /* ---------- แถบบน ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(7,12,24,.72); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .top-row { max-width: 1060px; margin: 0 auto; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-weight: 700; }
+  .brand svg { width: 24px; height: 24px; }
+  .top-actions { display: flex; align-items: center; gap: 16px; }
+  .back-link { font-size: .88em; text-decoration: none; color: var(--muted); }
+  .back-link:hover { color: var(--text); }
+  .langbtn {
+    background: rgba(14,23,48,.7); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 6px 15px; font: inherit; font-size: .82em; cursor: pointer; transition: .25s;
+  }
+  .langbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- เลย์เอาต์ ---------- */
+  .layout { max-width: 1060px; margin: 0 auto; padding: 44px 22px 96px; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 52px; align-items: start; }
+  .layout > main { min-width: 0; }  /* กัน grid track โป่งเพราะ min-content ของตาราง/โค้ดยาว */
+
+  .toc { position: sticky; top: 82px; display: flex; flex-direction: column; gap: 2px; }
+  .toc-label { font-size: .7em; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .toc a { text-decoration: none; color: var(--muted); font-size: .86em; padding: 7px 10px; border-radius: 6px; border-left: 2px solid transparent; }
+  .toc a:hover { color: var(--text); background: var(--surface); border-left-color: var(--border-lit); }
+
+  /* จอแคบ: ซ่อนสารบัญ ใช้คอลัมน์เดียว — ต้องมาหลัง .toc/.layout base เพื่อให้ override ติด */
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 8px; }
+    .toc { display: none; }
+  }
+
+  .doc-head { margin-bottom: 44px; max-width: 60ch; }
+  .doc-head .eyebrow { font-size: .74em; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .doc-head h1 { font-size: clamp(1.9em, 4vw, 2.6em); letter-spacing: -.02em; margin: .35em 0 .3em; line-height: 1.15; }
+  .doc-head p { color: var(--muted); font-size: 1.05em; margin: 0; }
+
+  section.step { margin-bottom: 48px; scroll-margin-top: 84px; padding-top: 26px; border-top: 1px solid var(--border); }
+  section.step:first-of-type { border-top: none; padding-top: 0; }
+  .step-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+  .step-num { font-size: .9em; color: var(--accent); font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .step-head h2 { font-size: 1.4em; margin: 0; letter-spacing: -.02em; }
+  .step-body { max-width: 66ch; }
+  .step-body p { margin: 0 0 14px; }
+  .step-body ul, .step-body ol { padding-left: 1.3em; margin: 0 0 14px; }
+  .step-body li { margin-bottom: .5em; }
+  .step-body b { color: var(--text); }
+
+  .callout {
+    display: flex; gap: 12px; align-items: flex-start;
+    border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin: 16px 0; font-size: .93em;
+  }
+  .callout svg { flex-shrink: 0; width: 18px; height: 18px; margin-top: 4px; }
+  .callout.tip { background: rgba(34,197,94,.09); border-color: rgba(34,197,94,.3); }
+  .callout.tip svg { color: var(--good); }
+  .callout.warn { background: rgba(255,159,69,.09); border-color: rgba(255,159,69,.3); }
+  .callout.warn svg { color: var(--warn); }
+  .callout p { margin: 0; }
+
+  .status-chips { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .status-chip { display: flex; align-items: center; gap: .5em; font-size: .85em; padding: .5em .9em; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
+  .status-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  .table-wrap { overflow-x: auto; margin: 14px 0; }
+  table.kv { border-collapse: collapse; width: 100%; min-width: 420px; font-size: .92em; }
+  table.kv th, table.kv td { text-align: left; padding: 10px 13px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.kv th { color: var(--muted); font-weight: 600; font-size: .86em; text-transform: uppercase; letter-spacing: .04em; }
+  table.kv .mono { font-family: ui-monospace, Consolas, monospace; }
+
+  details.faq { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; }
+  details.faq summary { cursor: pointer; padding: 15px 17px; font-weight: 600; font-size: .96em; list-style: none; }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq .faq-body { padding: 0 17px 16px; color: var(--muted); font-size: .92em; }
+
+  footer.doc { border-top: 1px solid var(--border); padding: 30px 22px 44px; text-align: center; color: var(--muted); font-size: .86em; }
+  footer.doc a { color: var(--muted); }
+  footer.doc a:hover { color: var(--accent); }
+
+  /* ---------- สลับภาษา (กลไกเดียวกับทั้งเว็บ — ดู /assets/lang-toggle.js) ---------- */
+  [data-lang] { display: none; }
+  html[lang="th"] [data-lang="th"], html[lang="en"] [data-lang="en"] { display: block; }
+  html[lang="th"] span[data-lang="th"], html[lang="en"] span[data-lang="en"] { display: inline; }
+  html[lang="th"] li[data-lang="th"], html[lang="en"] li[data-lang="en"] { display: list-item; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <a class="brand" href="/8hrs">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M16 3 27 9 27 23 16 29 5 23 5 9Z" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <path d="M11 13.5 21 13.5M11 19 21 19" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="3 2"/>
+      </svg>
+      <span>8Hrs</span>
+    </a>
+    <div class="top-actions">
+      <a class="back-link" href="/8hrs"><span data-lang="th">← กลับหน้าแรก</span><span data-lang="en">← Back to home</span></a>
+      <button class="langbtn" id="langbtn" type="button"></button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc">
+    <span class="toc-label" data-lang="th">สารบัญ</span>
+    <span class="toc-label" data-lang="en">Contents</span>
+    <a href="#install"><span data-lang="th">1. ติดตั้งโปรแกรม</span><span data-lang="en">1. Install the app</span></a>
+    <a href="#account"><span data-lang="th">2. สร้างบัญชี / เข้าสู่ระบบ</span><span data-lang="en">2. Account &amp; sign-in</span></a>
+    <a href="#calibrate"><span data-lang="th">3. ปรับเทียบท่านั่ง</span><span data-lang="en">3. Calibrate posture</span></a>
+    <a href="#colors"><span data-lang="th">4. อ่านค่าสีสถานะ</span><span data-lang="en">4. Read the status colours</span></a>
+    <a href="#settings"><span data-lang="th">5. ปรับการแจ้งเตือน</span><span data-lang="en">5. Adjust alerts</span></a>
+    <a href="#reports"><span data-lang="th">6. ดูรายงานย้อนหลัง</span><span data-lang="en">6. View reports</span></a>
+    <a href="#pro"><span data-lang="th">7. อัปเกรดเป็น Pro</span><span data-lang="en">7. Upgrade to Pro</span></a>
+    <a href="#troubleshoot"><span data-lang="th">8. แก้ปัญหาเบื้องต้น</span><span data-lang="en">8. Troubleshooting</span></a>
+    <a href="#faq"><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">FAQ</span></a>
+  </nav>
+
+  <main>
+    <div class="doc-head">
+      <span class="eyebrow"><span data-lang="th">คู่มือการใช้งาน</span><span data-lang="en">User guide</span></span>
+      <h1><span data-lang="th">เริ่มใช้ 8Hrs ใน 8 ขั้นตอน</span><span data-lang="en">Get started with 8Hrs in 8 steps</span></h1>
+      <p data-lang="th">ตั้งแต่ติดตั้งจนถึงอ่านรายงานท่านั่งย้อนหลัง — แต่ละหัวข้อใช้เวลาไม่เกิน 2 นาที</p>
+      <p data-lang="en">From installing to reading your posture history — each step takes under two minutes.</p>
+    </div>
+
+    <section class="step" id="install">
+      <div class="step-head"><span class="step-num">01</span><h2><span data-lang="th">ติดตั้งโปรแกรม</span><span data-lang="en">Install the app</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">8Hrs รองรับ <b>Windows 10 และ 11</b> เมื่อเปิดให้ดาวน์โหลดแล้ว จะติดตั้งผ่าน Microsoft Store แล้วกดติดตั้งตามปกติ ตัวโปรแกรมจะไปโผล่เป็นไอคอนเล็กๆ ที่ถาดระบบ (system tray) มุมขวาล่างของหน้าจอ</p>
+        <p data-lang="en">8Hrs runs on <b>Windows 10 and 11</b>. Once it launches, you'll install it from the Microsoft Store like any other app. It then appears as a small icon in the system tray, at the bottom-right of your screen.</p>
+        <div class="callout warn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          <p data-lang="th"><b>ยังไม่เปิดให้ดาวน์โหลด</b> — <a href="/8hrs#notify">กรอกอีเมลไว้ที่หน้าแรก</a> แล้วเราจะแจ้งทันทีที่ขึ้น Microsoft Store</p>
+          <p data-lang="en"><b>Not available yet</b> — <a href="/8hrs#notify">leave your email on the home page</a> and we'll tell you the moment it's on the Microsoft Store.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" id="account">
+      <div class="step-head"><span class="step-num">02</span><h2><span data-lang="th">สร้างบัญชี / เข้าสู่ระบบ</span><span data-lang="en">Create an account / sign in</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">เปิดโปรแกรมครั้งแรกจะเจอหน้าล็อกอิน เลือกได้ 2 ทาง:</p>
+        <p data-lang="en">The first time you open the app you'll see a sign-in screen, with two options:</p>
+        <ul>
+          <li data-lang="th">สมัครด้วยอีเมล + ตั้งรหัสผ่าน (กดไอคอนรูปตาที่ช่องรหัสผ่านเพื่อดู/ซ่อนรหัสได้)</li>
+          <li data-lang="en">Sign up with an email and password (tap the eye icon in the password field to show or hide it)</li>
+          <li data-lang="th">กด "เข้าสู่ระบบด้วย Google" เพื่อล็อกอินเร็วขึ้นโดยไม่ต้องตั้งรหัสผ่านใหม่</li>
+          <li data-lang="en">Use "Sign in with Google" to log in faster without setting a new password</li>
+        </ul>
+        <p data-lang="th">บัญชีนี้ใช้สำหรับผูกสิทธิ์ Pro และกู้คืนการเข้าถึงหากเปลี่ยนเครื่อง — <b>ไม่เกี่ยวกับข้อมูลท่านั่ง</b> ซึ่งเก็บอยู่ในเครื่องคุณเท่านั้น ฟีเจอร์พื้นฐานทั้งหมดใช้ได้โดยไม่ต้องเข้าสู่ระบบ</p>
+        <p data-lang="en">The account only ties your Pro membership and lets you restore access on a new machine — it has <b>nothing to do with your posture data</b>, which stays on your PC. All core features work without signing in.</p>
+      </div>
+    </section>
+
+    <section class="step" id="calibrate">
+      <div class="step-head"><span class="step-num">03</span><h2><span data-lang="th">ปรับเทียบท่านั่ง</span><span data-lang="en">Calibrate your posture</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">ก่อนใช้งานจริง คลิกขวาที่ไอคอนถาดระบบแล้วเลือก <b>"ปรับเทียบท่านั่งตรง"</b> โปรแกรมจะเปิดหน้าต่างพรีวิวกล้องขนาดใหญ่ ให้คุณนั่งในท่าที่ถูกต้อง (หลังตรง มองจอตรงๆ) แล้วนิ่งไว้สักครู่ตามที่โปรแกรมนับถอยหลัง ระบบจะใช้ท่านี้เป็น <b>เส้นฐานของคุณเอง</b> สำหรับวัดว่าต่อไปคุณเบี่ยงจากท่านี้มากแค่ไหน ไม่ใช่ค่ากลางจากคนอื่น</p>
+        <p data-lang="en">Before using it for real, right-click the tray icon and choose <b>"Calibrate posture"</b>. The app opens a large camera preview — sit the way you should (back straight, looking at the screen) and hold still while it counts down. That pose becomes <b>your own baseline</b> for measuring how far you drift later, not someone else's average.</p>
+        <div class="callout tip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+          <p data-lang="th">ปรับเทียบใหม่ได้ทุกเมื่อจากเมนูคลิกขวา หากย้ายตำแหน่งกล้อง เปลี่ยนเก้าอี้ หรือปรับเทียบพลาด (มีเมนู "ล้างการปรับเทียบ" ด้วย)</p>
+          <p data-lang="en">Re-calibrate any time from the right-click menu if you move the camera, change chairs, or get it wrong (there's also a "Clear calibration" option).</p>
+        </div>
+        <p data-lang="th">หน้าต่างนี้มีปุ่มเลือกภาษาไทย/อังกฤษอยู่ด้านล่างกึ่งกลาง และแสดงโครงร่างวงรีคลุมศีรษะกับลำตัวไว้ให้ตรวจตำแหน่งก่อนกดยืนยัน</p>
+        <p data-lang="en">The window has a Thai/English toggle near the bottom, and shows an oval outline over your head and torso so you can check your position before confirming.</p>
+      </div>
+    </section>
+
+    <section class="step" id="colors">
+      <div class="step-head"><span class="step-num">04</span><h2><span data-lang="th">อ่านค่าสีสถานะ</span><span data-lang="en">Read the status colours</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">หลังปรับเทียบเสร็จ หน้าต่างลอยจะเริ่มวาดโครงร่างทับภาพจากกล้อง สีของกรอบและป้ายบอกสถานะท่านั่งปัจจุบัน:</p>
+        <p data-lang="en">Once calibrated, the floating window starts drawing your outline over the camera image. The frame and banner colour tell you your current posture state:</p>
+        <div class="status-chips">
+          <span class="status-chip"><span class="dot" style="background:var(--good)"></span><span data-lang="th">เขียว — ท่านั่งดี</span><span data-lang="en">Green — good posture</span></span>
+          <span class="status-chip"><span class="dot" style="background:var(--warn)"></span><span data-lang="th">ส้ม — ก้ม/เอียงต่อเนื่องเกิน 2 นาที</span><span data-lang="en">Orange — hunched / tilted for over 2 minutes</span></span>
+          <span class="status-chip"><span class="dot" style="background:var(--crit)"></span><span data-lang="th">แดง (กะพริบ) — ผิดท่าต่อเนื่องเกิน 5 นาที</span><span data-lang="en">Red (blinking) — off for over 5 minutes</span></span>
+        </div>
+        <p data-lang="th">ป้ายจะเริ่มกะพริบตั้งแต่ครบ 1 นาทีเพื่อเตือนตั้งแต่เนิ่นๆ ก่อนถึงสีส้ม นอกจากนี้ยังมีการเตือน <b>"นั่งนานเกินไป"</b> แยกต่างหาก แม้ท่านั่งจะยังดีอยู่ก็ตาม เพื่อชวนให้ลุกยืนเป็นระยะ ถ้ายังไม่ลุกจะทวงซ้ำอีก 2 ครั้ง ห่างกันครั้งละ 1 นาที แล้วเงียบ</p>
+        <p data-lang="en">The banner starts blinking at the 1-minute mark to warn you early, before orange. There's also a separate <b>"sitting too long"</b> reminder — even when your posture is fine — to get you up periodically. Ignore it and it nudges twice more, a minute apart, then goes quiet.</p>
+      </div>
+    </section>
+
+    <section class="step" id="settings">
+      <div class="step-head"><span class="step-num">05</span><h2><span data-lang="th">ปรับการแจ้งเตือนและหน้าต่าง</span><span data-lang="en">Adjust alerts and the window</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">คลิกขวาที่ไอคอนในถาดระบบเพื่อเปิดเมนูตั้งค่า — ปรับได้ทั้งภาษา กล้องที่ใช้ และ (สำหรับสมาชิก Pro) ช่วงเวลาของการเตือนนั่งนาน (ค่าเริ่มต้น 30 นาที)</p>
+        <p data-lang="en">Right-click the tray icon to open the settings menu — change the language, the camera, and (for Pro) the stand-up reminder interval (30 minutes by default).</p>
+        <ul>
+          <li data-lang="th"><b>ลากย้าย</b> หน้าต่างลอยไปวางมุมจอที่ชอบได้เลย</li>
+          <li data-lang="en"><b>Drag</b> the floating window to whichever corner you like</li>
+          <li data-lang="th"><b>ดับเบิลคลิก</b> ที่หน้าต่างเพื่อซ่อนชั่วคราว 30 วินาที</li>
+          <li data-lang="en"><b>Double-click</b> the window to hide it for 30 seconds</li>
+          <li data-lang="th"><b>ย่อเหลือแถบเล็ก</b> สูง 42 พิกเซล เมื่ออยากให้เกะกะน้อยที่สุด</li>
+          <li data-lang="en"><b>Shrink it to a 42-pixel strip</b> when you want it as unobtrusive as possible</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="step" id="reports">
+      <div class="step-head"><span class="step-num">06</span><h2><span data-lang="th">ดูรายงานย้อนหลัง</span><span data-lang="en">View past reports</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">เปิดหน้ารายงานจากเมนูคลิกขวา จะเห็นสรุปของเดือนที่เลือก: เวลารวมที่ถูกเฝ้าติดตาม, สัดส่วนท่านั่งดี / เอียง / ค่อม, จำนวนวันที่มีข้อมูล, จำนวนครั้งที่นั่งนานเกินไป และกราฟแท่งรายวัน ชี้เมาส์ที่แท่งไหนก็เห็นทั้งเปอร์เซ็นต์และเวลาจริง ใช้ปุ่ม ◀ ▶ มุมขวาบนเพื่อย้อนดูเดือนก่อนหน้า</p>
+        <p data-lang="en">Open the report window from the right-click menu to see a summary for the selected month: total monitored time, the good / tilted / slouched split, how many days have data, how often you sat too long, and a daily bar chart. Hover any bar for both the percentage and the real duration. Use the ◀ ▶ buttons at the top right to step back through months.</p>
+        <div class="table-wrap" data-lang="th"><table class="kv">
+          <tr><th>บัญชี</th><th>เก็บสถิติ</th><th>ดูรายงาน</th></tr>
+          <tr><td>Free</td><td>7 วันแรกของแต่ละเดือน</td><td>เดือนปัจจุบัน</td></tr>
+          <tr><td>Pro</td><td>ทุกวัน ไม่จำกัด</td><td>ทุกเดือน + ส่งออก Excel</td></tr>
+        </table></div>
+        <div class="table-wrap" data-lang="en"><table class="kv">
+          <tr><th>Plan</th><th>History</th><th>Reports</th></tr>
+          <tr><td>Free</td><td>First 7 days of each month</td><td>Current month</td></tr>
+          <tr><td>Pro</td><td>Every day, unlimited</td><td>Every month + Excel export</td></tr>
+        </table></div>
+      </div>
+    </section>
+
+    <section class="step" id="pro">
+      <div class="step-head"><span class="step-num">07</span><h2><span data-lang="th">อัปเกรดเป็น Pro</span><span data-lang="en">Upgrade to Pro</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">กดปุ่ม "อัปเกรดเป็น Pro" จากเมนูหรือหน้ารายงาน จะเจอ 2 ช่องทางชำระเงิน:</p>
+        <p data-lang="en">Press "Upgrade to Pro" from the menu or the report window to see two payment options:</p>
+        <div class="table-wrap" data-lang="th"><table class="kv">
+          <tr><th>ช่องทาง</th><th>วิธีจ่าย</th><th>ราคา</th></tr>
+          <tr><td>ในไทย</td><td>สแกน QR พร้อมเพย์ (ยอดระบุมาให้แล้ว)</td><td class="mono">39 ฿/เดือน · 399 ฿/ปี</td></tr>
+          <tr><td>ต่างประเทศ</td><td>ลิงก์ PayPal.me</td><td class="mono">$30 USD/ปี</td></tr>
+        </table></div>
+        <div class="table-wrap" data-lang="en"><table class="kv">
+          <tr><th>Region</th><th>How to pay</th><th>Price</th></tr>
+          <tr><td>Thailand</td><td>Scan the PromptPay QR (amount pre-filled)</td><td class="mono">฿39/mo · ฿399/yr</td></tr>
+          <tr><td>Elsewhere</td><td>A PayPal.me link</td><td class="mono">$30 USD/yr</td></tr>
+        </table></div>
+        <p data-lang="th">เป็นการโอนครั้งเดียวต่อรอบ ไม่มีการตัดเงินอัตโนมัติซ้ำ หลังโอนแล้วแจ้งอีเมลบัญชีที่ใช้ล็อกอินในแอปตามขั้นตอนในหน้าต่างชำระเงิน ทีมงานจะเปิดสิทธิ์ Pro ให้หลังตรวจสอบยอดโอน (ปกติภายในไม่กี่ชั่วโมง ไม่เกิน 1 วัน)</p>
+        <p data-lang="en">Each is a one-off transfer per period with no repeat charges. After paying, send the email you sign in with, following the steps in the payment window. We activate Pro after confirming the transfer (usually within a few hours, no more than a day).</p>
+        <div class="callout tip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+          <p data-lang="th">ใช้อีเมลเดียวกับที่ล็อกอินในแอปตอนแจ้งโอนเงินเสมอ ไม่งั้นระบบจะหาบัญชีที่ต้องเปิดสิทธิ์ให้ไม่เจอ · มีปุ่ม "ทดลองใช้โปรฟรี 7 วัน" กดได้ครั้งเดียวจากในโปรแกรม</p>
+          <p data-lang="en">Always use the same email you log in with when you report the transfer, or we can't find the account to activate. There's also a "7-day free Pro trial" button, usable once, inside the app.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" id="troubleshoot">
+      <div class="step-head"><span class="step-num">08</span><h2><span data-lang="th">แก้ปัญหาเบื้องต้น</span><span data-lang="en">Troubleshooting</span></h2></div>
+      <div class="step-body">
+        <ul>
+          <li data-lang="th"><b>กล้องไม่ทำงานหลังคอมพิวเตอร์ตื่นจากสลีป</b> — ปิดโปรแกรมแล้วเปิดใหม่ ระบบจะเชื่อมต่อกล้องใหม่ให้</li>
+          <li data-lang="en"><b>The camera stops working after the PC wakes from sleep</b> — close and reopen the app; it reconnects the camera</li>
+          <li data-lang="th"><b>หน้าต่างลอยหายไป</b> — เช็คไอคอนในถาดระบบ (อาจต้องกดลูกศร "แสดงไอคอนที่ซ่อนอยู่") แล้วคลิกขวาเลือก "แสดงตอนนี้"</li>
+          <li data-lang="en"><b>The floating window disappeared</b> — check the tray (you may need the "show hidden icons" arrow), then right-click and choose "Show now"</li>
+          <li data-lang="th"><b>แจ้งเตือนไวเกินไปหรือช้าเกินไป</b> — ปรับเทียบท่านั่งใหม่ (ขั้นตอนที่ 3) โดยเฉพาะถ้าย้ายตำแหน่งกล้องหรือเปลี่ยนเก้าอี้</li>
+          <li data-lang="en"><b>Alerts feel too sensitive or too slow</b> — re-calibrate (step 3), especially after moving the camera or changing chairs</li>
+          <li data-lang="th"><b>ลงชื่อเข้าใช้ด้วย Google ไม่ได้</b> — ตรวจว่าต่อเน็ตอยู่ แล้วลองอีกครั้งหลังปิด-เปิดโปรแกรมใหม่</li>
+          <li data-lang="en"><b>Can't sign in with Google</b> — check you're online, then try again after restarting the app</li>
+        </ul>
+        <p data-lang="th">ยังไม่หาย? ทักมาที่ <a href="mailto:contact@saantie.com">contact@saantie.com</a> หรือ LINE <code>@341jvvzy</code></p>
+        <p data-lang="en">Still stuck? Reach us at <a href="mailto:contact@saantie.com">contact@saantie.com</a> or LINE <code>@341jvvzy</code></p>
+      </div>
+    </section>
+
+    <section class="step" id="faq">
+      <div class="step-head"><h2><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">FAQ</span></h2></div>
+      <div class="step-body" style="max-width:none">
+        <details class="faq" open>
+          <summary><span data-lang="th">ข้อมูลท่านั่งของฉันเก็บไว้ที่ไหน</span><span data-lang="en">Where is my posture data stored?</span></summary>
+          <div class="faq-body">
+            <span data-lang="th">เก็บเป็นไฟล์ในเครื่องคุณเท่านั้น (โฟลเดอร์ข้อมูลโปรแกรมใน Windows ที่ <code>%LOCALAPPDATA%\PostureMonitor</code>) ไม่ได้อัปโหลดขึ้นเซิร์ฟเวอร์ ย้ายเครื่องแล้วประวัติเก่าจะไม่ติดไปด้วย</span>
+            <span data-lang="en">Only as a file on your PC (the app's data folder in Windows, at <code>%LOCALAPPDATA%\PostureMonitor</code>). Nothing is uploaded, and history doesn't follow you to a new machine.</span>
+          </div>
+        </details>
+        <details class="faq">
+          <summary><span data-lang="th">ลบบัญชีหรือข้อมูลทั้งหมดได้อย่างไร</span><span data-lang="en">How do I delete my account or all my data?</span></summary>
+          <div class="faq-body">
+            <span data-lang="th">ลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code> เพื่อล้างประวัติท่านั่ง ส่วนบัญชีผู้ใช้ ติดต่อทีมงานที่ <a href="mailto:contact@saantie.com">contact@saantie.com</a> เพื่อขอลบข้อมูลถาวรจาก Firebase</span>
+            <span data-lang="en">Delete the <code>%LOCALAPPDATA%\PostureMonitor</code> folder to clear your posture history. For the user account, email <a href="mailto:contact@saantie.com">contact@saantie.com</a> to have it permanently removed from Firebase.</span>
+          </div>
+        </details>
+        <details class="faq">
+          <summary><span data-lang="th">ใช้ได้กับกล้องเว็บแคมแบบไหนบ้าง</span><span data-lang="en">Which webcams work with it?</span></summary>
+          <div class="faq-body">
+            <span data-lang="th">ใช้ได้กับเว็บแคมทั่วไปที่ Windows รู้จักอยู่แล้ว ทั้งกล้องในตัวโน้ตบุ๊กและกล้อง USB แยก ไม่ต้องติดตั้งไดรเวอร์เพิ่ม เลือกกล้องได้จากเมนูคลิกขวา</span>
+            <span data-lang="en">Any webcam Windows already recognises — built-in or external USB, no extra drivers. Pick the camera from the right-click menu.</span>
+          </div>
+        </details>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="doc">
+  <span data-lang="th">มีคำถามเพิ่มเติม? ติดต่อ <a href="mailto:contact@saantie.com">contact@saantie.com</a> · <a href="/8hrs">หน้าแรก 8Hrs</a> · <a href="/8hrs/privacy">นโยบายความเป็นส่วนตัว</a></span>
+  <span data-lang="en">More questions? Contact <a href="mailto:contact@saantie.com">contact@saantie.com</a> · <a href="/8hrs">8Hrs home</a> · <a href="/8hrs/privacy">Privacy policy</a></span>
+</footer>
+
+<script src="/assets/lang-toggle.js"></script>
+</body>
+</html>

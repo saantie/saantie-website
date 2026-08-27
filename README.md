@@ -7,13 +7,14 @@
 
 ```
 index.html            → saantie.com          หน้าหลัก (2 ภาษา สลับด้วยปุ่มมุมขวาบน)
+8hrs/index.html       → saantie.com/8hrs            landing page ของ 8Hrs (2 ภาษา + ฟอร์ม waitlist)
+8hrs/guide.html       → saantie.com/8hrs/guide      คู่มือการใช้งาน 8 ขั้นตอน (2 ภาษา)
 8hrs/privacy.html     → saantie.com/8hrs/privacy    นโยบายความเป็นส่วนตัวของ 8Hrs
 assets/8hrs-icon.png  → ไอคอนแอปบนการ์ด
 ```
 
-> **ยังไม่มี `8hrs/index.html`** (หน้า landing page ของโปรแกรม) — ร่างเนื้อหาอยู่ที่
-> `F:\posture_monitor\posture_monitor\LANDING_PAGE_DRAFT.md` รอสร้างทีหลัง
-> ตอนนี้การ์ดในหน้าหลักจึงยังไม่ลิงก์ไป `/8hrs/` มีแต่ลิงก์ไปหน้านโยบาย
+> ปุ่ม "ดาวน์โหลด" ในหน้า 8Hrs เป็น **ฟอร์ม waitlist** (ยังไม่มีปุ่ม Microsoft Store จริง)
+> ยิงไปที่ Cloud Function `contactForm` ตัวเดียวกับฟอร์มติดต่อ ดูรายละเอียดใน `CLAUDE.md`
 
 ## ⚠️ URL ที่ห้ามเปลี่ยนหลังส่ง Microsoft Store
 

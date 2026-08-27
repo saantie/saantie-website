@@ -25,11 +25,29 @@
 
 ```
 index.html              → saantie.com                  หน้าหลัก (bio + การ์ดลิงก์แอป)
-8hrs/index.html          → saantie.com/8hrs              (ยังไม่สร้าง — ร่างอยู่ที่ F:\posture_monitor\posture_monitor\LANDING_PAGE_DRAFT.md)
+8hrs/index.html          → saantie.com/8hrs              landing page ของ 8Hrs (2 ภาษา + ฟอร์ม waitlist)
+8hrs/guide.html          → saantie.com/8hrs/guide        คู่มือการใช้งาน 8 ขั้นตอน (2 ภาษา)
 8hrs/privacy.html        → saantie.com/8hrs/privacy      นโยบายความเป็นส่วนตัวของ 8Hrs
 assets/8hrs-icon.png     → ไอคอนแอปบนการ์ดหน้าหลัก
 assets/lang-toggle.js    → สคริปต์สลับภาษา ใช้ร่วมกันทุกหน้า (ดูหัวข้อถัดไป)
 ```
+
+**ที่มาของเนื้อหา 3 หน้าใน `8hrs/`** — landing + guide สร้างจากดราฟ artifact ที่เจ้าของเว็บทำไว้
+(landing: `05c19d21-af6f-46d2-bc6b-b287908240bf`, guide: `2d6736ca-de7e-49c6-82cb-eda2b1f5087a`)
+แล้วปรับให้เข้าธีม `index.html` + ทำ 2 ภาษา ส่วนร่างเนื้อหาเดิมแบบยาวอยู่ที่
+`F:\posture_monitor\posture_monitor\LANDING_PAGE_DRAFT.md` (ยังอ้างอิงได้ ตัวเลข/สำนวนบางส่วนดึงจากตรงนั้น)
+
+**ปุ่ม "ดาวน์โหลด" ในหน้า 8Hrs = ฟอร์ม waitlist** (ยังไม่มีปุ่ม Store จริงเพราะยังไม่ได้สมัคร
+Partner Center) — ฟอร์มยิงไปที่ Cloud Function `contactForm` **ตัวเดียวกับฟอร์มติดต่อในหน้าหลัก**
+โดยแนบข้อความขึ้นต้นด้วย `[8Hrs waitlist]` ให้แยกจากข้อความติดต่อทั่วไปได้ ไม่ต้องแตะ backend
+เมื่อ Store พร้อมแล้ว: แทน `href="#notify"` ของปุ่มหลักด้วยลิงก์ Store จริง และแก้ callout ใน
+`8hrs/guide.html` หัวข้อ "ติดตั้งโปรแกรม"
+
+**ตัวเลขในหน้า 8Hrs ที่ผูกกับโค้ด `posture_monitor.py`** (แก้ในโปรแกรมต้องมาแก้ที่นี่ด้วย):
+฿39/เดือน · ฿399/ปี · $30 USD/ปี · เตือน 1 นาที→กะพริบ, 2 นาที→ส้ม (`ORANGE_S`), 5 นาที→แดง (`RED_S`) ·
+ฟรีเก็บสถิติ 7 วันแรกของเดือน (`FREE_TIER_MAX_DAYS_PER_MONTH`) · ทดลองโปร 7 วัน (`PRO_TRIAL_DAYS`) ·
+เน็ตหลุดใช้ต่อ 14 วัน (`OFFLINE_GRACE_DAYS`) · โหมดแถบเล็ก 42 px · สีสถานะใช้ hex เดียวกับ
+`COLOR_GOOD/WARN/CRIT`
 
 ## ⚠️ กฎที่ห้ามฝ่าฝืน
 
@@ -47,6 +65,7 @@ Cloudflare Pages ตัดนามสกุล `.html` ให้อัตโน
 
 ```
 <appname>/index.html      → saantie.com/<appname>          landing page ของแอป
+<appname>/guide.html     → saantie.com/<appname>/guide     คู่มือการใช้งาน (ถ้ามี — ดู 8hrs/guide.html)
 <appname>/privacy.html    → saantie.com/<appname>/privacy   นโยบายความเป็นส่วนตัว (บังคับถ้าแอปขึ้น Store)
 ```
 
@@ -109,12 +128,19 @@ Firestore collection `contact_messages` เผื่ออีเมลตกส�
 
 ## งานค้าง
 
-- **`8hrs/index.html`** (landing page ตัวโปรแกรม 8Hrs) — ยังไม่สร้าง ร่างเนื้อหาอยู่ที่
-  `F:\posture_monitor\posture_monitor\LANDING_PAGE_DRAFT.md`
+- **สกรีนช็อต / GIF จริงของโปรแกรม** — `8hrs/index.html` และ `8hrs/guide.html` ตอนนี้ใช้ภาพจำลอง
+  SVG แทนทั้งหมด (ยังไม่มีไฟล์ภาพจริง) จุดที่ควรแทนที่: hero, การ์ดฟีเจอร์ 3 ใบ, หน้ารายงานในคู่มือ
+  — ห้ามใช้ภาพสต็อกคนทำท่าเป็นสกรีนช็อต ต้องเป็นภาพหน้าจอจริงเท่านั้น
+- **section รีวิวผู้ใช้** — ตัดออกจาก `8hrs/index.html` แล้ว (ดราฟมี placeholder `[ ชื่อผู้ใช้ ]`)
+  ค่อยเพิ่มกลับเมื่อมีรีวิวจริงจากผู้ใช้หลังเปิดตัว
+- **ปุ่ม waitlist ใช้ endpoint ร่วมกับฟอร์มติดต่อ** — เป็นทางลัด ไม่มี dedupe อีเมล / ไม่มีหน้าดูรายชื่อ
+  ทุก signup = 1 อีเมลเข้า `contact@saantie.com` + 1 doc ใน Firestore `contact_messages` (กรอง
+  ด้วยข้อความขึ้นต้น `[8Hrs waitlist]`) พอสำหรับช่วงก่อน launch ถ้ารายชื่อเยอะค่อยแยก collection/หน้า admin
 
 ## จะโตแล้วทำยังไง (ถ้าจำนวนหน้าเยอะขึ้นมาก)
 
-ตอนนี้ (2 หน้า: `index.html`, `8hrs/privacy.html`) ยังไม่คุ้มที่จะเพิ่มความซับซ้อนของ build step —
+ตอนนี้ (4 หน้า: `index.html`, `8hrs/index.html`, `8hrs/guide.html`, `8hrs/privacy.html`) ยังพอไหว
+แต่เริ่มเห็นความเจ็บของการก็อป CSS token ไปทุกไฟล์ ยังไม่คุ้มที่จะเพิ่มความซับซ้อนของ build step —
 ก็อป `<head>`/CSS token/สคริปต์ร่วมด้วยมือได้สบาย (สคริปต์สลับภาษาแยกไฟล์กลางแล้ว เหลือแค่ CSS token
 ที่ยังคัดลอกไว้ในแต่ละไฟล์)
 
