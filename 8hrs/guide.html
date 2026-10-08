@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>คู่มือการใช้งาน 8Hrs | 8Hrs Posture Monitor — User guide</title>
-<meta name="description" content="เริ่มใช้ 8Hrs Posture Monitor ตั้งแต่ติดตั้งจนถึงอ่านรายงานท่านั่งย้อนหลัง — Getting started with 8Hrs Posture Monitor, from install to reading your posture reports.">
+<title>คู่มือการใช้งาน 8Hrs | 8Hrs Posture Monitor — User Guide</title>
+<meta name="description" content="คู่มือการใช้งาน 8Hrs Posture Monitor ตั้งแต่การติดตั้ง การจัดตำแหน่งกล้อง การปรับเทียบท่านั่ง ไปจนถึงการอ่านรายงาน — A guide to 8Hrs Posture Monitor, from installation and calibration to reading your posture reports.">
 <meta name="theme-color" content="#070C18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Ctext x='32' y='46' font-family='Segoe UI,sans-serif' font-size='40' font-weight='700' fill='%2338BDF8' text-anchor='middle'%3E8%3C/text%3E%3C/svg%3E">
 <style>
@@ -20,8 +20,9 @@
     --muted: #8DA2C8;
     --accent: #38BDF8;
     --accent-soft: rgba(56, 189, 248, 0.12);
-    /* สีสถานะท่านั่ง — hex ตรงกับ COLOR_GOOD/WARN/CRIT ใน posture_monitor.py */
+    /* สีสถานะท่านั่ง — hex ตรงกับ COLOR_GOOD/DRIFT/WARN/CRIT ใน posture_monitor.py */
     --good: #22C55E;
+    --drift: #FFDD40;
     --warn: #FF9F45;
     --crit: #FF4438;
   }
@@ -68,7 +69,8 @@
   .toc a { text-decoration: none; color: var(--muted); font-size: .86em; padding: 7px 10px; border-radius: 6px; border-left: 2px solid transparent; }
   .toc a:hover { color: var(--text); background: var(--surface); border-left-color: var(--border-lit); }
 
-  /* จอแคบ: ซ่อนสารบัญ ใช้คอลัมน์เดียว — ต้องมาหลัง .toc/.layout base เพื่อให้ override ติด */
+  /* จอแคบ: ซ่อนสารบัญ ใช้คอลัมน์เดียว — ต้องมาหลัง .toc/.layout base เพื่อให้ override ติด
+     (เคยวางไว้ก่อน .toc แล้ว .toc{display:flex} ที่มาทีหลังชนะ หน้าล้นแนวนอนบนมือถือ) */
   @media (max-width: 860px) {
     .layout { grid-template-columns: 1fr; gap: 8px; }
     .toc { display: none; }
@@ -78,12 +80,19 @@
   .doc-head .eyebrow { font-size: .74em; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
   .doc-head h1 { font-size: clamp(1.9em, 4vw, 2.6em); letter-spacing: -.02em; margin: .35em 0 .3em; line-height: 1.15; }
   .doc-head p { color: var(--muted); font-size: 1.05em; margin: 0; }
+  /* line-height 1.15 แคบเกินสำหรับสระบน/วรรณยุกต์ซ้อนของอักษรไทย — ดูคำอธิบายใน 8hrs/index.html */
+  html[lang="th"] .doc-head h1 { line-height: 1.7; }
 
   section.step { margin-bottom: 48px; scroll-margin-top: 84px; padding-top: 26px; border-top: 1px solid var(--border); }
   section.step:first-of-type { border-top: none; padding-top: 0; }
   .step-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
   .step-num { font-size: .9em; color: var(--accent); font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .step-head h2 { font-size: 1.4em; margin: 0; letter-spacing: -.02em; }
+  .pro-tag {
+    display: inline-block; vertical-align: middle; margin-left: 8px; font-size: .5em; font-weight: 700;
+    letter-spacing: .06em; padding: 3px 9px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(56,189,248,.3);
+  }
   .step-body { max-width: 66ch; }
   .step-body p { margin: 0 0 14px; }
   .step-body ul, .step-body ol { padding-left: 1.3em; margin: 0 0 14px; }
@@ -106,10 +115,10 @@
   .status-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
   .table-wrap { overflow-x: auto; margin: 14px 0; }
-  table.kv { border-collapse: collapse; width: 100%; min-width: 420px; font-size: .92em; }
+  table.kv { border-collapse: collapse; width: 100%; min-width: 460px; font-size: .92em; }
   table.kv th, table.kv td { text-align: left; padding: 10px 13px; border-bottom: 1px solid var(--border); vertical-align: top; }
   table.kv th { color: var(--muted); font-weight: 600; font-size: .86em; text-transform: uppercase; letter-spacing: .04em; }
-  table.kv .mono { font-family: ui-monospace, Consolas, monospace; }
+  table.kv .mono { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
 
   details.faq { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; }
   details.faq summary { cursor: pointer; padding: 15px 17px; font-weight: 600; font-size: .96em; list-style: none; }
@@ -120,7 +129,8 @@
   footer.doc a { color: var(--muted); }
   footer.doc a:hover { color: var(--accent); }
 
-  /* ---------- สลับภาษา (กลไกเดียวกับทั้งเว็บ — ดู /assets/lang-toggle.js) ---------- */
+  /* ---------- สลับภาษา (กลไกเดียวกับทั้งเว็บ — ดู /assets/lang-toggle.js) ----------
+     ตารางห้ามใส่ data-lang ที่ <th>/<td> — display:block จะทำโครงตารางพัง ให้ทำตารางแยกต่อภาษาแทน */
   [data-lang] { display: none; }
   html[lang="th"] [data-lang="th"], html[lang="en"] [data-lang="en"] { display: block; }
   html[lang="th"] span[data-lang="th"], html[lang="en"] span[data-lang="en"] { display: inline; }
@@ -128,6 +138,9 @@
 </style>
 </head>
 <body>
+
+<!-- ข้อเท็จจริงทุกข้อในหน้านี้ตรวจกับ posture_monitor.py (ต.ค. 2569) — รายการค่าที่ผูกกับโค้ดอยู่ใน CLAUDE.md
+     ข้อความไทยห้ามขึ้นบรรทัดใหม่กลางวลี เพราะเบราว์เซอร์จะแสดงการขึ้นบรรทัดเป็นช่องว่าง 1 ช่อง -->
 
 <header class="top">
   <div class="top-row">
@@ -139,7 +152,7 @@
       <span>8Hrs</span>
     </a>
     <div class="top-actions">
-      <a class="back-link" href="/8hrs"><span data-lang="th">← กลับหน้าแรก</span><span data-lang="en">← Back to home</span></a>
+      <a class="back-link" href="/8hrs"><span data-lang="th">← หน้าหลัก 8Hrs</span><span data-lang="en">← 8Hrs home</span></a>
       <button class="langbtn" id="langbtn" type="button"></button>
     </div>
   </div>
@@ -149,183 +162,258 @@
   <nav class="toc">
     <span class="toc-label" data-lang="th">สารบัญ</span>
     <span class="toc-label" data-lang="en">Contents</span>
-    <a href="#install"><span data-lang="th">1. ติดตั้งโปรแกรม</span><span data-lang="en">1. Install the app</span></a>
-    <a href="#account"><span data-lang="th">2. สร้างบัญชี / เข้าสู่ระบบ</span><span data-lang="en">2. Account &amp; sign-in</span></a>
-    <a href="#calibrate"><span data-lang="th">3. ปรับเทียบท่านั่ง</span><span data-lang="en">3. Calibrate posture</span></a>
-    <a href="#colors"><span data-lang="th">4. อ่านค่าสีสถานะ</span><span data-lang="en">4. Read the status colours</span></a>
-    <a href="#settings"><span data-lang="th">5. ปรับการแจ้งเตือน</span><span data-lang="en">5. Adjust alerts</span></a>
-    <a href="#reports"><span data-lang="th">6. ดูรายงานย้อนหลัง</span><span data-lang="en">6. View reports</span></a>
-    <a href="#pro"><span data-lang="th">7. อัปเกรดเป็น Pro</span><span data-lang="en">7. Upgrade to Pro</span></a>
-    <a href="#troubleshoot"><span data-lang="th">8. แก้ปัญหาเบื้องต้น</span><span data-lang="en">8. Troubleshooting</span></a>
+    <a href="#install"><span data-lang="th">1. ข้อกำหนดและการติดตั้ง</span><span data-lang="en">1. Requirements &amp; installation</span></a>
+    <a href="#camera"><span data-lang="th">2. การจัดตำแหน่งกล้อง</span><span data-lang="en">2. Positioning the camera</span></a>
+    <a href="#account"><span data-lang="th">3. บัญชีผู้ใช้</span><span data-lang="en">3. Your account</span></a>
+    <a href="#calibrate"><span data-lang="th">4. การปรับเทียบท่านั่ง</span><span data-lang="en">4. Calibration</span></a>
+    <a href="#colors"><span data-lang="th">5. สถานะท่านั่ง</span><span data-lang="en">5. Posture status</span></a>
+    <a href="#reminder"><span data-lang="th">6. การแจ้งเตือนให้ลุกพัก</span><span data-lang="en">6. Break reminders</span></a>
+    <a href="#settings"><span data-lang="th">7. การตั้งค่า</span><span data-lang="en">7. Settings</span></a>
+    <a href="#reports"><span data-lang="th">8. รายงานท่านั่ง</span><span data-lang="en">8. Posture reports</span></a>
+    <a href="#pro"><span data-lang="th">9. บัญชีโปร</span><span data-lang="en">9. Pro membership</span></a>
+    <a href="#troubleshoot"><span data-lang="th">10. การแก้ไขปัญหา</span><span data-lang="en">10. Troubleshooting</span></a>
     <a href="#faq"><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">FAQ</span></a>
   </nav>
 
   <main>
     <div class="doc-head">
       <span class="eyebrow"><span data-lang="th">คู่มือการใช้งาน</span><span data-lang="en">User guide</span></span>
-      <h1><span data-lang="th">เริ่มใช้ 8Hrs ใน 8 ขั้นตอน</span><span data-lang="en">Get started with 8Hrs in 8 steps</span></h1>
-      <p data-lang="th">ตั้งแต่ติดตั้งจนถึงอ่านรายงานท่านั่งย้อนหลัง — แต่ละหัวข้อใช้เวลาไม่เกิน 2 นาที</p>
-      <p data-lang="en">From installing to reading your posture history — each step takes under two minutes.</p>
+      <h1><span data-lang="th">เริ่มต้นใช้งาน 8Hrs Posture Monitor</span><span data-lang="en">Getting started with 8Hrs Posture Monitor</span></h1>
+      <p data-lang="th">คู่มือฉบับนี้อธิบายการใช้งานโปรแกรมตั้งแต่การติดตั้ง การจัดตำแหน่งกล้อง และการปรับเทียบท่านั่ง ไปจนถึงการอ่านรายงานท่านั่งย้อนหลัง</p>
+      <p data-lang="en">This guide covers everything from installing the app and positioning your camera to calibrating your posture and reading your history.</p>
     </div>
 
     <section class="step" id="install">
-      <div class="step-head"><span class="step-num">01</span><h2><span data-lang="th">ติดตั้งโปรแกรม</span><span data-lang="en">Install the app</span></h2></div>
+      <div class="step-head"><span class="step-num">01</span><h2><span data-lang="th">ข้อกำหนดของระบบและการติดตั้ง</span><span data-lang="en">Requirements and installation</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">8Hrs รองรับ <b>Windows 10 และ 11</b> เมื่อเปิดให้ดาวน์โหลดแล้ว จะติดตั้งผ่าน Microsoft Store แล้วกดติดตั้งตามปกติ ตัวโปรแกรมจะไปโผล่เป็นไอคอนเล็กๆ ที่ถาดระบบ (system tray) มุมขวาล่างของหน้าจอ</p>
-        <p data-lang="en">8Hrs runs on <b>Windows 10 and 11</b>. Once it launches, you'll install it from the Microsoft Store like any other app. It then appears as a small icon in the system tray, at the bottom-right of your screen.</p>
+        <ul>
+          <li data-lang="th">ระบบปฏิบัติการ <b>Windows 10 เวอร์ชัน 1809 ขึ้นไป</b> หรือ <b>Windows 11</b></li>
+          <li data-lang="en"><b>Windows 10 version 1809 or later</b>, or <b>Windows 11</b></li>
+          <li data-lang="th">เว็บแคมที่ระบบปฏิบัติการ Windows รองรับ ทั้งกล้องในตัวโน้ตบุ๊กและกล้องแบบ USB</li>
+          <li data-lang="en">Any webcam that Windows supports, whether built into a laptop or connected by USB</li>
+          <li data-lang="th">การเชื่อมต่ออินเทอร์เน็ตจำเป็นเฉพาะการเข้าสู่ระบบและการตรวจสอบสิทธิ์บัญชีโปรเท่านั้น</li>
+          <li data-lang="en">An internet connection is needed only to sign in and to check Pro membership</li>
+        </ul>
+        <p data-lang="th">โปรแกรมจะเผยแพร่ผ่าน Microsoft Store หลังติดตั้ง ไอคอนของโปรแกรมจะปรากฏในถาดระบบ (system tray) บริเวณมุมขวาล่างของหน้าจอ <b>คลิกซ้ายที่ไอคอนนี้เพื่อเปิดเมนูตั้งค่า</b> ซึ่งเป็นจุดเริ่มต้นของฟังก์ชันส่วนใหญ่ในคู่มือฉบับนี้</p>
+        <p data-lang="en">The app will be distributed through the Microsoft Store. Once installed, its icon appears in the system tray at the bottom-right of the screen. <b>Left-click the icon to open Settings</b>, where most of the features described in this guide are found.</p>
         <div class="callout warn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
-          <p data-lang="th"><b>ยังไม่เปิดให้ดาวน์โหลด</b> — <a href="/8hrs#notify">กรอกอีเมลไว้ที่หน้าแรก</a> แล้วเราจะแจ้งทันทีที่ขึ้น Microsoft Store</p>
-          <p data-lang="en"><b>Not available yet</b> — <a href="/8hrs#notify">leave your email on the home page</a> and we'll tell you the moment it's on the Microsoft Store.</p>
+          <p data-lang="th"><b>ขณะนี้ยังไม่เปิดให้ดาวน์โหลด</b> ท่านสามารถ<a href="/8hrs#notify">ลงทะเบียนอีเมลที่หน้าหลัก</a>เพื่อรับการแจ้งเตือนเมื่อโปรแกรมพร้อมให้ดาวน์โหลดบน Microsoft Store</p>
+          <p data-lang="en"><b>Not yet available for download.</b> <a href="/8hrs#notify">Register your email on the home page</a> and we will let you know as soon as the app is available on the Microsoft Store.</p>
         </div>
+      </div>
+    </section>
+
+    <section class="step" id="camera">
+      <div class="step-head"><span class="step-num">02</span><h2><span data-lang="th">การจัดตำแหน่งกล้อง</span><span data-lang="en">Positioning the camera</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">โปรแกรมประเมินท่านั่งจากตำแหน่งของดวงตาและไหล่ทั้งสองข้าง จึงควรจัดกล้องให้เป็นไปตามข้อแนะนำต่อไปนี้</p>
+        <p data-lang="en">The app judges your posture from the position of your eyes and both shoulders, so set up your camera as follows:</p>
+        <ul>
+          <li data-lang="th">กล้องควรมองเห็น<b>ใบหน้าและไหล่ทั้งสองข้าง</b>อย่างชัดเจนขณะนั่งทำงาน</li>
+          <li data-lang="en">The camera should see <b>your face and both shoulders</b> clearly while you work.</li>
+          <li data-lang="th">ควรมีแสงสว่างเพียงพอให้กล้องมองเห็นใบหน้าได้ชัดเจน</li>
+          <li data-lang="en">Make sure there is enough light for the camera to see your face clearly.</li>
+          <li data-lang="th">ควรนั่งในระยะใกล้เคียงกับตอนปรับเทียบ หากถอยห่างจากกล้องมากเกินไป โปรแกรมจะแสดงข้อความ <b>“อยู่ไกลจากกล้องเกินไป”</b> และหยุดตรวจจับชั่วคราว</li>
+          <li data-lang="en">Sit at roughly the same distance as when you calibrated. If you move too far back, the app shows <b>“Too far from camera”</b> and pauses tracking.</li>
+        </ul>
       </div>
     </section>
 
     <section class="step" id="account">
-      <div class="step-head"><span class="step-num">02</span><h2><span data-lang="th">สร้างบัญชี / เข้าสู่ระบบ</span><span data-lang="en">Create an account / sign in</span></h2></div>
+      <div class="step-head"><span class="step-num">03</span><h2><span data-lang="th">บัญชีผู้ใช้</span><span data-lang="en">Your account</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">เปิดโปรแกรมครั้งแรกจะเจอหน้าล็อกอิน เลือกได้ 2 ทาง:</p>
-        <p data-lang="en">The first time you open the app you'll see a sign-in screen, with two options:</p>
+        <p data-lang="th">ผู้ใช้สามารถเข้าสู่ระบบได้จากเมนูตั้งค่า โดยเลือกได้ 2 วิธี</p>
+        <p data-lang="en">You can sign in from Settings in one of two ways:</p>
         <ul>
-          <li data-lang="th">สมัครด้วยอีเมล + ตั้งรหัสผ่าน (กดไอคอนรูปตาที่ช่องรหัสผ่านเพื่อดู/ซ่อนรหัสได้)</li>
-          <li data-lang="en">Sign up with an email and password (tap the eye icon in the password field to show or hide it)</li>
-          <li data-lang="th">กด "เข้าสู่ระบบด้วย Google" เพื่อล็อกอินเร็วขึ้นโดยไม่ต้องตั้งรหัสผ่านใหม่</li>
-          <li data-lang="en">Use "Sign in with Google" to log in faster without setting a new password</li>
+          <li data-lang="th">สมัครด้วยอีเมลและรหัสผ่าน</li>
+          <li data-lang="en">Create an account with an email address and password</li>
+          <li data-lang="th">เข้าสู่ระบบด้วยบัญชี Google โดยไม่ต้องตั้งรหัสผ่านใหม่</li>
+          <li data-lang="en">Sign in with your Google account, with no new password to remember</li>
         </ul>
-        <p data-lang="th">บัญชีนี้ใช้สำหรับผูกสิทธิ์ Pro และกู้คืนการเข้าถึงหากเปลี่ยนเครื่อง — <b>ไม่เกี่ยวกับข้อมูลท่านั่ง</b> ซึ่งเก็บอยู่ในเครื่องคุณเท่านั้น ฟีเจอร์พื้นฐานทั้งหมดใช้ได้โดยไม่ต้องเข้าสู่ระบบ</p>
-        <p data-lang="en">The account only ties your Pro membership and lets you restore access on a new machine — it has <b>nothing to do with your posture data</b>, which stays on your PC. All core features work without signing in.</p>
+        <p data-lang="th">การสมัครบัญชีไม่มีค่าใช้จ่าย หากยังไม่เข้าสู่ระบบ โปรแกรมจะตรวจจับท่านั่งและเปลี่ยนสีโครงร่างตามปกติ แต่จะยังไม่แจ้งเตือนด้วยเสียงและไม่แสดงข้อความสถานะ บัญชีผู้ใช้ใช้สำหรับการแจ้งเตือนและสิทธิ์สมาชิกเท่านั้น <b>ข้อมูลท่านั่งของผู้ใช้จัดเก็บอยู่ในเครื่องคอมพิวเตอร์เสมอ</b></p>
+        <p data-lang="en">Accounts are free. Without signing in, the app still detects your posture and changes the colour of the outline, but it will not play alert sounds or show status messages. Your account is used only for alerts and membership — <b>your posture data always stays on your computer.</b></p>
       </div>
     </section>
 
     <section class="step" id="calibrate">
-      <div class="step-head"><span class="step-num">03</span><h2><span data-lang="th">ปรับเทียบท่านั่ง</span><span data-lang="en">Calibrate your posture</span></h2></div>
+      <div class="step-head"><span class="step-num">04</span><h2><span data-lang="th">การปรับเทียบท่านั่ง</span><span data-lang="en">Calibrating your posture</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">ก่อนใช้งานจริง คลิกขวาที่ไอคอนถาดระบบแล้วเลือก <b>"ปรับเทียบท่านั่งตรง"</b> โปรแกรมจะเปิดหน้าต่างพรีวิวกล้องขนาดใหญ่ ให้คุณนั่งในท่าที่ถูกต้อง (หลังตรง มองจอตรงๆ) แล้วนิ่งไว้สักครู่ตามที่โปรแกรมนับถอยหลัง ระบบจะใช้ท่านี้เป็น <b>เส้นฐานของคุณเอง</b> สำหรับวัดว่าต่อไปคุณเบี่ยงจากท่านี้มากแค่ไหน ไม่ใช่ค่ากลางจากคนอื่น</p>
-        <p data-lang="en">Before using it for real, right-click the tray icon and choose <b>"Calibrate posture"</b>. The app opens a large camera preview — sit the way you should (back straight, looking at the screen) and hold still while it counts down. That pose becomes <b>your own baseline</b> for measuring how far you drift later, not someone else's average.</p>
+        <p data-lang="th">เมื่อเปิดโปรแกรม หน้าต่างแสดงท่านั่งจะมีปุ่ม <b>“กดปรับเทียบท่านั่งตรง”</b> (หรือเลือก “ปรับเทียบท่านั่งตรง” ในเมนูตั้งค่า) โปรแกรมจะเปิดหน้าต่างแสดงภาพจากกล้อง ให้นั่งในท่าที่ถูกต้อง หลังตรงและมองตรงไปที่หน้าจอ แล้วนั่งนิ่งระหว่างที่โปรแกรมนับถอยหลังและบันทึกท่านั่ง ซึ่งใช้เวลาเพียงไม่กี่วินาที เมื่อตรวจสอบโครงร่างที่แสดงแล้วจึงกดยืนยัน ท่านั่งนี้จะเป็น<b>ค่าอ้างอิงเฉพาะของผู้ใช้</b> ซึ่งโปรแกรมใช้เปรียบเทียบกับท่านั่งในระหว่างการใช้งาน</p>
+        <p data-lang="en">When the app starts, its window shows a <b>Tap to calibrate posture</b> button (you can also choose Calibrate posture in Settings). A window opens with your camera view. Sit the way you intend to — back straight, looking directly at the screen — and hold still for a few seconds while the app counts down and records your posture. Check the outline it draws, then confirm. That posture becomes <b>your personal reference</b>, against which the app measures how you sit from then on.</p>
+        <p data-lang="th">หลังยืนยัน หน้าต่างแสดงท่านั่งจะย้ายไปที่มุมขวาล่างของหน้าจอ และในการปรับเทียบครั้งแรกของแต่ละวัน โปรแกรมจะเปิดรายงานของวันก่อนหน้าที่มีข้อมูลล่าสุดให้โดยอัตโนมัติ</p>
+        <p data-lang="en">Once you confirm, the posture window moves to the bottom-right corner of the screen. The first time you calibrate each day, the app also opens the report for the most recent previous day with data.</p>
         <div class="callout tip">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
-          <p data-lang="th">ปรับเทียบใหม่ได้ทุกเมื่อจากเมนูคลิกขวา หากย้ายตำแหน่งกล้อง เปลี่ยนเก้าอี้ หรือปรับเทียบพลาด (มีเมนู "ล้างการปรับเทียบ" ด้วย)</p>
-          <p data-lang="en">Re-calibrate any time from the right-click menu if you move the camera, change chairs, or get it wrong (there's also a "Clear calibration" option).</p>
+          <p data-lang="th">โปรแกรมบันทึกค่าการปรับเทียบล่าสุดไว้ ในการเปิดโปรแกรมครั้งต่อไป สามารถกดปุ่ม <b>“ข้าม”</b> ข้างปุ่มปรับเทียบเพื่อใช้ค่าเดิมได้ทันที ทั้งนี้ ควรปรับเทียบใหม่ทุกครั้งที่ย้ายตำแหน่งกล้อง เปลี่ยนเก้าอี้ หรือเปลี่ยนกล้อง</p>
+          <p data-lang="en">The app remembers your last calibration. Next time you start it, press <b>Skip</b> next to the calibrate button to reuse it straight away. Recalibrate whenever you move the camera, change chairs or switch to a different camera.</p>
         </div>
-        <p data-lang="th">หน้าต่างนี้มีปุ่มเลือกภาษาไทย/อังกฤษอยู่ด้านล่างกึ่งกลาง และแสดงโครงร่างวงรีคลุมศีรษะกับลำตัวไว้ให้ตรวจตำแหน่งก่อนกดยืนยัน</p>
-        <p data-lang="en">The window has a Thai/English toggle near the bottom, and shows an oval outline over your head and torso so you can check your position before confirming.</p>
       </div>
     </section>
 
     <section class="step" id="colors">
-      <div class="step-head"><span class="step-num">04</span><h2><span data-lang="th">อ่านค่าสีสถานะ</span><span data-lang="en">Read the status colours</span></h2></div>
+      <div class="step-head"><span class="step-num">05</span><h2><span data-lang="th">สถานะท่านั่ง</span><span data-lang="en">Posture status</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">หลังปรับเทียบเสร็จ หน้าต่างลอยจะเริ่มวาดโครงร่างทับภาพจากกล้อง สีของกรอบและป้ายบอกสถานะท่านั่งปัจจุบัน:</p>
-        <p data-lang="en">Once calibrated, the floating window starts drawing your outline over the camera image. The frame and banner colour tell you your current posture state:</p>
+        <p data-lang="th">หลังปรับเทียบแล้ว โปรแกรมจะแสดงโครงร่างท่านั่งในหน้าต่างขนาดเล็กที่มุมจอ สีของโครงร่างและป้ายสถานะบอกระดับท่านั่งในขณะนั้น และป้ายสถานะจะแสดงระยะเวลาที่อยู่ในท่านั้นต่อเนื่อง</p>
+        <p data-lang="en">Once calibrated, the app shows your outline in a small window in the corner of the screen. The colour of the outline and status banner tells you how you are sitting, and the banner shows how long you have been in that posture.</p>
         <div class="status-chips">
-          <span class="status-chip"><span class="dot" style="background:var(--good)"></span><span data-lang="th">เขียว — ท่านั่งดี</span><span data-lang="en">Green — good posture</span></span>
-          <span class="status-chip"><span class="dot" style="background:var(--warn)"></span><span data-lang="th">ส้ม — ก้ม/เอียงต่อเนื่องเกิน 2 นาที</span><span data-lang="en">Orange — hunched / tilted for over 2 minutes</span></span>
-          <span class="status-chip"><span class="dot" style="background:var(--crit)"></span><span data-lang="th">แดง (กะพริบ) — ผิดท่าต่อเนื่องเกิน 5 นาที</span><span data-lang="en">Red (blinking) — off for over 5 minutes</span></span>
+          <span class="status-chip"><span class="dot" style="background:var(--good)"></span><span data-lang="th">เขียว — ท่านั่งเหมาะสม</span><span data-lang="en">Green — good posture</span></span>
+          <span class="status-chip"><span class="dot" style="background:var(--drift)"></span><span data-lang="th">เหลือง — เริ่มก้มหรือเอียง</span><span data-lang="en">Yellow — starting to lean or slouch</span></span>
+          <span class="status-chip"><span class="dot" style="background:var(--warn)"></span><span data-lang="th">ส้ม — ต่อเนื่องเกิน 2 นาที</span><span data-lang="en">Orange — for more than 2 minutes</span></span>
+          <span class="status-chip"><span class="dot" style="background:var(--crit)"></span><span data-lang="th">แดง — ต่อเนื่องเกิน 5 นาที</span><span data-lang="en">Red — for more than 5 minutes</span></span>
         </div>
-        <p data-lang="th">ป้ายจะเริ่มกะพริบตั้งแต่ครบ 1 นาทีเพื่อเตือนตั้งแต่เนิ่นๆ ก่อนถึงสีส้ม นอกจากนี้ยังมีการเตือน <b>"นั่งนานเกินไป"</b> แยกต่างหาก แม้ท่านั่งจะยังดีอยู่ก็ตาม เพื่อชวนให้ลุกยืนเป็นระยะ ถ้ายังไม่ลุกจะทวงซ้ำอีก 2 ครั้ง ห่างกันครั้งละ 1 นาที แล้วเงียบ</p>
-        <p data-lang="en">The banner starts blinking at the 1-minute mark to warn you early, before orange. There's also a separate <b>"sitting too long"</b> reminder — even when your posture is fine — to get you up periodically. Ignore it and it nudges twice more, a minute apart, then goes quiet.</p>
+        <p data-lang="th">เมื่อก้ม เอียง หรือหลังค่อมต่อเนื่องครบ 1 นาที ป้ายสถานะจะเริ่มกะพริบเพื่อเตือนล่วงหน้า สำหรับบัญชีโปร เมื่อสถานะเข้าสู่ระดับแดง โปรแกรมจะแสดงภาพจากกล้องบนหน้าจอโดยอัตโนมัติ เพื่อให้เห็นท่านั่งของตนเอง (ภาพนี้แสดงบนหน้าจอเท่านั้น ไม่มีการบันทึก)</p>
+        <p data-lang="en">After a minute of leaning, tilting or slouching, the banner starts blinking as an early warning. On a Pro account, the app also brings up your camera view automatically when the status turns red, so you can see how you are sitting. The view is only displayed on screen — it is never recorded.</p>
+        <p data-lang="th">หากโปรแกรมมองไม่เห็นดวงตาและไหล่ต่อเนื่อง 5 วินาที เช่น เมื่อลุกจากโต๊ะ โปรแกรมจะหยุดนับเวลาทันที และจะเริ่มนับต่อเมื่อเห็นผู้ใช้ชัดเจนครบ 3 วินาที ช่วงเวลาที่ไม่อยู่หน้าจอจึงไม่ถูกนำไปรวมในรายงาน</p>
+        <p data-lang="en">If the app cannot see your eyes and shoulders for 5 seconds — when you step away, for example — it stops timing immediately, and resumes once it has seen you clearly for 3 seconds. Time away from the desk is therefore never counted in your reports.</p>
+      </div>
+    </section>
+
+    <section class="step" id="reminder">
+      <div class="step-head"><span class="step-num">06</span><h2><span data-lang="th">การแจ้งเตือนให้ลุกพัก</span><span data-lang="en">Break reminders</span><span class="pro-tag">PRO</span></h2></div>
+      <div class="step-body">
+        <p data-lang="th">เมื่อนั่งต่อเนื่องครบระยะเวลาที่กำหนด (ค่าเริ่มต้น 30 นาที ปรับได้ที่ <b>“ตั้งเวลาเตือนนั่งนาน”</b> ในเมนูตั้งค่า) โปรแกรมจะแจ้งเตือนให้ลุกพัก หากยังไม่ลุก โปรแกรมจะแจ้งเตือนซ้ำอีก 2 ครั้ง ห่างกันครั้งละ 1 นาที และแจ้งเตือนครั้งสุดท้ายเมื่อครบ 15 นาทีนับจากการแจ้งเตือนครั้งแรก จากนั้นจะไม่แจ้งเตือนอีกจนกว่าผู้ใช้จะลุกจากที่นั่ง</p>
+        <p data-lang="en">When you have been sitting for the set length of time (30 minutes by default, adjustable under <b>Set long-sit reminder</b> in Settings), the app reminds you to take a break. If you stay seated, it reminds you twice more at one-minute intervals, then once more 15 minutes after the first reminder. After that it stays silent until you get up.</p>
+        <div class="callout tip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          <p data-lang="th">ตัวอย่าง: หากตั้งไว้ 30 นาที โปรแกรมจะแจ้งเตือนเมื่อนั่งครบนาทีที่ 30, 31, 32 และ 45</p>
+          <p data-lang="en">For example, with the default 30 minutes you will be reminded at minutes 30, 31, 32 and 45.</p>
+        </div>
+        <p data-lang="th">ระยะเวลาพักที่แนะนำคืออย่างน้อย 5 นาที หากกลับมานั่งก่อนครบกำหนด โปรแกรมจะแจ้งให้ทราบ โดยเวลาพักจากการลุกหลายครั้งจะถูกนับรวมกัน และโปรแกรมจะแจ้งเมื่อพักครบ 5 นาทีแล้ว</p>
+        <p data-lang="en">A break should last at least 5 minutes. If you sit down again before then, the app lets you know. Breaks taken in several short stretches are added together, and the app tells you once you have rested for the full 5 minutes.</p>
       </div>
     </section>
 
     <section class="step" id="settings">
-      <div class="step-head"><span class="step-num">05</span><h2><span data-lang="th">ปรับการแจ้งเตือนและหน้าต่าง</span><span data-lang="en">Adjust alerts and the window</span></h2></div>
+      <div class="step-head"><span class="step-num">07</span><h2><span data-lang="th">การตั้งค่า</span><span data-lang="en">Settings</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">คลิกขวาที่ไอคอนในถาดระบบเพื่อเปิดเมนูตั้งค่า — ปรับได้ทั้งภาษา กล้องที่ใช้ และ (สำหรับสมาชิก Pro) ช่วงเวลาของการเตือนนั่งนาน (ค่าเริ่มต้น 30 นาที)</p>
-        <p data-lang="en">Right-click the tray icon to open the settings menu — change the language, the camera, and (for Pro) the stand-up reminder interval (30 minutes by default).</p>
+        <p data-lang="th">หน้าต่างแสดงท่านั่งออกแบบมาไม่ให้รบกวนการทำงาน การคลิกเมาส์จะทะลุผ่านหน้าต่างไปยังโปรแกรมด้านหลัง และเมื่อเลื่อนเมาส์ไปชี้ หน้าต่างจะซ่อนตัวชั่วคราว 7 วินาทีแล้วกลับมาที่ตำแหน่งเดิม ตัวเลือกอื่นๆ อยู่ในเมนูตั้งค่า ได้แก่</p>
+        <p data-lang="en">The posture window is designed to stay out of your way: clicks pass straight through it to whatever is underneath, and it hides for 7 seconds when you point the mouse at it, then reappears in the same place. Other options are in Settings:</p>
         <ul>
-          <li data-lang="th"><b>ลากย้าย</b> หน้าต่างลอยไปวางมุมจอที่ชอบได้เลย</li>
-          <li data-lang="en"><b>Drag</b> the floating window to whichever corner you like</li>
-          <li data-lang="th"><b>ดับเบิลคลิก</b> ที่หน้าต่างเพื่อซ่อนชั่วคราว 30 วินาที</li>
-          <li data-lang="en"><b>Double-click</b> the window to hide it for 30 seconds</li>
-          <li data-lang="th"><b>ย่อเหลือแถบเล็ก</b> สูง 42 พิกเซล เมื่ออยากให้เกะกะน้อยที่สุด</li>
-          <li data-lang="en"><b>Shrink it to a 42-pixel strip</b> when you want it as unobtrusive as possible</li>
+          <li data-lang="th"><b>แสดงเฉพาะป้ายเตือน</b> — ย่อหน้าต่างเหลือเพียงแถบป้ายสถานะ สูงประมาณ 42 พิกเซล</li>
+          <li data-lang="en"><b>Show banner only</b> — shrinks the window to a status strip about 42 pixels tall</li>
+          <li data-lang="th"><b>วาดเป็นดอกไม้แทนรูปคน</b> — เปลี่ยนรูปแบบการแสดงโครงร่าง</li>
+          <li data-lang="en"><b>Show as flower instead of body</b> — an alternative style for the outline</li>
+          <li data-lang="th"><b>จัดการเสียงเตือน</b> — เปิดหรือปิดเสียง และเลือกรูปแบบเสียง (การเลือกรูปแบบเสียงสำหรับบัญชีโปร)</li>
+          <li data-lang="en"><b>Manage alert sound</b> — turn sounds on or off and choose a sound style (styles are a Pro feature)</li>
+          <li data-lang="th"><b>ซ่อนทำงานเบื้องหลัง</b> — ซ่อนหน้าต่างทั้งหมดโดยยังตรวจจับท่านั่งต่อไป (บัญชีโปร)</li>
+          <li data-lang="en"><b>Hide in background</b> — hides the window entirely while posture tracking continues (Pro)</li>
+          <li data-lang="th"><b>เลือกกล้อง</b> และ <b>เชื่อมต่อกล้องใหม่</b></li>
+          <li data-lang="en"><b>Select camera</b> and <b>Reconnect camera</b></li>
+          <li data-lang="th"><b>เปิดอัตโนมัติเมื่อเปิด Windows</b> — ให้โปรแกรมเริ่มทำงานทุกครั้งที่เปิดเครื่องคอมพิวเตอร์</li>
+          <li data-lang="en"><b>Start with Windows</b> — launches the app automatically whenever you start your computer</li>
+          <li data-lang="th"><b>ภาษา</b> และ <b>กำหนดชื่อผู้ใช้</b> ที่แสดงในโปรแกรมและรายงาน</li>
+          <li data-lang="en"><b>Language</b> and <b>Set display name</b>, shown in the app and in reports</li>
         </ul>
       </div>
     </section>
 
     <section class="step" id="reports">
-      <div class="step-head"><span class="step-num">06</span><h2><span data-lang="th">ดูรายงานย้อนหลัง</span><span data-lang="en">View past reports</span></h2></div>
+      <div class="step-head"><span class="step-num">08</span><h2><span data-lang="th">รายงานท่านั่ง</span><span data-lang="en">Posture reports</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">เปิดหน้ารายงานจากเมนูคลิกขวา จะเห็นสรุปของเดือนที่เลือก: เวลารวมที่ถูกเฝ้าติดตาม, สัดส่วนท่านั่งดี / เอียง / ค่อม, จำนวนวันที่มีข้อมูล, จำนวนครั้งที่นั่งนานเกินไป และกราฟแท่งรายวัน ชี้เมาส์ที่แท่งไหนก็เห็นทั้งเปอร์เซ็นต์และเวลาจริง ใช้ปุ่ม ◀ ▶ มุมขวาบนเพื่อย้อนดูเดือนก่อนหน้า</p>
-        <p data-lang="en">Open the report window from the right-click menu to see a summary for the selected month: total monitored time, the good / tilted / slouched split, how many days have data, how often you sat too long, and a daily bar chart. Hover any bar for both the percentage and the real duration. Use the ◀ ▶ buttons at the top right to step back through months.</p>
+        <p data-lang="th">เลือก <b>“ดูรายงานท่านั่ง”</b> ในเมนูตั้งค่าเพื่อดูสรุปรายเดือน ซึ่งประกอบด้วยเวลาที่ติดตามได้ทั้งหมด สัดส่วนเวลานั่งตรง จำนวนวันที่มีข้อมูล สัดส่วนเวลานั่งหลังค่อม จำนวนครั้งที่ได้รับการเตือนนั่งนาน และการเปรียบเทียบกับเดือนที่แล้ว</p>
+        <p data-lang="en">Choose <b>View posture report</b> in Settings for a monthly summary: total tracked time, the share of time spent upright, the number of days with data, the share of time spent slouching, how many long-sit reminders you received, and a comparison with last month.</p>
+        <p data-lang="th">เวลาที่ติดตามได้แบ่งออกเป็น 3 หมวด ซึ่งรวมกันเท่ากับเวลาทั้งหมด</p>
+        <p data-lang="en">Tracked time is divided into three categories that together add up to the total:</p>
+        <ul>
+          <li data-lang="th"><b>นั่งตรง</b> — ท่านั่งใกล้เคียงกับค่าที่ปรับเทียบไว้</li>
+          <li data-lang="en"><b>Upright</b> — close to your calibrated posture</li>
+          <li data-lang="th"><b>เอียงหรือก้ม</b> — ศีรษะหรือไหล่เอียง หรือก้มศีรษะ</li>
+          <li data-lang="en"><b>Tilted or leaning</b> — your head or shoulders tilted, or your head dropped forward</li>
+          <li data-lang="th"><b>หลังค่อม</b> — ไหล่ห่อและทรุดต่ำกว่าค่าที่ปรับเทียบไว้ หากเกิดพร้อมกับการก้มหรือเอียง จะนับเป็นหลังค่อม</li>
+          <li data-lang="en"><b>Slouching</b> — shoulders rounded and lower than your calibrated posture; if it happens together with tilting or leaning, it counts as slouching</li>
+        </ul>
+        <p data-lang="th">นอกจากนี้ รายงานยังแสดงช่วง <b>“นานเกินไป”</b> คือเวลาที่ยังคงนั่งต่อเนื่องหลังได้รับการเตือนให้ลุกพักแล้ว ซึ่งแสดงซ้อนกับหมวดข้างต้น</p>
+        <p data-lang="en">Reports also mark periods of sitting <b>Too long</b> — time spent still seated after a break reminder — shown on top of the categories above.</p>
+        <p data-lang="th">ในกราฟรายเดือน เมื่อชี้เมาส์ที่แท่งกราฟจะแสดงทั้งเปอร์เซ็นต์และระยะเวลาจริง และสามารถคลิกเพื่อดูรายละเอียดของวันนั้นในรูปแบบเส้นเวลา รายงานสามารถแชร์เป็นรูปภาพได้</p>
+        <p data-lang="en">In the monthly chart, hover over a bar to see both the percentage and the actual time, or click it to see that day as a timeline. Reports can also be shared as an image.</p>
         <div class="table-wrap" data-lang="th"><table class="kv">
-          <tr><th>บัญชี</th><th>เก็บสถิติ</th><th>ดูรายงาน</th></tr>
-          <tr><td>Free</td><td>7 วันแรกของแต่ละเดือน</td><td>เดือนปัจจุบัน</td></tr>
-          <tr><td>Pro</td><td>ทุกวัน ไม่จำกัด</td><td>ทุกเดือน + ส่งออก Excel</td></tr>
+          <tr><th>บัญชี</th><th>ข้อมูลที่แสดงในรายงาน</th><th>ส่งออก Excel</th></tr>
+          <tr><td>ฟรี</td><td>7 วันแรกของเดือนปัจจุบัน</td><td>—</td></tr>
+          <tr><td>โปร</td><td>ทุกวัน และย้อนดูได้ทุกเดือน</td><td>ได้</td></tr>
         </table></div>
         <div class="table-wrap" data-lang="en"><table class="kv">
-          <tr><th>Plan</th><th>History</th><th>Reports</th></tr>
-          <tr><td>Free</td><td>First 7 days of each month</td><td>Current month</td></tr>
-          <tr><td>Pro</td><td>Every day, unlimited</td><td>Every month + Excel export</td></tr>
+          <tr><th>Account</th><th>What the report shows</th><th>Excel export</th></tr>
+          <tr><td>Free</td><td>The first 7 days of the current month</td><td>—</td></tr>
+          <tr><td>Pro</td><td>Every day, for every past month</td><td>Yes</td></tr>
         </table></div>
       </div>
     </section>
 
     <section class="step" id="pro">
-      <div class="step-head"><span class="step-num">07</span><h2><span data-lang="th">อัปเกรดเป็น Pro</span><span data-lang="en">Upgrade to Pro</span></h2></div>
+      <div class="step-head"><span class="step-num">09</span><h2><span data-lang="th">บัญชีโปร</span><span data-lang="en">Pro membership</span></h2></div>
       <div class="step-body">
-        <p data-lang="th">กดปุ่ม "อัปเกรดเป็น Pro" จากเมนูหรือหน้ารายงาน จะเจอ 2 ช่องทางชำระเงิน:</p>
-        <p data-lang="en">Press "Upgrade to Pro" from the menu or the report window to see two payment options:</p>
+        <p data-lang="th">เลือก <b>“ใช้งานแบบบัญชีโปร”</b> ในเมนูตั้งค่า ผู้ใช้ใหม่สามารถทดลองใช้บัญชีโปรได้ฟรี 7 วัน (ใช้สิทธิ์ได้ครั้งเดียว) หรือเลือกชำระเงินผ่านช่องทางต่อไปนี้</p>
+        <p data-lang="en">Choose <b>Use Pro account</b> in Settings. You can try Pro free for 7 days (once per account), or pay using one of the following:</p>
         <div class="table-wrap" data-lang="th"><table class="kv">
-          <tr><th>ช่องทาง</th><th>วิธีจ่าย</th><th>ราคา</th></tr>
-          <tr><td>ในไทย</td><td>สแกน QR พร้อมเพย์ (ยอดระบุมาให้แล้ว)</td><td class="mono">39 ฿/เดือน · 399 ฿/ปี</td></tr>
-          <tr><td>ต่างประเทศ</td><td>ลิงก์ PayPal.me</td><td class="mono">$30 USD/ปี</td></tr>
+          <tr><th>ช่องทาง</th><th>ราคา</th><th>การเปิดใช้สิทธิ์</th></tr>
+          <tr><td>พร้อมเพย์ (สแกนคิวอาร์โค้ด)</td><td class="mono">39 บาท / เดือน<br>399 บาท / ปี</td><td>ผู้พัฒนาเปิดใช้สิทธิ์หลังตรวจสอบยอดโอน ภายใน 1 วัน</td></tr>
+          <tr><td>บัตรเครดิต บัตรเดบิต หรือ PayPal (ผ่าน Lemon Squeezy)</td><td class="mono">69 บาท / 30 วัน<br>599 บาท / 365 วัน</td><td>เปิดใช้สิทธิ์อัตโนมัติภายในไม่กี่นาที</td></tr>
         </table></div>
         <div class="table-wrap" data-lang="en"><table class="kv">
-          <tr><th>Region</th><th>How to pay</th><th>Price</th></tr>
-          <tr><td>Thailand</td><td>Scan the PromptPay QR (amount pre-filled)</td><td class="mono">฿39/mo · ฿399/yr</td></tr>
-          <tr><td>Elsewhere</td><td>A PayPal.me link</td><td class="mono">$30 USD/yr</td></tr>
+          <tr><th>Method</th><th>Price</th><th>Activation</th></tr>
+          <tr><td>PromptPay (scan the QR code)</td><td class="mono">฿39 / month<br>฿399 / year</td><td>Activated by us once the transfer is confirmed, within one day</td></tr>
+          <tr><td>Credit card, debit card or PayPal (via Lemon Squeezy)</td><td class="mono">฿69 / 30 days<br>฿599 / 365 days</td><td>Activated automatically within minutes</td></tr>
         </table></div>
-        <p data-lang="th">เป็นการโอนครั้งเดียวต่อรอบ ไม่มีการตัดเงินอัตโนมัติซ้ำ หลังโอนแล้วแจ้งอีเมลบัญชีที่ใช้ล็อกอินในแอปตามขั้นตอนในหน้าต่างชำระเงิน ทีมงานจะเปิดสิทธิ์ Pro ให้หลังตรวจสอบยอดโอน (ปกติภายในไม่กี่ชั่วโมง ไม่เกิน 1 วัน)</p>
-        <p data-lang="en">Each is a one-off transfer per period with no repeat charges. After paying, send the email you sign in with, following the steps in the payment window. We activate Pro after confirming the transfer (usually within a few hours, no more than a day).</p>
+        <p data-lang="th">ทุกช่องทางเป็นการชำระเงินครั้งเดียวต่อรอบ <b>ไม่มีการตัดเงินอัตโนมัติ</b> เมื่อสิทธิ์หมดอายุ โปรแกรมยังคงใช้งานได้ตามปกติในฐานะบัญชีฟรี และหากไม่ได้เชื่อมต่ออินเทอร์เน็ต สิทธิ์โปรจะยังใช้งานได้ต่อไปอีกสูงสุด 14 วัน</p>
+        <p data-lang="en">Every option is a one-off payment for the period you choose — <b>nothing renews automatically</b>. When Pro expires, the app keeps working as a free account. If you go offline, Pro remains active for up to 14 days.</p>
         <div class="callout tip">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
-          <p data-lang="th">ใช้อีเมลเดียวกับที่ล็อกอินในแอปตอนแจ้งโอนเงินเสมอ ไม่งั้นระบบจะหาบัญชีที่ต้องเปิดสิทธิ์ให้ไม่เจอ · มีปุ่ม "ทดลองใช้โปรฟรี 7 วัน" กดได้ครั้งเดียวจากในโปรแกรม</p>
-          <p data-lang="en">Always use the same email you log in with when you report the transfer, or we can't find the account to activate. There's also a "7-day free Pro trial" button, usable once, inside the app.</p>
+          <p data-lang="th">เมื่อชำระผ่านพร้อมเพย์ โปรดแจ้งอีเมลเดียวกับที่ใช้เข้าสู่ระบบในโปรแกรมตามขั้นตอนในหน้าต่างชำระเงิน เพื่อให้ผู้พัฒนาเปิดใช้สิทธิ์ให้กับบัญชีที่ถูกต้อง การชำระผ่าน Lemon Squeezy ต้องเข้าสู่ระบบและเชื่อมต่ออินเทอร์เน็ตไว้ เพื่อให้ระบบเปิดใช้สิทธิ์ให้บัญชีที่ใช้อยู่ได้โดยอัตโนมัติ</p>
+          <p data-lang="en">When paying by PromptPay, follow the steps in the payment window and send us the same email address you use to sign in, so that Pro is activated on the right account. To pay through Lemon Squeezy, stay signed in and online so that Pro can be activated on your account automatically.</p>
         </div>
       </div>
     </section>
 
     <section class="step" id="troubleshoot">
-      <div class="step-head"><span class="step-num">08</span><h2><span data-lang="th">แก้ปัญหาเบื้องต้น</span><span data-lang="en">Troubleshooting</span></h2></div>
+      <div class="step-head"><span class="step-num">10</span><h2><span data-lang="th">การแก้ไขปัญหาเบื้องต้น</span><span data-lang="en">Troubleshooting</span></h2></div>
       <div class="step-body">
         <ul>
-          <li data-lang="th"><b>กล้องไม่ทำงานหลังคอมพิวเตอร์ตื่นจากสลีป</b> — ปิดโปรแกรมแล้วเปิดใหม่ ระบบจะเชื่อมต่อกล้องใหม่ให้</li>
-          <li data-lang="en"><b>The camera stops working after the PC wakes from sleep</b> — close and reopen the app; it reconnects the camera</li>
-          <li data-lang="th"><b>หน้าต่างลอยหายไป</b> — เช็คไอคอนในถาดระบบ (อาจต้องกดลูกศร "แสดงไอคอนที่ซ่อนอยู่") แล้วคลิกขวาเลือก "แสดงตอนนี้"</li>
-          <li data-lang="en"><b>The floating window disappeared</b> — check the tray (you may need the "show hidden icons" arrow), then right-click and choose "Show now"</li>
-          <li data-lang="th"><b>แจ้งเตือนไวเกินไปหรือช้าเกินไป</b> — ปรับเทียบท่านั่งใหม่ (ขั้นตอนที่ 3) โดยเฉพาะถ้าย้ายตำแหน่งกล้องหรือเปลี่ยนเก้าอี้</li>
-          <li data-lang="en"><b>Alerts feel too sensitive or too slow</b> — re-calibrate (step 3), especially after moving the camera or changing chairs</li>
-          <li data-lang="th"><b>ลงชื่อเข้าใช้ด้วย Google ไม่ได้</b> — ตรวจว่าต่อเน็ตอยู่ แล้วลองอีกครั้งหลังปิด-เปิดโปรแกรมใหม่</li>
-          <li data-lang="en"><b>Can't sign in with Google</b> — check you're online, then try again after restarting the app</li>
+          <li data-lang="th"><b>ภาพจากกล้องเป็นสีดำ หรือกล้องไม่ทำงานหลังเครื่องคอมพิวเตอร์กลับจากโหมดสลีป</b> — โปรแกรมจะพยายามเชื่อมต่อกล้องใหม่โดยอัตโนมัติ หากยังไม่ทำงาน ให้เลือก “เชื่อมต่อกล้องใหม่” ในเมนูตั้งค่า หรือปิดและเปิดโปรแกรมอีกครั้ง</li>
+          <li data-lang="en"><b>The camera view is black, or the camera stops working after your computer wakes from sleep</b> — the app tries to reconnect automatically. If it doesn't, choose “Reconnect camera” in Settings, or restart the app.</li>
+          <li data-lang="th"><b>มีข้อความ “อยู่ไกลจากกล้องเกินไป”</b> — ขยับเข้าใกล้กล้องให้อยู่ในระยะใกล้เคียงกับตอนปรับเทียบ หรือปรับเทียบท่านั่งใหม่ในตำแหน่งปัจจุบัน</li>
+          <li data-lang="en"><b>“Too far from camera” appears</b> — move closer, to about the distance you calibrated at, or recalibrate from where you are now.</li>
+          <li data-lang="th"><b>มองไม่เห็นหน้าต่างแสดงท่านั่ง</b> — ตรวจสอบว่าไม่ได้เปิดตัวเลือก “ซ่อนทำงานเบื้องหลัง” ไว้ และตรวจสอบว่าโปรแกรมยังทำงานอยู่โดยดูไอคอนในถาดระบบ (อาจต้องกดลูกศร “แสดงไอคอนที่ซ่อนอยู่” ก่อน)</li>
+          <li data-lang="en"><b>The posture window has disappeared</b> — make sure “Hide in background” is turned off, and check that the app is still running by looking for its tray icon (you may need to click the “Show hidden icons” arrow first).</li>
+          <li data-lang="th"><b>การแจ้งเตือนไวหรือช้าเกินไป</b> — ปรับเทียบท่านั่งใหม่ (หัวข้อที่ 4) โดยเฉพาะหลังย้ายกล้องหรือเปลี่ยนเก้าอี้</li>
+          <li data-lang="en"><b>Alerts seem too sensitive or too slow</b> — recalibrate (section 4), particularly after moving the camera or changing chairs.</li>
+          <li data-lang="th"><b>เข้าสู่ระบบด้วย Google ไม่สำเร็จ</b> — ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต แล้วลองอีกครั้งหลังปิดและเปิดโปรแกรมใหม่</li>
+          <li data-lang="en"><b>Google sign-in fails</b> — check your internet connection, then restart the app and try again.</li>
         </ul>
-        <p data-lang="th">ยังไม่หาย? ทักมาที่ <a href="mailto:contact@saantie.com">contact@saantie.com</a> หรือ LINE <code>@341jvvzy</code></p>
-        <p data-lang="en">Still stuck? Reach us at <a href="mailto:contact@saantie.com">contact@saantie.com</a> or LINE <code>@341jvvzy</code></p>
+        <p data-lang="th">หากยังพบปัญหา โปรดเลือก “แจ้งปัญหาการใช้งาน” ในเมนูตั้งค่า หรือติดต่อ <a href="mailto:contact@saantie.com">contact@saantie.com</a> หรือ LINE <code>@341jvvzy</code></p>
+        <p data-lang="en">If the problem persists, choose “Report a problem” in Settings, or contact us at <a href="mailto:contact@saantie.com">contact@saantie.com</a> or on LINE at <code>@341jvvzy</code>.</p>
       </div>
     </section>
 
     <section class="step" id="faq">
-      <div class="step-head"><h2><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">FAQ</span></h2></div>
+      <div class="step-head"><h2><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">Frequently asked questions</span></h2></div>
       <div class="step-body" style="max-width:none">
         <details class="faq" open>
-          <summary><span data-lang="th">ข้อมูลท่านั่งของฉันเก็บไว้ที่ไหน</span><span data-lang="en">Where is my posture data stored?</span></summary>
+          <summary><span data-lang="th">ข้อมูลท่านั่งจัดเก็บไว้ที่ใด</span><span data-lang="en">Where is my posture data stored?</span></summary>
           <div class="faq-body">
-            <span data-lang="th">เก็บเป็นไฟล์ในเครื่องคุณเท่านั้น (โฟลเดอร์ข้อมูลโปรแกรมใน Windows ที่ <code>%LOCALAPPDATA%\PostureMonitor</code>) ไม่ได้อัปโหลดขึ้นเซิร์ฟเวอร์ ย้ายเครื่องแล้วประวัติเก่าจะไม่ติดไปด้วย</span>
-            <span data-lang="en">Only as a file on your PC (the app's data folder in Windows, at <code>%LOCALAPPDATA%\PostureMonitor</code>). Nothing is uploaded, and history doesn't follow you to a new machine.</span>
+            <span data-lang="th">จัดเก็บเป็นไฟล์ในเครื่องคอมพิวเตอร์ของผู้ใช้เท่านั้น ที่ <code>%LOCALAPPDATA%\PostureMonitor</code> โดยไม่มีการอัปโหลดขึ้นเซิร์ฟเวอร์ ดังนั้นประวัติท่านั่งจะไม่ถูกย้ายไปยังคอมพิวเตอร์เครื่องใหม่</span>
+            <span data-lang="en">Only in a file on your own computer, at <code>%LOCALAPPDATA%\PostureMonitor</code>. Nothing is uploaded, which also means your history does not move with you to a new computer.</span>
           </div>
         </details>
         <details class="faq">
-          <summary><span data-lang="th">ลบบัญชีหรือข้อมูลทั้งหมดได้อย่างไร</span><span data-lang="en">How do I delete my account or all my data?</span></summary>
+          <summary><span data-lang="th">ต้องการลบบัญชีหรือข้อมูลทั้งหมด ต้องทำอย่างไร</span><span data-lang="en">How do I delete my account or all my data?</span></summary>
           <div class="faq-body">
-            <span data-lang="th">ลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code> เพื่อล้างประวัติท่านั่ง ส่วนบัญชีผู้ใช้ ติดต่อทีมงานที่ <a href="mailto:contact@saantie.com">contact@saantie.com</a> เพื่อขอลบข้อมูลถาวรจาก Firebase</span>
-            <span data-lang="en">Delete the <code>%LOCALAPPDATA%\PostureMonitor</code> folder to clear your posture history. For the user account, email <a href="mailto:contact@saantie.com">contact@saantie.com</a> to have it permanently removed from Firebase.</span>
+            <span data-lang="th">ลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code> เพื่อล้างประวัติท่านั่งในเครื่องคอมพิวเตอร์ สำหรับบัญชีผู้ใช้ โปรดติดต่อ <a href="mailto:contact@saantie.com">contact@saantie.com</a> เพื่อขอลบข้อมูลออกจากระบบอย่างถาวร</span>
+            <span data-lang="en">Delete the <code>%LOCALAPPDATA%\PostureMonitor</code> folder to clear your posture history. To have your account permanently removed, email <a href="mailto:contact@saantie.com">contact@saantie.com</a>.</span>
           </div>
         </details>
         <details class="faq">
-          <summary><span data-lang="th">ใช้ได้กับกล้องเว็บแคมแบบไหนบ้าง</span><span data-lang="en">Which webcams work with it?</span></summary>
+          <summary><span data-lang="th">ต้องปรับเทียบท่านั่งทุกครั้งที่เปิดโปรแกรมหรือไม่</span><span data-lang="en">Do I have to calibrate every time I start the app?</span></summary>
           <div class="faq-body">
-            <span data-lang="th">ใช้ได้กับเว็บแคมทั่วไปที่ Windows รู้จักอยู่แล้ว ทั้งกล้องในตัวโน้ตบุ๊กและกล้อง USB แยก ไม่ต้องติดตั้งไดรเวอร์เพิ่ม เลือกกล้องได้จากเมนูคลิกขวา</span>
-            <span data-lang="en">Any webcam Windows already recognises — built-in or external USB, no extra drivers. Pick the camera from the right-click menu.</span>
+            <span data-lang="th">ไม่จำเป็น โปรแกรมบันทึกค่าการปรับเทียบล่าสุดไว้ เมื่อเปิดโปรแกรมครั้งต่อไปสามารถกดปุ่ม “ข้าม” เพื่อใช้ค่าเดิมได้ทันที ควรปรับเทียบใหม่เฉพาะเมื่อตำแหน่งกล้อง เก้าอี้ หรือกล้องที่ใช้เปลี่ยนไป</span>
+            <span data-lang="en">No. The app remembers your last calibration, so next time you can press “Skip” to reuse it. Recalibrate only when your camera position, chair or camera changes.</span>
+          </div>
+        </details>
+        <details class="faq">
+          <summary><span data-lang="th">ใช้กับเว็บแคมแบบใดได้บ้าง</span><span data-lang="en">Which webcams are supported?</span></summary>
+          <div class="faq-body">
+            <span data-lang="th">ใช้ได้กับเว็บแคมทั่วไปที่ Windows รองรับ ทั้งกล้องในตัวโน้ตบุ๊กและกล้องแบบ USB โดยไม่ต้องติดตั้งไดรเวอร์เพิ่มเติม หากมีหลายกล้อง สามารถเลือกได้ที่ “เลือกกล้อง” ในเมนูตั้งค่า</span>
+            <span data-lang="en">Any webcam that Windows recognises, whether built into a laptop or connected by USB, with no extra drivers. If you have more than one, pick the one you want under “Select camera” in Settings.</span>
           </div>
         </details>
       </div>
@@ -334,8 +422,8 @@
 </div>
 
 <footer class="doc">
-  <span data-lang="th">มีคำถามเพิ่มเติม? ติดต่อ <a href="mailto:contact@saantie.com">contact@saantie.com</a> · <a href="/8hrs">หน้าแรก 8Hrs</a> · <a href="/8hrs/privacy">นโยบายความเป็นส่วนตัว</a></span>
-  <span data-lang="en">More questions? Contact <a href="mailto:contact@saantie.com">contact@saantie.com</a> · <a href="/8hrs">8Hrs home</a> · <a href="/8hrs/privacy">Privacy policy</a></span>
+  <span data-lang="th">สอบถามเพิ่มเติม: <a href="mailto:contact@saantie.com">contact@saantie.com</a> · <a href="/8hrs">หน้าหลัก 8Hrs</a> · <a href="/8hrs/privacy">นโยบายความเป็นส่วนตัว</a></span>
+  <span data-lang="en">Questions: <a href="mailto:contact@saantie.com">contact@saantie.com</a> · <a href="/8hrs">8Hrs home</a> · <a href="/8hrs/privacy">Privacy policy</a></span>
 </footer>
 
 <script src="/assets/lang-toggle.js"></script>

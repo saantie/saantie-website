@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>8Hrs Posture Monitor — เตือนท่านั่งจากเว็บแคม | Webcam posture reminder for Windows</title>
-<meta name="description" content="8Hrs เฝ้าดูท่านั่งของคุณผ่านเว็บแคมแบบเรียลไทม์ แล้วเตือนเมื่อก้ม เอียง หรือค่อมนานเกินไป ประมวลผลบนเครื่องคุณ 100% ภาพจากกล้องไม่เคยออกจากเครื่อง — A Windows app that watches your posture through your webcam and nudges you when you slouch. 100% on-device.">
+<title>8Hrs Posture Monitor — โปรแกรมติดตามท่านั่งผ่านเว็บแคม | Webcam posture monitor for Windows</title>
+<meta name="description" content="8Hrs ติดตามท่านั่งผ่านเว็บแคมแบบเรียลไทม์ บันทึกว่านั่งก้ม นั่งเอียง หรือนั่งหลังค่อมนานเท่าใด และแจ้งเตือนเมื่อท่านั่งไม่เหมาะสมนานเกินไป ประมวลผลภายในเครื่องคอมพิวเตอร์ทั้งหมด — A Windows app that tracks how long you spend hunched, tilted or slouched, entirely on your own computer.">
 <meta name="theme-color" content="#070C18">
 <!-- ไอคอน "8" เส้นเรืองแสงฟ้าบนพื้นน้ำเงินเข้ม — ชุดสีเดียวกับหน้าหลัก saantie.com แต่แยกเป็นของ 8Hrs -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Ctext x='32' y='46' font-family='Segoe UI,sans-serif' font-size='40' font-weight='700' fill='%2338BDF8' text-anchor='middle'%3E8%3C/text%3E%3C/svg%3E">
@@ -127,11 +127,20 @@
   .hero { padding: 72px 0 64px; }
   .hero-grid { display: grid; grid-template-columns: 1.02fr .98fr; gap: 52px; align-items: center; }
   @media (max-width: 880px) { .hero-grid { grid-template-columns: 1fr; gap: 36px; } }
+  /* กลุ่มคำที่ห้ามตัดบรรทัดกลาง — ภาษาไทยไม่มีช่องว่างระหว่างคำ เบราว์เซอร์จึงตัดกลางวลีได้ เช่น "นั่ง / หลังค่อม" */
+  .nw { white-space: nowrap; }
+  /* ป้ายหัวข้อเล็กใช้ letter-spacing กว้างแบบตัวพิมพ์ใหญ่ภาษาอังกฤษ ซึ่งทำให้ภาษาไทยอ่านยาก — ลดลงเมื่อเป็นไทย */
+  html[lang="th"] .eyebrow, html[lang="th"] .feature-copy .tag { letter-spacing: .03em; }
   .hero h1 {
     font-size: clamp(2.3em, 5.4vw, 3.7em); margin: 0 0 18px; font-weight: 700;
     background: linear-gradient(100deg, #FFFFFF 6%, var(--accent) 54%, #A5B4FC 98%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
+  /* อักษรไทยมีสระบน+วรรณยุกต์ซ้อน และสระล่าง ที่สูงเกินกล่องของฟอนต์ (วัดจริงด้วย canvas: หมึกสูงสุด 1.67 เท่าของ
+     ขนาดตัวอักษร เช่น "ที่ไม่") — line-height 1.15 ของหัวข้อทำให้วรรณยุกต์ซ้อนทับบรรทัดบน และหัวข้อไล่สี
+     (background-clip:text วาดได้แค่ในกล่องของ h1) ถูกตัดขอบบน (ผู้ใช้แจ้ง ต.ค. 2569) จึงเผื่อเฉพาะตอนเป็นภาษาไทย */
+  html[lang="th"] h1, html[lang="th"] h2, html[lang="th"] h3 { line-height: 1.7; }
+  html[lang="th"] .hero h1 { font-size: clamp(1.9em, 4.2vw, 2.9em); padding: .08em 0; }
   .hero .sub { font-size: clamp(1.02em, 2vw, 1.18em); color: var(--text); margin: 0 0 26px; max-width: 40em; }
   .hero .sub b { color: var(--accent); font-weight: 600; }
   .hero-ctas { display: flex; gap: 13px; flex-wrap: wrap; }
@@ -145,15 +154,17 @@
   }
   .device svg { width: 100%; height: auto; display: block; }
   .device figcaption { margin: 12px 0 0; font-size: .78em; color: var(--muted); text-align: center; }
+  /* z-index จำเป็น — .chip อยู่ก่อน figure.device (position:relative) ใน DOM ถ้าไม่ตั้ง กรอบภาพจะวาดทับป้าย
+     จนเหลือให้อ่านแค่ปลายข้อความ (เจอจากภาพหน้าจอจริง ต.ค. 2569) */
   .chip {
-    position: absolute; display: inline-flex; align-items: center; gap: 8px;
+    position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px;
     background: rgba(14,23,48,.92); border: 1px solid var(--border-lit); border-radius: 10px;
     padding: 8px 13px; font-size: .8em; backdrop-filter: blur(6px);
     box-shadow: 0 12px 30px -14px rgba(0,0,0,.7);
   }
   .chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .chip.chip-a { top: 8%; right: -14px; }
-  .chip.chip-b { bottom: 12%; left: -18px; }
+  .chip.chip-b { bottom: 24%; left: -18px; }  /* สูงพอไม่ทับ figcaption ใต้ภาพ */
   @media (max-width: 520px) { .chip { display: none; } }
   @keyframes sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-1.4deg); } }
   .rig { transform-origin: 50% 88%; animation: sway 6s ease-in-out infinite; }
@@ -342,10 +353,10 @@
       <span>8Hrs</span>
     </a>
     <nav class="nav-links">
-      <a class="optional" href="#features"><span data-lang="th">ฟีเจอร์</span><span data-lang="en">Features</span></a>
+      <a class="optional" href="#features"><span data-lang="th">ความสามารถ</span><span data-lang="en">Features</span></a>
       <a class="optional" href="#pricing"><span data-lang="th">ราคา</span><span data-lang="en">Pricing</span></a>
       <a class="optional" href="/8hrs/guide"><span data-lang="th">คู่มือ</span><span data-lang="en">Guide</span></a>
-      <a class="btn btn-primary btn-sm" href="#notify"><span data-lang="th">รับแจ้งเตือน</span><span data-lang="en">Get notified</span></a>
+      <a class="btn btn-primary btn-sm" href="#notify"><span data-lang="th">รับข่าวการเปิดตัว</span><span data-lang="en">Get notified</span></a>
     </nav>
   </div>
 </header>
@@ -357,44 +368,46 @@
     <div class="hero-grid">
       <div>
         <span class="eyebrow">
-          <span data-lang="th">แจ้งเตือนท่านั่งเรียลไทม์ · ประมวลผลบนเครื่องคุณ 100%</span>
-          <span data-lang="en">Real-time posture alerts · 100% on your device</span>
+          <span data-lang="th">ติดตามท่านั่งแบบเรียลไทม์ · ประมวลผลภายในเครื่องคอมพิวเตอร์</span>
+          <span data-lang="en">Real-time posture tracking · processed entirely on your computer</span>
         </span>
         <h1>
-          <span data-lang="th">รู้ตัวก่อน จะปวดคอ ปวดหลัง</span>
-          <span data-lang="en">Catch bad posture before the ache sets in</span>
+          <span data-lang="th"><span class="nw">นั่งก้ม</span> <span class="nw">นั่งเอียง</span> <span class="nw">นั่งหลังค่อม</span> <span class="nw">นานแค่ไหน</span><span class="nw">ไม่เคยรู้มาก่อน</span></span>
+          <span data-lang="en">Hunched, tilted, slouched — for how long? Until now, you never knew.</span>
         </h1>
         <p class="sub" data-lang="th">
-          8Hrs เฝ้าดูท่านั่งของคุณผ่านเว็บแคมแบบเรียลไทม์ แล้วเตือนทันทีที่เริ่มก้ม เอียง หรือค่อมนานเกินไป
-          ทำงานอยู่ในหน้าต่างเล็กๆ มุมจอ ไม่บังงาน — และ<b>ภาพจากกล้องไม่เคยออกจากเครื่องคุณ</b>
+          8Hrs ใช้เว็บแคมติดตามท่านั่งของคุณแบบเรียลไทม์ บันทึกว่าในแต่ละวันคุณนั่งก้ม นั่งเอียง หรือนั่งหลังค่อมนานเท่าใด
+          และแจ้งเตือนทันทีเมื่อท่านั่งไม่เหมาะสมต่อเนื่องนานเกินไป ช่วยให้คุณรักษาท่านั่งและบุคลิกภาพที่ดีได้ตลอดวันทำงาน
+          โดย<b>ภาพจากกล้องจะไม่ถูกส่งออกจากเครื่องคอมพิวเตอร์ของคุณ</b>
         </p>
         <p class="sub" data-lang="en">
-          8Hrs watches your posture through your webcam in real time and nudges you the moment you hunch,
-          tilt, or slouch for too long. It sits in a small corner overlay, out of your way — and
-          <b>your camera feed never leaves your computer</b>.
+          8Hrs uses your webcam to follow your posture in real time, records how long you spend hunched,
+          tilted or slouched each day, and alerts you as soon as a poor posture has gone on too long — helping
+          you keep good posture, and a confident bearing, throughout the workday. <b>Your camera feed never
+          leaves your computer.</b>
         </p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#notify">
-            <span data-lang="th">รับแจ้งเตือนเมื่อเปิดตัว</span><span data-lang="en">Notify me at launch</span>
+            <span data-lang="th">ลงทะเบียนรับข่าวการเปิดตัว</span><span data-lang="en">Notify me at launch</span>
           </a>
           <a class="btn btn-ghost" href="/8hrs/guide">
-            <span data-lang="th">ดูวิธีใช้งาน</span><span data-lang="en">See how it works</span>
+            <span data-lang="th">อ่านคู่มือการใช้งาน</span><span data-lang="en">Read the guide</span>
           </a>
         </div>
         <p class="hero-note">
-          <span data-lang="th">ยังไม่เปิดให้ดาวน์โหลด · ฟีเจอร์หลักจะฟรีตลอด · ไม่ต้องผูกบัตร · ไทย/อังกฤษ</span>
-          <span data-lang="en">Not available yet · Core features will be free forever · No credit card · Thai/English</span>
+          <span data-lang="th">ยังไม่เปิดให้ดาวน์โหลด · ใช้งานฟังก์ชันหลักได้ฟรี · ไม่ต้องใช้บัตรเครดิต · รองรับภาษาไทยและภาษาอังกฤษ</span>
+          <span data-lang="en">Not yet available · Core features are free · No credit card required · Thai and English</span>
         </p>
       </div>
 
       <div class="hero-art">
         <span class="chip chip-a">
           <span class="dot" style="background:var(--good)"></span>
-          <span data-lang="th">ท่านั่งดี — 42:10</span><span data-lang="en">Good posture — 42:10</span>
+          <span data-lang="th">ท่านั่งเหมาะสม — 42:10</span><span data-lang="en">Good posture — 42:10</span>
         </span>
         <span class="chip chip-b">
           <span class="dot" style="background:var(--warn)"></span>
-          <span data-lang="th">เอียงไหล่ 2 นาที</span><span data-lang="en">Shoulder tilt · 2 min</span>
+          <span data-lang="th">ไหล่เอียง 2 นาที</span><span data-lang="en">Shoulders tilted · 2 min</span>
         </span>
         <figure class="device">
           <!-- ภาพจำลองโครงร่างที่โปรแกรมวาดทับเว็บแคม (หัวเหลี่ยม + วิซอร์ + เส้นลำตัว)
@@ -414,44 +427,44 @@
               <circle cx="210" cy="94" r="3.5" fill="var(--good)" stroke="none"/>
             </g>
           </svg>
-          <figcaption data-lang="th">โครงร่างที่โปรแกรมวาดทับภาพเว็บแคมของคุณ</figcaption>
-          <figcaption data-lang="en">The outline the app draws over your webcam view</figcaption>
+          <figcaption data-lang="th">โครงร่างที่โปรแกรมแสดงทับภาพจากเว็บแคม (ภาพจำลอง)</figcaption>
+          <figcaption data-lang="en">The outline the app draws over your webcam view (illustration)</figcaption>
         </figure>
       </div>
     </div>
   </section>
 </div>
 
-<!-- ================= แถบความเชื่อใจ ================= -->
+<!-- ================= แถบความเชื่อมั่น ================= -->
 <section class="trust">
   <div class="wrap reveal">
     <div class="trust-grid">
       <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>
         <div>
-          <span data-lang="th"><b>ภาพจากกล้องไม่ถูกอัปโหลด</b> — ประมวลผลบนเครื่องคุณทั้งหมด</span>
-          <span data-lang="en"><b>Your camera feed is never uploaded</b> — all processing happens on your PC</span>
+          <span data-lang="th"><b>ไม่มีการอัปโหลดภาพจากกล้อง</b> ประมวลผลภายในเครื่องคอมพิวเตอร์ของคุณทั้งหมด</span>
+          <span data-lang="en"><b>No video is uploaded</b> — everything is processed on your PC</span>
         </div>
       </div>
       <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 5l16 16M5.5 9a5 5 0 016.9-2.3M3 12.5A9 9 0 0110 8.5M8 16a4 4 0 015.5-1.2"/><path d="M12 20h.01"/></svg>
         <div>
-          <span data-lang="th"><b>ใช้ได้แม้ไม่ต่อเน็ต</b> — โมเดล AI ฝังมากับตัวโปรแกรม</span>
-          <span data-lang="en"><b>Works offline</b> — the AI model ships inside the app</span>
+          <span data-lang="th"><b>ทำงานได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต</b> โมเดล AI ติดตั้งมาพร้อมโปรแกรม</span>
+          <span data-lang="en"><b>Works offline</b> — the AI model is built into the app</span>
         </div>
       </div>
       <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2"/></svg>
         <div>
-          <span data-lang="th"><b>กินเครื่องเบา</b> — ออกแบบให้เปิดค้างทั้งวันได้</span>
-          <span data-lang="en"><b>Light on your PC</b> — built to run all day</span>
+          <span data-lang="th"><b>ใช้ทรัพยากรของเครื่องคอมพิวเตอร์น้อย</b> ออกแบบให้เปิดใช้งานได้ตลอดวัน</span>
+          <span data-lang="en"><b>Light on resources</b> — designed to run all day</span>
         </div>
       </div>
       <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
         <div>
-          <span data-lang="th"><b>ใช้งานได้เต็มรูปแบบ</b> ทั้งภาษาไทยและอังกฤษ</span>
-          <span data-lang="en"><b>Fully usable</b> in both Thai and English</span>
+          <span data-lang="th"><b>รองรับภาษาไทยและภาษาอังกฤษ</b> ในทุกหน้าจอ</span>
+          <span data-lang="en"><b>Thai and English</b> throughout the app</span>
         </div>
       </div>
     </div>
@@ -463,45 +476,45 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">
-        <span data-lang="th">ปัญหาที่คนนั่งทำงานหน้าจอเจอทุกวัน</span>
-        <span data-lang="en">What screen workers deal with every day</span>
+        <span data-lang="th">ปัญหาที่พบบ่อยในผู้ที่ทำงานหน้าจอ</span>
+        <span data-lang="en">A familiar problem at the desk</span>
       </span>
-      <h2><span data-lang="th">กว่าจะรู้ตัวว่านั่งผิดท่า ก็ปวดไปแล้ว</span><span data-lang="en">By the time you notice, it already aches</span></h2>
-      <p data-lang="th">สมองไม่เตือนตอนคอค่อยๆ ยื่นไปข้างหน้า หรือไหล่ค่อยๆ ทรุดลง กว่าจะรู้สึกตัวก็ผ่านไปเป็นชั่วโมง</p>
-      <p data-lang="en">Your brain doesn't flag it when your neck creeps forward or your shoulders sink — hours pass before you feel it.</p>
+      <h2><span data-lang="th">ท่านั่งที่ไม่เหมาะสมเกิดขึ้นโดยไม่รู้ตัว</span><span data-lang="en">Poor posture creeps in unnoticed</span></h2>
+      <p data-lang="th">ศีรษะที่ค่อยๆ ยื่นไปข้างหน้า และไหล่ที่ค่อยๆ ห่อลงระหว่างการทำงาน เกิดขึ้นทีละน้อยจนกลายเป็นท่านั่งและบุคลิกภาพที่ติดตัวโดยไม่ทันสังเกต</p>
+      <p data-lang="en">Your head edges forward and your shoulders round, a little at a time, until it becomes the way you sit — and the way you carry yourself — without your noticing.</p>
     </div>
 
     <div class="problem-grid reveal">
       <div class="card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 6c0-2 1.8-3 4-3s4 1 4 3c0 3-3 4-3 7"/><path d="M13 20h-2"/></svg>
-        <h3><span data-lang="th">นั่งค่อมโดยไม่รู้ตัว</span><span data-lang="en">Slouching without noticing</span></h3>
-        <p data-lang="th">ตั้งใจนั่งหลังตรงตอนเช้า แต่พอทำงานเพลินๆ หลังค่อมลงเรื่อยๆ โดยไม่มีใครสะกิด</p>
-        <p data-lang="en">You start the day sitting straight, then sink lower and lower as you focus, with nothing to nudge you.</p>
+        <h3><span data-lang="th">หลังค่อมโดยไม่รู้ตัว</span><span data-lang="en">Slouching without realising</span></h3>
+        <p data-lang="th">แม้ตั้งใจนั่งหลังตรงในช่วงเช้า แต่เมื่อจดจ่อกับงาน ท่านั่งมักค่อยๆ ทรุดลงโดยไม่มีสิ่งใดเตือน</p>
+        <p data-lang="en">You may start the day sitting up straight, but once you are absorbed in work your posture slowly sinks, with nothing to remind you.</p>
       </div>
       <div class="card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
-        <h3><span data-lang="th">นั่งยาวเกินไปโดยไม่พัก</span><span data-lang="en">Sitting too long without a break</span></h3>
-        <p data-lang="th">เพลินกับงานจนลืมลุก บางวันนั่งรวดเดียว 3–4 ชั่วโมงโดยไม่ได้ขยับตัวเลย</p>
-        <p data-lang="en">You forget to stand up — some days it's 3–4 hours straight without moving.</p>
+        <h3><span data-lang="th">นั่งนานโดยไม่ได้ลุกพัก</span><span data-lang="en">Hours without a break</span></h3>
+        <p data-lang="th">ในวันที่มีงานต่อเนื่อง หลายคนนั่งติดต่อกัน 3–4 ชั่วโมงโดยไม่ได้ลุกเปลี่ยนอิริยาบถเลย</p>
+        <p data-lang="en">On a busy day it is easy to stay seated for three or four hours without getting up once.</p>
       </div>
       <div class="card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 19h16M7 15l3-4 3 2 4-6"/></svg>
-        <h3><span data-lang="th">ไม่มีข้อมูลย้อนหลังดูพฤติกรรมตัวเอง</span><span data-lang="en">No history to learn from</span></h3>
-        <p data-lang="th">รู้สึกว่าปวดหลังบ่อยขึ้น แต่ไม่มีตัวเลขจริงยืนยันว่าวันไหนของสัปดาห์ที่ท่านั่งแย่ที่สุด</p>
-        <p data-lang="en">Your back hurts more often, but you have no real numbers on which day of the week is worst.</p>
+        <h3><span data-lang="th">ไม่มีข้อมูลให้ทบทวน</span><span data-lang="en">No record to learn from</span></h3>
+        <p data-lang="th">ไม่มีข้อมูลที่บอกได้ว่าในแต่ละวันนั่งผิดท่านานเท่าใด และช่วงเวลาใดที่เกิดขึ้นบ่อยที่สุด</p>
+        <p data-lang="en">There is no record of how long you spend in a poor posture each day, or when it happens most.</p>
       </div>
       <div class="card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M18.5 5.5l-2 2M7.5 16.5l-2 2"/><circle cx="12" cy="12" r="3.5"/></svg>
-        <h3><span data-lang="th">แอปเตือนท่านั่งส่วนใหญ่ยุ่งยากเกินไป</span><span data-lang="en">Most posture apps are too much hassle</span></h3>
-        <p data-lang="th">ต้องสวมอุปกรณ์ ต้องเปิดแอปแยก หรือส่งภาพขึ้นคลาวด์ให้คนอื่นดู จนเลิกใช้ไปในที่สุด</p>
-        <p data-lang="en">They need a wearable, a separate app, or uploading video to the cloud — so you stop using them.</p>
+        <h3><span data-lang="th">เครื่องมือหลายแบบใช้งานไม่สะดวก</span><span data-lang="en">Other tools get in the way</span></h3>
+        <p data-lang="th">เครื่องมือเตือนท่านั่งหลายแบบต้องใช้อุปกรณ์สวมใส่ หรือต้องส่งภาพขึ้นระบบคลาวด์ ทำให้ไม่สะดวกต่อการใช้งานในระยะยาว</p>
+        <p data-lang="en">Many posture tools need a wearable device or send video to the cloud, which makes them hard to live with day to day.</p>
       </div>
     </div>
 
     <div class="solution reveal">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
-      <p data-lang="th"><b>8Hrs เป็นหน้าต่างลอยเล็กๆ มุมจอ</b> ที่เฝ้าดูท่านั่งของคุณตลอดเวลา พอเริ่มก้ม เอียง หรือค่อมนานเกินไป มันจะเปลี่ยนสีและเตือนทันที พร้อมสรุปเป็นรายงานย้อนหลังทุกเดือน โดยไม่มีภาพจากกล้องหลุดออกจากเครื่องแม้แต่เฟรมเดียว</p>
-      <p data-lang="en"><b>8Hrs is a small floating window in the corner of your screen</b> that watches your posture continuously. Start to hunch, tilt, or slouch for too long and it changes colour and alerts you right away — with a monthly report to look back on, and not a single camera frame ever leaving your computer.</p>
+      <p data-lang="th"><b>8Hrs คือหน้าต่างขนาดเล็กที่มุมจอ</b> ซึ่งติดตามท่านั่งของคุณอย่างต่อเนื่อง เมื่อคุณก้ม เอียง หรือหลังค่อมนานเกินไป โปรแกรมจะเปลี่ยนสีและแจ้งเตือนทันที พร้อมสรุปเป็นรายงานรายวันและรายเดือน ช่วยให้คุณรักษาท่านั่งและบุคลิกภาพที่ดีได้อย่างต่อเนื่อง โดยไม่มีภาพจากกล้องถูกส่งออกจากเครื่องคอมพิวเตอร์ของคุณแม้แต่เฟรมเดียว</p>
+      <p data-lang="en"><b>8Hrs is a small window in the corner of your screen</b> that keeps watch over your posture. When you hunch, tilt or slouch for too long, it changes colour and alerts you straight away, then sums everything up in daily and monthly reports, so good posture becomes a habit — without a single camera frame ever leaving your computer.</p>
     </div>
   </div>
 </section>
@@ -510,18 +523,18 @@
 <section id="features">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow"><span data-lang="th">ฟีเจอร์หลัก</span><span data-lang="en">Core features</span></span>
-      <h2><span data-lang="th">ทำน้อย แต่รู้ตัวได้ไว</span><span data-lang="en">Barely any setup, quick to notice</span></h2>
-      <p data-lang="th">เปิดโปรแกรม ปรับเทียบท่านั่งครั้งเดียว แล้วปล่อยให้มันทำงานอยู่มุมจอ</p>
-      <p data-lang="en">Open it, calibrate your posture once, then let it sit in the corner and work.</p>
+      <span class="eyebrow"><span data-lang="th">ความสามารถหลัก</span><span data-lang="en">Key features</span></span>
+      <h2><span data-lang="th">ตั้งค่าเพียงครั้งเดียว แล้วให้โปรแกรมช่วยดูแลท่านั่ง</span><span data-lang="en">Set it up once, then let it watch your posture</span></h2>
+      <p data-lang="th">ปรับเทียบท่านั่งในครั้งแรก และเลือกใช้ค่าเดิมได้ทันทีในครั้งต่อไป จากนั้นโปรแกรมจะทำงานอยู่ที่มุมจอตลอดการใช้งาน</p>
+      <p data-lang="en">Calibrate the first time and simply reuse it after that, while the app quietly does its job from the corner of your screen.</p>
     </div>
 
     <div class="feature reveal">
       <div class="feature-copy">
-        <span class="tag"><span data-lang="th">01 — เฝ้าดูแบบเรียลไทม์</span><span data-lang="en">01 — Real-time tracking</span></span>
-        <h3><span data-lang="th">วาดโครงร่างท่านั่งทับภาพเว็บแคมสดๆ</span><span data-lang="en">It draws your posture over the live webcam view</span></h3>
-        <p data-lang="th">ระบบตรวจจับท่าทางวาดเส้นไหล่ ลำตัว และศีรษะทับภาพจากกล้องแบบเรียลไทม์ ให้คุณเห็นเลยว่าตอนนี้คอ ไหล่ และหลังอยู่ตำแหน่งไหน โดยไม่ต้องเดา</p>
-        <p data-lang="en">Pose detection overlays your shoulders, torso, and head on the camera image in real time, so you can see exactly where your neck, shoulders, and back are right now — no guessing.</p>
+        <span class="tag"><span data-lang="th">01 — ติดตามแบบเรียลไทม์</span><span data-lang="en">01 — Real-time tracking</span></span>
+        <h3><span data-lang="th">แสดงโครงร่างท่านั่งทับภาพจากเว็บแคม</span><span data-lang="en">Your posture, drawn over your webcam view</span></h3>
+        <p data-lang="th">ระบบตรวจจับท่าทางระบุตำแหน่งศีรษะ ไหล่ และลำตัว แล้วแสดงเป็นโครงร่างแบบเรียลไทม์ ทำให้เห็นได้ทันทีว่าท่านั่งในขณะนั้นเป็นอย่างไร</p>
+        <p data-lang="en">Pose detection locates your head, shoulders and torso and draws them as a live outline, so you can see at a glance how you are sitting right now.</p>
       </div>
       <div class="feature-visual">
         <svg viewBox="0 0 200 150" fill="none" aria-hidden="true">
@@ -540,10 +553,10 @@
 
     <div class="feature flip reveal">
       <div class="feature-copy">
-        <span class="tag"><span data-lang="th">02 — แจ้งเตือนเป็นขั้น</span><span data-lang="en">02 — Escalating alerts</span></span>
-        <h3><span data-lang="th">เขียว → ส้ม → แดง ตามระยะเวลาที่นั่งผิดท่า</span><span data-lang="en">Green → orange → red, by how long you've been off</span></h3>
-        <p data-lang="th">เพิ่งเริ่มก้มเล็กน้อยระบบยังไม่รบกวน แต่ถ้าค้างท่าเดิม ครบ 1 นาทีป้ายเริ่มกะพริบ 2 นาทีเป็นสีส้ม 5 นาทีเป็นสีแดง และมีเตือนให้ลุกยืนแยกต่างหากเมื่อนั่งติดต่อกันนานเกินไป</p>
-        <p data-lang="en">A small slump won't bother you — but hold it: at 1 minute the banner blinks, at 2 minutes it turns orange, at 5 minutes red. A separate nudge tells you to stand up when you've been sitting too long.</p>
+        <span class="tag"><span data-lang="th">02 — แจ้งเตือนตามระดับ</span><span data-lang="en">02 — Escalating alerts</span></span>
+        <h3><span data-lang="th">เปลี่ยนสีตามระยะเวลาที่นั่งผิดท่า</span><span data-lang="en">Colours that change the longer you stay off</span></h3>
+        <p data-lang="th">การก้มเพียงชั่วครู่จะไม่รบกวนการทำงาน หากค้างอยู่ในท่าเดิม โครงร่างจะเปลี่ยนจากสีเขียวเป็นสีเหลือง ป้ายสถานะเริ่มกะพริบเมื่อครบ 1 นาที เปลี่ยนเป็นสีส้มเมื่อเกิน 2 นาที และสีแดงเมื่อเกิน 5 นาที สำหรับบัญชีโปร โปรแกรมจะแจ้งเตือนให้ลุกพักเมื่อนั่งต่อเนื่องนานเกินกำหนดด้วย</p>
+        <p data-lang="en">A brief slump won't interrupt you. Hold it, and the outline turns from green to yellow; the banner starts blinking after one minute, turns orange after two and red after five. Pro accounts also get a reminder to take a break when they have been sitting for too long.</p>
       </div>
       <div class="feature-visual">
         <svg viewBox="0 0 200 150" fill="none" aria-hidden="true">
@@ -551,19 +564,22 @@
           <circle cx="55" cy="66" r="24" fill="rgba(34,197,94,.14)" stroke="var(--good)" stroke-width="2.2"/>
           <circle cx="100" cy="66" r="24" fill="rgba(255,159,69,.14)" stroke="var(--warn)" stroke-width="2.2"/>
           <circle cx="145" cy="66" r="24" fill="rgba(255,68,56,.14)" stroke="var(--crit)" stroke-width="2.2"/>
-          <text x="55" y="112" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="9" fill="var(--muted)">ท่าดี</text>
-          <text x="100" y="112" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="9" fill="var(--muted)">2 min</text>
-          <text x="145" y="112" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="9" fill="var(--muted)">5 min</text>
+          <g data-lang="th" font-family="Segoe UI,sans-serif" font-size="9" fill="var(--muted)" text-anchor="middle">
+            <text x="55" y="112">นั่งตรง</text><text x="100" y="112">2 นาที</text><text x="145" y="112">5 นาที</text>
+          </g>
+          <g data-lang="en" font-family="Segoe UI,sans-serif" font-size="9" fill="var(--muted)" text-anchor="middle">
+            <text x="55" y="112">Upright</text><text x="100" y="112">2 min</text><text x="145" y="112">5 min</text>
+          </g>
         </svg>
       </div>
     </div>
 
     <div class="feature reveal">
       <div class="feature-copy">
-        <span class="tag"><span data-lang="th">03 — รายงานรายเดือน</span><span data-lang="en">03 — Monthly reports</span></span>
-        <h3><span data-lang="th">ดูสถิติท่านั่งย้อนหลังเป็นกราฟรายวัน</span><span data-lang="en">See your posture history as a daily chart</span></h3>
-        <p data-lang="th">สรุปเวลานั่งท่าดี / เอียง / ค่อม ของแต่ละวัน เปอร์เซ็นต์รวม และจำนวนครั้งที่นั่งนานเกินไป ชี้เมาส์ที่แท่งไหนก็เห็นทั้ง % และเวลาจริง ส่งออกเป็น Excel ได้ (ฟีเจอร์โปร)</p>
-        <p data-lang="en">A breakdown of good / tilted / slouched time for each day, overall percentages, and how often you sat too long. Hover any bar for both the percentage and the real duration. Export to Excel (Pro).</p>
+        <span class="tag"><span data-lang="th">03 — รายงานรายวันและรายเดือน</span><span data-lang="en">03 — Daily and monthly reports</span></span>
+        <h3><span data-lang="th">ทบทวนท่านั่งย้อนหลังด้วยกราฟรายวัน</span><span data-lang="en">Look back with a chart for every day</span></h3>
+        <p data-lang="th">รายงานสรุปเวลาที่นั่งตรง นั่งเอียงหรือก้ม และนั่งหลังค่อมของแต่ละวัน พร้อมสัดส่วนโดยรวม จำนวนครั้งที่ได้รับการเตือนนั่งนาน และการเปรียบเทียบกับเดือนที่แล้ว เมื่อชี้ที่แท่งกราฟจะแสดงทั้งเปอร์เซ็นต์และระยะเวลาจริง บัญชีโปรสามารถย้อนดูได้ทุกเดือนและส่งออกเป็นไฟล์ Excel</p>
+        <p data-lang="en">Reports show how long you sat upright, tilted or leaning, and slouched each day, along with overall proportions, the number of long-sit reminders and a comparison with the previous month. Hover over a bar for both the percentage and the actual time. Pro accounts can browse every past month and export to Excel.</p>
       </div>
       <div class="feature-visual">
         <svg viewBox="0 0 200 150" fill="none" aria-hidden="true">
@@ -586,42 +602,44 @@
 </section>
 
 <!-- ================= ความเป็นส่วนตัว ================= -->
+<!-- ข้อความส่วนนี้ต้องสอดคล้องกับ 8hrs/privacy.html เสมอ — ห้ามเคลมเกินกว่าที่นโยบายเขียนไว้
+     ("ส่งผ่านอินเทอร์เน็ต" จงใจเจาะจง เพราะแอปคู่หูบนมือถือส่งข้อมูลผ่าน Wi-Fi ในเครือข่ายด้วย) -->
 <section class="privacy" id="privacy">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow"><span data-lang="th">ความเป็นส่วนตัว</span><span data-lang="en">Privacy</span></span>
-      <h2><span data-lang="th">เว็บแคมของคุณ ยังเป็นของคุณ</span><span data-lang="en">Your webcam stays yours</span></h2>
-      <p data-lang="th">จุดที่ต่างจากแอปเว็บแคมส่วนใหญ่ — 8Hrs ไม่มีเซิร์ฟเวอร์รับภาพเลย</p>
-      <p data-lang="en">The thing most webcam apps get wrong — 8Hrs has no server to receive images at all.</p>
+      <h2><span data-lang="th">เว็บแคมของคุณ ยังคงเป็นของคุณ</span><span data-lang="en">Your webcam stays yours</span></h2>
+      <p data-lang="th">8Hrs ไม่มีเซิร์ฟเวอร์สำหรับรับภาพจากกล้อง ภาพทุกเฟรมได้รับการประมวลผลภายในเครื่องคอมพิวเตอร์ของคุณเอง</p>
+      <p data-lang="en">8Hrs has no server that receives camera images — every frame is processed on your own computer.</p>
     </div>
 
     <div class="privacy-grid reveal">
       <div>
         <ul class="checks">
           <li>
-            <span data-lang="th"><b>ภาพจากกล้องประมวลผลในเครื่องคุณเท่านั้น</b></span>
-            <span data-lang="en"><b>Camera images are processed entirely on your PC</b></span>
+            <span data-lang="th"><b>ภาพจากกล้องได้รับการประมวลผลภายในเครื่องคอมพิวเตอร์ของคุณเท่านั้น</b></span>
+            <span data-lang="en"><b>Camera images are processed only on your PC</b></span>
           </li>
           <li>
-            <span data-lang="th"><b>ไม่มีการบันทึกวิดีโอหรือภาพนิ่งลงไฟล์</b> ทุกเฟรมถูกทิ้งทันทีหลังวิเคราะห์</span>
-            <span data-lang="en"><b>Nothing is recorded to disk</b> — every frame is discarded right after analysis</span>
+            <span data-lang="th"><b>ไม่มีการบันทึกภาพหรือวิดีโอ</b> ภาพแต่ละเฟรมถูกลบทิ้งทันทีหลังการวิเคราะห์</span>
+            <span data-lang="en"><b>Nothing is recorded</b> — each frame is discarded as soon as it has been analysed</span>
           </li>
           <li>
-            <span data-lang="th"><b>ไม่มีการอัปโหลดภาพ</b> ไปเซิร์ฟเวอร์ใดทั้งสิ้น</span>
-            <span data-lang="en"><b>No frames are uploaded</b> anywhere</span>
+            <span data-lang="th"><b>ไม่มีการอัปโหลดภาพ</b> ไปยังเซิร์ฟเวอร์ใด</span>
+            <span data-lang="en"><b>No images are uploaded</b> to any server</span>
           </li>
           <li>
-            <span data-lang="th">สถิติท่านั่งเก็บเป็น<b>ไฟล์ในเครื่องคุณ</b></span>
-            <span data-lang="en">Your posture stats live in a <b>local file on your PC</b></span>
+            <span data-lang="th">สถิติท่านั่งจัดเก็บเป็น<b>ไฟล์ภายในเครื่องคอมพิวเตอร์ของคุณ</b></span>
+            <span data-lang="en">Your posture statistics are kept in a <b>file on your own computer</b></span>
           </li>
           <li>
-            <span data-lang="th">โมเดล AI ฝังมากับโปรแกรม — <b>ปิดเน็ตก็ใช้ได้</b></span>
-            <span data-lang="en">The AI model ships inside the app — <b>it works with the internet off</b></span>
+            <span data-lang="th">โมเดล AI ติดตั้งมาพร้อมโปรแกรม จึง<b>ใช้งานได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต</b></span>
+            <span data-lang="en">The AI model is built into the app, so <b>it works without an internet connection</b></span>
           </li>
         </ul>
         <div class="only-out">
-          <p data-lang="th" style="margin:0"><b>สิ่งเดียวที่ส่งออกไป:</b> เฉพาะตอนคุณเลือกลงชื่อเข้าใช้เพื่อใช้บัญชีโปร — ส่งแค่อีเมลกับสถานะสมาชิกเพื่อตรวจว่าจ่ายแล้วหรือยัง ไม่มีข้อมูลท่านั่งหรือภาพปนไปด้วย ถ้าไม่ลงชื่อเข้าใช้ โปรแกรมไม่ต่อเน็ตเลยแม้แต่ครั้งเดียว</p>
-          <p data-lang="en" style="margin:0"><b>The only exception:</b> if you choose to sign in for Pro, it sends your email and membership status to check whether your subscription is active — no posture data, no images. Never sign in, and the app never touches the network.</p>
+          <p data-lang="th" style="margin:0"><b>ข้อมูลที่ส่งผ่านอินเทอร์เน็ต:</b> เฉพาะเมื่อคุณเข้าสู่ระบบ โปรแกรมจะส่งเพียงอีเมลและสถานะสมาชิกเพื่อยืนยันตัวตนและตรวจสอบสิทธิ์ โดยไม่มีภาพหรือข้อมูลท่านั่งรวมอยู่ด้วย หากไม่เข้าสู่ระบบ จะไม่มีข้อมูลของคุณถูกส่งออกจากเครื่องคอมพิวเตอร์</p>
+          <p data-lang="en" style="margin:0"><b>What goes over the internet:</b> only when you sign in, and only your email address and membership status, to verify your account. No images or posture data are included. If you don't sign in, none of your information leaves your computer.</p>
         </div>
         <a href="/8hrs/privacy">
           <span data-lang="th">อ่านนโยบายความเป็นส่วนตัวฉบับเต็ม →</span>
@@ -639,15 +657,26 @@
           <path d="M70 98 L104 98" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#ah)"/>
           <!-- เครื่องของคุณ -->
           <rect x="108" y="46" width="132" height="104" rx="8" stroke="var(--accent)" stroke-width="1.8" fill="rgba(56,189,248,.06)"/>
-          <text x="174" y="72" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" font-weight="700" fill="var(--text)">เครื่องของคุณ</text>
-          <text x="174" y="94" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="8.5" fill="var(--muted)">วิเคราะห์ท่านั่ง</text>
-          <text x="174" y="110" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="8.5" fill="var(--muted)">เก็บสถิติ (ไฟล์ในเครื่อง)</text>
-          <text x="174" y="132" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="8.5" fill="var(--good)">✓ ไม่มีภาพออกไปไหน</text>
           <!-- เส้นประออกไปข้างนอก -->
           <path d="M240 100 L270 100" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#ah2)"/>
-          <text x="255" y="118" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="7.5" fill="var(--muted)">อีเมล +</text>
-          <text x="255" y="128" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="7.5" fill="var(--muted)">สถานะสมาชิก</text>
-          <text x="255" y="138" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="7" fill="var(--muted)">(เฉพาะตอนลงชื่อเข้าใช้)</text>
+          <g data-lang="th" font-family="Segoe UI,sans-serif" text-anchor="middle">
+            <text x="174" y="72" font-size="10" font-weight="700" fill="var(--text)">คอมพิวเตอร์ของคุณ</text>
+            <text x="174" y="94" font-size="8.5" fill="var(--muted)">วิเคราะห์ท่านั่ง</text>
+            <text x="174" y="110" font-size="8.5" fill="var(--muted)">จัดเก็บสถิติในคอมพิวเตอร์</text>
+            <text x="174" y="132" font-size="8.5" fill="var(--good)">✓ ไม่มีภาพถูกส่งออก</text>
+            <text x="255" y="118" font-size="7.5" fill="var(--muted)">อีเมล +</text>
+            <text x="255" y="128" font-size="7.5" fill="var(--muted)">สถานะสมาชิก</text>
+            <text x="255" y="138" font-size="7" fill="var(--muted)">(เมื่อเข้าสู่ระบบ)</text>
+          </g>
+          <g data-lang="en" font-family="Segoe UI,sans-serif" text-anchor="middle">
+            <text x="174" y="72" font-size="10" font-weight="700" fill="var(--text)">Your computer</text>
+            <text x="174" y="94" font-size="8.5" fill="var(--muted)">Posture analysis</text>
+            <text x="174" y="110" font-size="8.5" fill="var(--muted)">Statistics (local file)</text>
+            <text x="174" y="132" font-size="8.5" fill="var(--good)">✓ No images leave</text>
+            <text x="255" y="118" font-size="7.5" fill="var(--muted)">Email +</text>
+            <text x="255" y="128" font-size="7.5" fill="var(--muted)">membership</text>
+            <text x="255" y="138" font-size="7" fill="var(--muted)">(when signed in)</text>
+          </g>
           <defs>
             <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
             <marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
@@ -659,48 +688,53 @@
 </section>
 
 <!-- ================= ราคา ================= -->
+<!-- ราคา/ช่องทางต้องตรงกับ PRO_PRICE_QR_* / PRO_PRICE_LS_* ใน posture_monitor.py (ดูรายการใน CLAUDE.md) -->
 <section id="pricing">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow"><span data-lang="th">ราคา</span><span data-lang="en">Pricing</span></span>
-      <h2><span data-lang="th">เริ่มใช้ฟรี อัปเกรดเมื่อพร้อม</span><span data-lang="en">Start free, upgrade when you're ready</span></h2>
-      <p data-lang="th">ไม่มีการตัดบัตรอัตโนมัติ — Pro เป็นการโอนตามรอบที่เลือกเอง เปิดสิทธิ์ให้หลังตรวจสอบยอดโอน</p>
-      <p data-lang="en">Nothing auto-renews — Pro is a one-off transfer for the period you choose, activated after we confirm it.</p>
+      <h2><span data-lang="th">เริ่มต้นใช้งานได้ฟรี และเลือกใช้บัญชีโปรเมื่อต้องการ</span><span data-lang="en">Start free, upgrade when you're ready</span></h2>
+      <p data-lang="th">ไม่มีการตัดเงินอัตโนมัติ บัญชีโปรเป็นการชำระเงินครั้งเดียวตามระยะเวลาที่เลือก</p>
+      <p data-lang="en">Nothing renews automatically — Pro is a one-off payment for the period you choose.</p>
     </div>
 
     <div class="pricing-grid reveal">
       <div class="plan">
         <h3>Free</h3>
         <div class="price">฿0</div>
+        <div class="price-alt"><span data-lang="th">ต้องสมัครบัญชีผู้ใช้ (ไม่มีค่าใช้จ่าย)</span><span data-lang="en">Requires a free account</span></div>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ตรวจจับท่านั่ง + แจ้งเตือนเป็นขั้น + เสียงเตือน</span><span data-lang="en">Posture detection + escalating alerts + sound</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">เตือนให้ลุกยืน + หยุดนับเวลาตอนลุกออกไป</span><span data-lang="en">Stand-up reminders + tracking pauses when you leave</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">เก็บสถิติ 7 วันแรกของแต่ละเดือน + ดูรายงานเดือนปัจจุบัน</span><span data-lang="en">Stats for the first 7 days of each month + current month's report</span></li>
-          <li class="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span data-lang="th">รายงานย้อนหลังทุกเดือน · ส่งออก Excel</span><span data-lang="en">Every past month · Excel export</span></li>
-          <li class="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span data-lang="th">ตั้งเวลาเตือนนั่งนานเอง · ซ่อนโปรแกรมถาวร</span><span data-lang="en">Custom reminder interval · always-hidden mode</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ตรวจจับท่านั่ง พร้อมแจ้งเตือนตามระดับและเสียงเตือน</span><span data-lang="en">Posture detection with escalating alerts and sound</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">หยุดนับเวลาอัตโนมัติเมื่อลุกจากโต๊ะ</span><span data-lang="en">Timing pauses automatically when you leave your desk</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">รายงาน 7 วันแรกของเดือนปัจจุบัน</span><span data-lang="en">Reports for the first 7 days of the current month</span></li>
+          <li class="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span data-lang="th">แจ้งเตือนให้ลุกพักเมื่อนั่งนาน</span><span data-lang="en">Break reminders after sitting too long</span></li>
+          <li class="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span data-lang="th">รายงานครบทุกวัน ย้อนดูทุกเดือน และส่งออก Excel</span><span data-lang="en">Full daily reports, every past month and Excel export</span></li>
         </ul>
-        <a class="btn btn-ghost" href="#notify"><span data-lang="th">รับแจ้งเตือน</span><span data-lang="en">Get notified</span></a>
+        <a class="btn btn-ghost" href="#notify"><span data-lang="th">รับข่าวการเปิดตัว</span><span data-lang="en">Get notified</span></a>
       </div>
 
       <div class="plan featured">
-        <span class="plan-badge"><span data-lang="th">คุ้มค่าที่สุด</span><span data-lang="en">Best value</span></span>
+        <span class="plan-badge"><span data-lang="th">แนะนำ</span><span data-lang="en">Recommended</span></span>
         <h3>Pro</h3>
         <div class="price">฿39<small> <span data-lang="th">/ เดือน</span><span data-lang="en">/ month</span></small></div>
-        <div class="price-alt"><span data-lang="th">หรือ ฿399/ปี · ต่างประเทศ $30/ปี ผ่าน PayPal</span><span data-lang="en">or ฿399/year · $30/year via PayPal outside Thailand</span></div>
+        <div class="price-alt">
+          <span data-lang="th">ผ่านพร้อมเพย์ หรือ ฿399 ต่อปี · ชำระด้วยบัตรเครดิต บัตรเดบิต หรือ PayPal ฿69 ต่อ 30 วัน หรือ ฿599 ต่อ 365 วัน</span>
+          <span data-lang="en">by PromptPay, or ฿399 a year · by credit card, debit card or PayPal, ฿69 for 30 days or ฿599 for 365 days</span>
+        </div>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ทุกอย่างในแพ็กเกจ Free</span><span data-lang="en">Everything in Free</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">เก็บสถิติทุกวัน + ดูรายงานย้อนหลังทุกเดือน</span><span data-lang="en">Stats every day + every past month's report</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ตั้งเวลาเตือนนั่งนานได้เอง</span><span data-lang="en">Set your own stand-up reminder interval</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">กดค้างดูภาพจากกล้อง + เก็บภาพอัตโนมัติตอนแจ้งเตือนแดง</span><span data-lang="en">Hold to view the camera + auto snapshot on red alerts</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ซ่อนโปรแกรมทำงานอยู่เบื้องหลัง + ส่งออก Excel</span><span data-lang="en">Run hidden in the background + Excel export</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ความสามารถทั้งหมดของแพ็กเกจ Free</span><span data-lang="en">Everything in Free</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">แจ้งเตือนให้ลุกพัก พร้อมกำหนดระยะเวลาเองได้</span><span data-lang="en">Break reminders, at an interval you choose</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">รายงานครบทุกวัน ย้อนดูได้ทุกเดือน และส่งออก Excel</span><span data-lang="en">Full daily reports, every past month and Excel export</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">แสดงภาพจากกล้องอัตโนมัติเมื่อเข้าสู่ระดับแดง</span><span data-lang="en">Camera view appears automatically on red alerts</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg><span data-lang="th">ซ่อนการทำงานไว้เบื้องหลัง และเลือกรูปแบบเสียงเตือน</span><span data-lang="en">Run hidden in the background and choose your alert sound</span></li>
         </ul>
-        <a class="btn btn-primary" href="#notify"><span data-lang="th">รับแจ้งเตือน</span><span data-lang="en">Get notified</span></a>
+        <a class="btn btn-primary" href="#notify"><span data-lang="th">รับข่าวการเปิดตัว</span><span data-lang="en">Get notified</span></a>
       </div>
     </div>
 
     <p class="pricing-fine reveal">
-      <span data-lang="th">ชำระครั้งเดียวต่อรอบ ไม่ผูกบัตร ไม่ต่ออายุอัตโนมัติ — หมดอายุแล้วโปรแกรมไม่หยุดทำงาน แค่กลับไปเป็นบัญชีฟรี และถ้าเน็ตหลุดยังใช้สิทธิ์โปรต่อได้อีก 14 วัน · ทดลองใช้โปรฟรี 7 วัน กดครั้งเดียวจากในโปรแกรม</span>
-      <span data-lang="en">One payment per period, no card on file, no auto-renewal — when it expires the app keeps working, it just returns to Free. Lose your connection and Pro keeps working for 14 more days · 7-day free trial, one click inside the app.</span>
+      <span data-lang="th">ทุกช่องทางเป็นการชำระเงินครั้งเดียวต่อรอบ ไม่มีการบันทึกข้อมูลบัตรเครดิตและไม่มีการต่ออายุอัตโนมัติ เมื่อสิทธิ์หมดอายุ โปรแกรมยังใช้งานได้ตามปกติในฐานะบัญชีฟรี และหากไม่ได้เชื่อมต่ออินเทอร์เน็ต สิทธิ์โปรยังใช้งานได้ต่อไปอีกสูงสุด 14 วัน · ทดลองใช้บัญชีโปรได้ฟรี 7 วันผ่านเมนูในโปรแกรม</span>
+      <span data-lang="en">Each payment covers a single period — no card is kept on file and nothing renews automatically. When Pro expires, the app carries on as a free account, and if you are offline Pro stays active for up to 14 days. · Try Pro free for 7 days from inside the app.</span>
     </p>
   </div>
 </section>
@@ -710,81 +744,81 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow"><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">FAQ</span></span>
-      <h2><span data-lang="th">ยังลังเลอยู่ใช่ไหม</span><span data-lang="en">Still on the fence?</span></h2>
+      <h2><span data-lang="th">คำถามที่พบบ่อย</span><span data-lang="en">Questions people ask</span></h2>
     </div>
 
     <div class="faq-list reveal">
       <details class="faq" open>
-        <summary><span><span data-lang="th">ต้องเปิดกล้องตลอดเวลาไหม ภาพจากกล้องปลอดภัยแค่ไหน</span><span data-lang="en">Does the camera stay on the whole time? How safe is the footage?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">ต้องเปิดกล้องตลอดเวลาหรือไม่ และภาพจากกล้องปลอดภัยเพียงใด</span><span data-lang="en">Does the camera need to be on? How safe is the footage?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ต้องเปิดกล้องขณะโปรแกรมทำงานเพื่อตรวจจับท่านั่ง แต่ภาพทุกเฟรมถูกวิเคราะห์ในหน่วยความจำแล้วทิ้งทันที ไม่มีการเขียนลงไฟล์และไม่มีการส่งออกจากเครื่องคุณ (ยกเว้นฟีเจอร์โปรที่เก็บสแนปช็อตตอนแจ้งเตือนแดง ซึ่งก็เก็บไว้ในเครื่องคุณเช่นกัน)</span>
-          <span data-lang="en">The camera needs to be on while the app runs so it can detect your posture, but every frame is analysed in memory and discarded immediately — nothing is written to disk and nothing leaves your computer (except the Pro snapshot on red alerts, which is also stored only on your PC).</span>
+          <span data-lang="th">โปรแกรมต้องใช้กล้องขณะทำงานเพื่อตรวจจับท่านั่ง ภาพแต่ละเฟรมจะได้รับการวิเคราะห์ในหน่วยความจำและลบทิ้งทันที โดยไม่มีการบันทึกลงไฟล์และไม่มีการส่งออกจากเครื่องคอมพิวเตอร์ของคุณ</span>
+          <span data-lang="en">The camera needs to be on while the app is running so that it can track your posture. Each frame is analysed in memory and discarded immediately — nothing is saved to a file, and nothing leaves your computer.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">รองรับ Mac หรือ Linux ไหม</span><span data-lang="en">Does it support Mac or Linux?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">รองรับ Mac หรือ Linux หรือไม่</span><span data-lang="en">Is there a Mac or Linux version?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ตอนนี้รองรับ Windows 10/11 เท่านั้น เพราะใช้เทคนิคหน้าต่างโปร่งใสเฉพาะของ Windows ในการวางโครงร่างทับหน้าจอ</span>
-          <span data-lang="en">Windows 10/11 only for now — it relies on a Windows-specific transparent-window technique to place the overlay on screen.</span>
+          <span data-lang="th">ปัจจุบันรองรับเฉพาะ Windows 10 และ Windows 11 เนื่องจากโปรแกรมใช้ความสามารถเฉพาะของ Windows ในการแสดงหน้าต่างโปร่งใสบนหน้าจอ</span>
+          <span data-lang="en">Not at the moment. 8Hrs supports Windows 10 and Windows 11 only, as it relies on Windows-specific features to display its transparent overlay.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">สมัคร Pro แล้วยกเลิกได้ไหม ต้องผูกบัตรเครดิตหรือเปล่า</span><span data-lang="en">Can I cancel Pro? Is a credit card required?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">บัญชีโปรต้องลงทะเบียนบัตรเครดิตหรือไม่ และยกเลิกอย่างไร</span><span data-lang="en">Do I need a credit card for Pro? How do I cancel?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ไม่ต้องผูกบัตร — Pro เป็นการโอนครั้งเดียวต่อรอบ (รายเดือนหรือรายปี) ไม่มีการตัดเงินอัตโนมัติ พอครบรอบแล้วไม่ต่ออายุ สิทธิ์ก็หมดไปเอง ไม่มีขั้นตอน "ยกเลิก" ที่ต้องทำ</span>
-          <span data-lang="en">No card on file — Pro is a one-off transfer per period (monthly or yearly) with no automatic charges. When the period ends without renewal, Pro simply lapses. There's no "cancel" step to remember.</span>
+          <span data-lang="th">ไม่ต้องลงทะเบียนบัตรเครดิต บัญชีโปรเป็นการชำระเงินครั้งเดียวตามรอบที่เลือก (รายเดือนหรือรายปี) และไม่มีการตัดเงินอัตโนมัติ เมื่อครบกำหนดโดยไม่ได้ต่ออายุ สิทธิ์จะสิ้นสุดลงเอง จึงไม่มีขั้นตอนการยกเลิก</span>
+          <span data-lang="en">No card is kept on file. Pro is a one-off payment for the period you choose (monthly or yearly) and never renews automatically, so when the period ends without renewal it simply lapses — there is nothing to cancel.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">โปรแกรมจะบังหน้าจอตอนทำงานไหม</span><span data-lang="en">Will it block my screen while I work?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">หน้าต่างของโปรแกรมจะบดบังการทำงานหรือไม่</span><span data-lang="en">Will it get in the way of my work?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ไม่บัง — หน้าต่างของ 8Hrs เป็นกล่องเล็กๆ ลากย้ายได้ วางไว้มุมจอ ดับเบิลคลิกเพื่อซ่อนชั่วคราว 30 วินาที หรือย่อเหลือแถบเล็กสูง 42 พิกเซล และไม่ขึ้นมาแทรกกลางงานที่ทำอยู่</span>
-          <span data-lang="en">No — the 8Hrs window is a small draggable box in the corner. Double-click to hide it for 30 seconds, or shrink it to a 42-pixel strip. It never pops up over what you're working on.</span>
+          <span data-lang="th">ไม่บดบัง หน้าต่างของ 8Hrs มีขนาดเล็กและอยู่ที่มุมจอ การคลิกเมาส์จะทะลุผ่านไปยังโปรแกรมด้านหลัง เมื่อเลื่อนเมาส์ไปชี้ หน้าต่างจะซ่อนตัวชั่วคราว 7 วินาที และสามารถย่อให้เหลือเพียงแถบป้ายสถานะสูงประมาณ 42 พิกเซลได้</span>
+          <span data-lang="en">No. The 8Hrs window is small and sits in a corner of the screen. Clicks pass straight through it, it hides for 7 seconds when you point the mouse at it, and you can shrink it to a status strip about 42 pixels tall.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">ทำไมแจ้งเตือนไม่ขึ้นทันทีที่ก้มนิดเดียว</span><span data-lang="en">Why doesn't it alert the instant I lean a little?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">เหตุใดจึงไม่แจ้งเตือนทันทีที่ก้มเพียงเล็กน้อย</span><span data-lang="en">Why doesn't it alert me the moment I lean?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ตั้งใจให้มีช่วงผ่อนผันสั้นๆ ก่อนแจ้งเตือน เพื่อไม่รบกวนตอนก้มหยิบของหรือเปลี่ยนอิริยาบถชั่วครู่ ระบบจะเตือนเมื่อค้างอยู่ในท่าที่ไม่ดีต่อเนื่องเกินเวลาที่กำหนดเท่านั้น</span>
-          <span data-lang="en">There's a short grace period by design, so reaching for something or shifting position briefly doesn't trigger it. It only alerts when you hold a poor posture continuously past the threshold.</span>
+          <span data-lang="th">โปรแกรมกำหนดช่วงเวลาผ่อนผันไว้ เพื่อไม่ให้แจ้งเตือนเมื่อก้มหยิบสิ่งของหรือเปลี่ยนอิริยาบถชั่วขณะ การแจ้งเตือนจะเกิดขึ้นเมื่ออยู่ในท่านั่งที่ไม่เหมาะสมต่อเนื่องเกินเวลาที่กำหนดเท่านั้น</span>
+          <span data-lang="en">There is a short grace period by design, so reaching for something or shifting position does not set it off. Alerts appear only once you have held a poor posture for longer than the set time.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">ใช้กับกล้องภายนอกหรือมีหลายกล้องได้ไหม</span><span data-lang="en">Can I use an external webcam or pick between cameras?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">ใช้กับกล้องภายนอก หรือเลือกระหว่างหลายกล้องได้หรือไม่</span><span data-lang="en">Can I use an external webcam, or choose between cameras?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ได้ทั้งคู่ ใช้ได้กับเว็บแคมทั่วไปที่ Windows รู้จักอยู่แล้ว ทั้งกล้องในตัวโน้ตบุ๊กและกล้อง USB แยก เลือกกล้องได้จากเมนู เปลี่ยนกล้องแล้วต้องปรับเทียบท่านั่งใหม่</span>
-          <span data-lang="en">Both. It works with any webcam Windows already recognises — built-in or external USB. Pick the camera from the menu; after switching, calibrate your posture again.</span>
+          <span data-lang="th">ได้ โปรแกรมรองรับเว็บแคมทั่วไปที่ Windows รู้จัก ทั้งกล้องในตัวโน้ตบุ๊กและกล้องแบบ USB สามารถเลือกกล้องได้ในเมนูตั้งค่า และควรปรับเทียบท่านั่งใหม่หลังเปลี่ยนกล้อง</span>
+          <span data-lang="en">Yes. Any webcam that Windows recognises will work, whether built in or connected by USB. Choose the camera in Settings, then recalibrate your posture.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">ต้องต่อเน็ตตลอดเวลาไหม</span><span data-lang="en">Do I need to be online all the time?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">ต้องเชื่อมต่ออินเทอร์เน็ตตลอดเวลาหรือไม่</span><span data-lang="en">Do I need to be online all the time?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">ไม่ต้อง การตรวจจับท่านั่งทำงานได้แม้ไม่มีเน็ต ต้องต่อเน็ตเฉพาะตอนลงชื่อเข้าใช้และตรวจสอบสิทธิ์โปรเท่านั้น</span>
-          <span data-lang="en">No. Posture detection works fully offline. A connection is only needed when signing in and checking Pro status.</span>
+          <span data-lang="th">ไม่จำเป็น การตรวจจับท่านั่งทำงานได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต การเชื่อมต่อจำเป็นเฉพาะเมื่อเข้าสู่ระบบและตรวจสอบสิทธิ์บัญชีโปรเท่านั้น</span>
+          <span data-lang="en">No. Posture tracking works entirely offline; a connection is needed only to sign in and to check your Pro status.</span>
         </div>
       </details>
       <details class="faq">
-        <summary><span><span data-lang="th">จ่ายเงินแล้วได้สิทธิ์โปรเลยไหม</span><span data-lang="en">Do I get Pro immediately after paying?</span></span><span class="pm"></span></summary>
+        <summary><span><span data-lang="th">หลังชำระเงินแล้ว จะได้รับสิทธิ์โปรเมื่อใด</span><span data-lang="en">How soon is Pro activated after I pay?</span></span><span class="pm"></span></summary>
         <div class="faq-body">
-          <span data-lang="th">เป็นการเปิดสิทธิ์ด้วยมือ ปกติภายในไม่กี่ชั่วโมง ไม่เกิน 1 วัน หลังโอนแล้วแจ้งอีเมลบัญชีที่ใช้ล็อกอินในแอปมาตามขั้นตอนในหน้าต่างชำระเงิน — ใช้อีเมลเดียวกับที่ล็อกอินเสมอ</span>
-          <span data-lang="en">Activation is manual, usually within a few hours and no more than a day. After transferring, send the email you use to sign in to the app, as shown in the payment window — always the same email you log in with.</span>
+          <span data-lang="th">หากชำระด้วยบัตรเครดิต บัตรเดบิต หรือ PayPal ผ่าน Lemon Squeezy ระบบจะเปิดสิทธิ์ให้อัตโนมัติภายในไม่กี่นาที หากชำระผ่านพร้อมเพย์ ผู้พัฒนาจะเปิดสิทธิ์ให้หลังตรวจสอบยอดโอนภายใน 1 วัน โดยโปรดแจ้งอีเมลเดียวกับที่ใช้เข้าสู่ระบบในโปรแกรม</span>
+          <span data-lang="en">Credit card, debit card and PayPal payments through Lemon Squeezy are activated automatically within minutes. PromptPay transfers are activated by us once the payment has been confirmed, within one day — please send the same email address you use to sign in to the app.</span>
         </div>
       </details>
     </div>
   </div>
 </section>
 
-<!-- ================= ฟอร์มแจ้งเตือน ================= -->
+<!-- ================= ฟอร์มรับข่าวการเปิดตัว ================= -->
 <section class="notify" id="notify">
   <div class="wrap">
     <div class="notify-box reveal">
-      <span class="eyebrow"><span data-lang="th">ยังไม่เปิดให้ดาวน์โหลด</span><span data-lang="en">Not available yet</span></span>
+      <span class="eyebrow"><span data-lang="th">ยังไม่เปิดให้ดาวน์โหลด</span><span data-lang="en">Not yet available</span></span>
       <h2 style="font-size:clamp(1.6em,3.4vw,2.2em);margin:0 0 12px">
-        <span data-lang="th">รับแจ้งเตือนตอนเปิดให้ดาวน์โหลด</span>
-        <span data-lang="en">Get notified when it launches</span>
+        <span data-lang="th">ลงทะเบียนรับข่าวการเปิดตัว</span>
+        <span data-lang="en">Be the first to know when it launches</span>
       </h2>
-      <p style="color:var(--muted);margin:0" data-lang="th">8Hrs กำลังอยู่ระหว่างส่งขึ้น Microsoft Store กรอกอีเมลไว้ แล้วเราจะส่งข่าวให้ทันทีที่เปิดให้ดาวน์โหลด — ฉบับเดียว ไม่มีสแปม</p>
-      <p style="color:var(--muted);margin:0" data-lang="en">8Hrs is on its way to the Microsoft Store. Leave your email and we'll tell you the moment it's available — one message, no spam.</p>
+      <p style="color:var(--muted);margin:0" data-lang="th">8Hrs อยู่ระหว่างการเตรียมเผยแพร่บน Microsoft Store โปรดลงทะเบียนอีเมลไว้ แล้วเราจะแจ้งให้ทราบทันทีที่เปิดให้ดาวน์โหลด โดยจะส่งเพียงฉบับเดียว</p>
+      <p style="color:var(--muted);margin:0" data-lang="en">8Hrs is being prepared for release on the Microsoft Store. Leave your email address and we will let you know as soon as it is available — just one message, nothing more.</p>
 
       <form class="notify-form" id="notify-form" novalidate>
         <input type="email" name="email" id="nf-email" autocomplete="email" required maxlength="320"
@@ -794,13 +828,13 @@
           <label>Website<input type="text" name="website" id="nf-website" tabindex="-1" autocomplete="off"></label>
         </div>
         <button type="submit" class="btn btn-primary" id="nf-submit">
-          <span data-lang="th">แจ้งเตือนฉัน</span><span data-lang="en">Notify me</span>
+          <span data-lang="th">ลงทะเบียน</span><span data-lang="en">Notify me</span>
         </button>
       </form>
       <p class="notify-status" id="nf-status" role="status" aria-live="polite"></p>
       <p class="notify-alt">
-        <span data-lang="th">หรือทักไลน์ <b>@341jvvzy</b> ก็ได้</span>
-        <span data-lang="en">or message us on LINE <b>@341jvvzy</b></span>
+        <span data-lang="th">หรือติดต่อทาง LINE <b>@341jvvzy</b></span>
+        <span data-lang="en">You can also reach us on LINE at <b>@341jvvzy</b></span>
       </p>
     </div>
   </div>
@@ -809,10 +843,10 @@
 <!-- ================= CTA ปิดท้าย ================= -->
 <section class="cta">
   <div class="wrap reveal">
-    <h2><span data-lang="th">พร้อมนั่งทำงานทั้งวันโดยไม่ปวดหลังหรือยัง</span><span data-lang="en">Ready to sit through the day without the ache?</span></h2>
-    <p data-lang="th">ฟีเจอร์ตรวจจับและเตือนทั้งหมดจะใช้ได้ฟรี · ติดตั้งเสร็จใน 1 นาที ปรับเทียบอีก 5 วินาที</p>
-    <p data-lang="en">Every detection and alert feature will be free · one minute to install, five seconds to calibrate.</p>
-    <a class="btn btn-primary" href="#notify"><span data-lang="th">รับแจ้งเตือนเมื่อเปิดตัว</span><span data-lang="en">Notify me at launch</span></a>
+    <h2><span data-lang="th">พร้อมดูแลท่านั่งและบุคลิกภาพระหว่างวันทำงานแล้วหรือยัง</span><span data-lang="en">Ready to look after your posture through the workday?</span></h2>
+    <p data-lang="th">ฟังก์ชันตรวจจับและแจ้งเตือนหลักใช้งานได้ฟรี ติดตั้งเสร็จได้ในไม่กี่นาที และการปรับเทียบท่านั่งใช้เวลาเพียงไม่กี่วินาที</p>
+    <p data-lang="en">The core tracking and alerts are free, installation takes a few minutes, and calibration takes only a few seconds.</p>
+    <a class="btn btn-primary" href="#notify"><span data-lang="th">ลงทะเบียนรับข่าวการเปิดตัว</span><span data-lang="en">Notify me at launch</span></a>
   </div>
 </section>
 
@@ -824,7 +858,7 @@
     </span>
     <div class="footer-links">
       <a href="/8hrs/privacy"><span data-lang="th">นโยบายความเป็นส่วนตัว</span><span data-lang="en">Privacy policy</span></a>
-      <a href="/8hrs/guide"><span data-lang="th">คู่มือการใช้งาน</span><span data-lang="en">Guide</span></a>
+      <a href="/8hrs/guide"><span data-lang="th">คู่มือการใช้งาน</span><span data-lang="en">User guide</span></a>
       <a href="https://line.me/R/ti/p/%40341jvvzy" target="_blank" rel="noopener">LINE @341jvvzy</a>
       <a href="mailto:contact@saantie.com">contact@saantie.com</a>
       <a href="/">saantie.com</a>
@@ -887,7 +921,7 @@
       if (!form.reportValidity()) return;
 
       btn.disabled = true;
-      setStatus("ok", "กำลังส่ง...", "Sending...");
+      setStatus("ok", "กำลังส่งข้อมูล...", "Sending…");
 
       var lang = document.documentElement.lang === "en" ? "en" : "th";
       var msg = lang === "en"
@@ -908,13 +942,13 @@
           if (!res.ok) throw new Error("HTTP " + res.status);
           form.reset();
           setStatus("ok",
-            "รับอีเมลไว้แล้ว ขอบคุณครับ จะแจ้งทันทีที่เปิดให้ดาวน์โหลด",
-            "You're on the list — thank you! We'll email you the moment it's available.");
+            "ลงทะเบียนเรียบร้อยแล้ว ขอบคุณที่ให้ความสนใจ เราจะแจ้งให้ทราบทันทีที่เปิดให้ดาวน์โหลด",
+            "Thank you — you're on the list. We'll email you as soon as 8Hrs is available.");
         })
         .catch(function () {
           setStatus("err",
-            "ส่งไม่สำเร็จ ลองใหม่อีกครั้ง หรือทักไลน์ @341jvvzy",
-            "Couldn't send that — please try again, or message us on LINE @341jvvzy.");
+            "ไม่สามารถส่งข้อมูลได้ โปรดลองอีกครั้ง หรือติดต่อทาง LINE @341jvvzy",
+            "Sorry, that didn't go through. Please try again, or contact us on LINE at @341jvvzy.");
         })
         .finally(function () { btn.disabled = false; });
     });

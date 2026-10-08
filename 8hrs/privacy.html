@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="utf-8">
@@ -60,152 +60,217 @@
 
   <div class="langbar"><button class="langbtn" id="langbtn" type="button"></button></div>
 
+  <!-- เนื้อหานโยบายต้องตรงกับพฤติกรรมจริงของโปรแกรมเสมอ (posture_monitor.py + android/) —
+       ฉบับนี้ตรวจกับโค้ด ต.ค. 2569: ลงชื่อด้วย Google, แอปคู่หูผ่าน Wi-Fi ในเครือข่าย, Lemon Squeezy
+       ถ้าเพิ่มบริการภายนอกใหม่ (เช่น AdMob ในแอป Android) ต้องแก้หน้านี้พร้อมกัน -->
+
   <div class="card" data-lang="th">
     <h1>นโยบายความเป็นส่วนตัว</h1>
-    <p class="muted">8Hrs Posture Monitor · ปรับปรุงล่าสุด 19 สิงหาคม 2569</p>
+    <p class="muted">8Hrs Posture Monitor และ 8Hrs Companion · ปรับปรุงล่าสุดเมื่อวันที่ 8 ตุลาคม 2569</p>
 
     <div class="key">
-      <b>สรุปสั้นที่สุด:</b> ภาพจากกล้องและข้อมูลท่านั่งของคุณ<b>ไม่เคยออกจากเครื่อง</b>
-      ประมวลผลในเครื่องทั้งหมด สิ่งเดียวที่ส่งออกคืออีเมลและสถานะสมาชิก และเฉพาะเมื่อคุณเลือกเข้าสู่ระบบเท่านั้น
+      <b>สาระสำคัญ:</b> ภาพจากกล้องได้รับการประมวลผลภายในเครื่องคอมพิวเตอร์ของผู้ใช้เท่านั้น
+      โดยไม่มีการบันทึกหรือส่งออกไปยังที่ใด ข้อมูลที่ส่งผ่านอินเทอร์เน็ตมีเพียงข้อมูลบัญชีผู้ใช้ที่จำเป็นต่อการตรวจสอบสิทธิ์สมาชิก และจะเกิดขึ้นเฉพาะเมื่อผู้ใช้เลือกเข้าสู่ระบบเท่านั้น
     </div>
 
-    <h2>1. ข้อมูลที่ประมวลผลในเครื่องเท่านั้น (ไม่ส่งออกไปไหน)</h2>
+    <p>นโยบายความเป็นส่วนตัวฉบับนี้อธิบายการเก็บรวบรวม การใช้ และการเปิดเผยข้อมูลของผลิตภัณฑ์ต่อไปนี้
+       ซึ่งพัฒนาโดย Saantie นักพัฒนาอิสระ (“ผู้พัฒนา”)</p>
     <ul>
-      <li><b>ภาพจากกล้อง</b> — ใช้ตรวจจับตำแหน่งไหล่และตาแบบเรียลไทม์ <b>ไม่มีการบันทึกเป็นไฟล์ ไม่มีการส่งขึ้นเซิร์ฟเวอร์ใดๆ</b> ภาพแต่ละเฟรมถูกทิ้งทันทีหลังประมวลผลเสร็จ</li>
-      <li><b>สถิติท่านั่งรายวัน</b> — จำนวนวินาทีที่ท่านั่งดี/เตือน/แย่ในแต่ละวัน เก็บในไฟล์ฐานข้อมูลบนเครื่องคุณที่
+      <li><b>8Hrs Posture Monitor</b> — โปรแกรมคอมพิวเตอร์สำหรับระบบปฏิบัติการ Windows (“โปรแกรม”)</li>
+      <li><b>8Hrs Companion</b> — แอปพลิเคชันคู่หูสำหรับสมาร์ทโฟนระบบปฏิบัติการ Android (“แอปพลิเคชัน”)</li>
+    </ul>
+
+    <h2>1. ข้อมูลที่ประมวลผลภายในเครื่องคอมพิวเตอร์ของผู้ใช้เท่านั้น</h2>
+    <ul>
+      <li><b>ภาพจากกล้อง</b> โปรแกรมใช้ภาพจากกล้องเพื่อระบุตำแหน่งดวงตาและไหล่ และประเมินท่านั่งแบบเรียลไทม์
+        ภาพแต่ละเฟรมจะถูกลบทิ้งทันทีหลังการประมวลผล โปรแกรมไม่บันทึกภาพนิ่งหรือวิดีโอลงในไฟล์
+        และไม่ส่งภาพไปยังเซิร์ฟเวอร์ใด</li>
+      <li><b>สถิติท่านั่งรายวัน</b> ได้แก่ ระยะเวลาที่อยู่ในท่านั่งแต่ละระดับและจำนวนครั้งของการแจ้งเตือน
+        จัดเก็บในไฟล์ฐานข้อมูลบนเครื่องคอมพิวเตอร์ของผู้ใช้ที่
         <code>%LOCALAPPDATA%\PostureMonitor\posture_history.db</code></li>
-      <li><b>ค่าตั้งค่าต่างๆ</b> — ค่าปรับเทียบท่านั่ง กล้องที่เลือก เก็บบนเครื่องเช่นกัน</li>
+      <li><b>การตั้งค่าโปรแกรม</b> เช่น ค่าการปรับเทียบท่านั่ง กล้องที่เลือกใช้ และชื่อที่แสดง จัดเก็บบนเครื่องคอมพิวเตอร์ของผู้ใช้เช่นเดียวกัน</li>
     </ul>
-    <p>ข้อมูลทั้งหมดในหัวข้อนี้ลบได้เองโดยลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code> หรือถอนการติดตั้งโปรแกรม</p>
+    <p>ผู้ใช้สามารถลบข้อมูลข้างต้นทั้งหมดได้โดยลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code>
+       หรือถอนการติดตั้งโปรแกรม สำหรับโปรแกรมที่ติดตั้งจาก Microsoft Store ข้อมูลดังกล่าวจะถูกลบโดยอัตโนมัติเมื่อถอนการติดตั้ง</p>
 
-    <h2>2. ข้อมูลที่ส่งออกจากเครื่อง (เฉพาะเมื่อเข้าสู่ระบบ)</h2>
-    <p>โปรแกรมใช้งานฟีเจอร์พื้นฐานได้โดย<b>ไม่ต้องเข้าสู่ระบบ</b> ซึ่งกรณีนั้นจะไม่มีข้อมูลใดออกจากเครื่องเลย
-       หากคุณเลือกสมัครสมาชิกหรือเข้าสู่ระบบ จะมีการส่งข้อมูลต่อไปนี้:</p>
+    <h2>2. ข้อมูลที่ส่งออกจากเครื่องคอมพิวเตอร์เมื่อเข้าสู่ระบบ</h2>
+    <p>การเข้าสู่ระบบเป็นทางเลือกของผู้ใช้ หากผู้ใช้ไม่เข้าสู่ระบบ โปรแกรมยังคงตรวจจับท่านั่งได้ และจะไม่มีข้อมูลของผู้ใช้ถูกส่งออกจากเครื่องคอมพิวเตอร์ ทั้งนี้ การแจ้งเตือนด้วยเสียง ข้อความแสดงสถานะ
+       และฟังก์ชันที่เกี่ยวข้องกับบัญชีผู้ใช้ จำเป็นต้องเข้าสู่ระบบด้วยบัญชีผู้ใช้ซึ่งไม่มีค่าใช้จ่าย
+       เมื่อผู้ใช้เข้าสู่ระบบ โปรแกรมจะส่งข้อมูลดังต่อไปนี้</p>
     <div class="table-wrap"><table>
-      <tr><th>ข้อมูล</th><th>ส่งไปที่ไหน</th><th>เพื่ออะไร</th></tr>
-      <tr><td>อีเมล และรหัสผ่าน</td><td>Firebase Authentication (Google LLC)</td><td>ยืนยันตัวตนเพื่อเข้าสู่ระบบ</td></tr>
-      <tr><td>อีเมล และวันหมดอายุสมาชิก</td><td>Cloud Firestore (Google LLC)</td><td>ตรวจสอบสิทธิ์สมาชิกแบบโปร</td></tr>
+      <tr><th>ข้อมูล</th><th>ผู้รับข้อมูล</th><th>วัตถุประสงค์</th></tr>
+      <tr><td>อีเมลและรหัสผ่าน หรือบัญชี Google</td><td>Firebase Authentication (Google LLC)</td><td>ยืนยันตัวตนเพื่อเข้าสู่ระบบ</td></tr>
+      <tr><td>อีเมลและวันหมดอายุสมาชิก</td><td>Cloud Firestore (Google LLC)</td><td>ตรวจสอบสิทธิ์สมาชิกแบบโปร</td></tr>
     </table></div>
-    <p class="muted">เราไม่ส่งภาพ ไม่ส่งข้อมูลท่านั่ง ไม่ส่งสถิติการใช้งาน และไม่มีระบบติดตามพฤติกรรมหรือโฆษณาใดๆ ในโปรแกรม</p>
+    <p>การเข้าสู่ระบบด้วยบัญชี Google ดำเนินการผ่านหน้าเข้าสู่ระบบของ Google โดยตรง โปรแกรมจึงไม่ได้รับรหัสผ่านบัญชี Google ของผู้ใช้</p>
+    <p class="muted">โปรแกรมไม่ส่งภาพจากกล้อง สถิติท่านั่ง หรือข้อมูลการใช้งานไปยังผู้พัฒนาหรือบุคคลภายนอก
+       และไม่มีระบบโฆษณาหรือระบบติดตามพฤติกรรมผู้ใช้</p>
 
-    <h2>3. การชำระเงิน</h2>
-    <p>การชำระเงินทำนอกตัวโปรแกรม ผ่านการโอนพร้อมเพย์หรือลิงก์ PayPal.Me
-       <b>โปรแกรมไม่เก็บและไม่ประมวลผลข้อมูลบัตรเครดิตหรือข้อมูลทางการเงินใดๆ ทั้งสิ้น</b>
-       สิ่งเดียวที่ผู้ดูแลได้รับคืออีเมลที่คุณแจ้งมาเพื่อเปิดสิทธิ์สมาชิกให้</p>
+    <h2>3. แอปพลิเคชัน 8Hrs Companion</h2>
+    <p>หากผู้ใช้จับคู่สมาร์ทโฟนกับโปรแกรมโดยสแกนคิวอาร์โค้ดที่แสดงในโปรแกรม เครื่องคอมพิวเตอร์ของผู้ใช้จะส่งการแจ้งเตือน ข้อมูลรายงานท่านั่ง ชื่อที่แสดง และสถานะบัญชีผู้ใช้ ไปยังสมาร์ทโฟนโดยตรงผ่านเครือข่าย
+       Wi-Fi ภายใน ด้วยการเชื่อมต่อที่เข้ารหัส ข้อมูลดังกล่าวไม่ผ่านเซิร์ฟเวอร์ของผู้พัฒนาหรือบุคคลภายนอก
+       และไม่มีการส่งภาพจากกล้องของเครื่องคอมพิวเตอร์ไปยังสมาร์ทโฟน</p>
+    <p>แอปพลิเคชันใช้กล้องของสมาร์ทโฟนเพื่อสแกนคิวอาร์โค้ดสำหรับการจับคู่เท่านั้น โดยประมวลผลภายในสมาร์ทโฟน
+       แอปพลิเคชันจัดเก็บข้อมูลการจับคู่ในรูปแบบที่เข้ารหัส รวมถึงประวัติการแจ้งเตือนและสำเนารายงานที่ผู้ใช้เคยเปิดดู เพื่อให้สามารถดูได้ขณะไม่ได้เชื่อมต่อ ผู้ใช้สามารถยุติการส่งข้อมูลได้โดยยกเลิกการจับคู่ในแอปพลิเคชัน หรือถอนการติดตั้งแอปพลิเคชัน</p>
 
-    <h2>4. การเก็บรักษาข้อมูลเข้าสู่ระบบ</h2>
-    <p>ข้อมูลสำหรับเข้าสู่ระบบอัตโนมัติถูกเก็บไว้บนเครื่องคุณและ<b>เข้ารหัสด้วยระบบ DPAPI ของ Windows</b>
-       ซึ่งผูกกุญแจกับบัญชี Windows ของคุณ หากมีผู้คัดลอกไฟล์นี้ไปยังเครื่องอื่นจะใช้งานไม่ได้
-       <b>เราไม่เก็บรหัสผ่านของคุณลงไฟล์ใดๆ</b></p>
-
-    <h2>5. สิทธิ์ของคุณ</h2>
+    <h2>4. การชำระเงิน</h2>
+    <p>การชำระเงินดำเนินการนอกโปรแกรม <b>โปรแกรมไม่เก็บรวบรวมและไม่ประมวลผลข้อมูลบัตรเครดิต บัตรเดบิต
+       หรือบัญชีธนาคารของผู้ใช้</b> โดยมีช่องทางการชำระเงินดังนี้</p>
     <ul>
-      <li><b>ใช้งานโดยไม่ระบุตัวตน</b> — ไม่เข้าสู่ระบบก็ใช้ฟีเจอร์พื้นฐานได้ครบ</li>
-      <li><b>ขอลบบัญชีและข้อมูล</b> — ติดต่อทางอีเมลด้านล่าง เราจะลบบัญชีและข้อมูลสมาชิกของคุณออกจาก Firebase</li>
-      <li><b>ปิดกล้องเมื่อไหร่ก็ได้</b> — ผ่าน Windows Settings &gt; Privacy &amp; security &gt; Camera</li>
-      <li><b>ลบข้อมูลในเครื่อง</b> — ลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code></li>
+      <li><b>พร้อมเพย์ (ภายในประเทศไทย)</b> — ผู้ใช้โอนเงินถึงผู้พัฒนาโดยตรงและแจ้งอีเมลที่ใช้เข้าสู่ระบบโปรแกรม
+        ผู้พัฒนาจะดำเนินการเปิดใช้สิทธิ์สมาชิกหลังตรวจสอบยอดเงิน</li>
+      <li><b>บัตรเครดิต บัตรเดบิต หรือ PayPal ผ่าน Lemon Squeezy</b> — Lemon Squeezy ทำหน้าที่เป็นผู้ขายและผู้รับชำระเงิน (merchant of record) และประมวลผลข้อมูลการชำระเงินตามนโยบายความเป็นส่วนตัวของ
+        Lemon Squeezy ลิงก์สำหรับชำระเงินจะแนบรหัสบัญชีผู้ใช้ไว้ เพื่อให้ระบบเปิดใช้สิทธิ์สมาชิกได้โดยอัตโนมัติ
+        ผู้พัฒนาได้รับเฉพาะข้อมูลคำสั่งซื้อที่จำเป็นต่อการเปิดใช้สิทธิ์ เช่น อีเมล แพ็กเกจที่ซื้อ และสถานะการชำระเงิน โดยไม่ได้รับหมายเลขบัตรเครดิตหรือบัตรเดบิต</li>
     </ul>
 
-    <h2>6. เด็กและเยาวชน</h2>
-    <p>โปรแกรมนี้ไม่ได้ออกแบบมาสำหรับเด็กอายุต่ำกว่า 13 ปี และเราไม่เก็บข้อมูลจากเด็กโดยเจตนา</p>
+    <h2>5. การจัดเก็บข้อมูลการเข้าสู่ระบบ</h2>
+    <p>ข้อมูลสำหรับการเข้าสู่ระบบอัตโนมัติจัดเก็บบนเครื่องคอมพิวเตอร์ของผู้ใช้ และ<b>เข้ารหัสด้วยระบบ DPAPI
+       ของ Windows</b> ซึ่งผูกกุญแจเข้ารหัสไว้กับบัญชีผู้ใช้ Windows หากมีการคัดลอกไฟล์ดังกล่าวไปยังคอมพิวเตอร์เครื่องอื่น จะไม่สามารถนำไปใช้งานได้ <b>โปรแกรมไม่บันทึกรหัสผ่านของผู้ใช้ลงในไฟล์ใด</b></p>
 
-    <h2>7. ซอฟต์แวร์ของผู้อื่นที่โปรแกรมนี้ใช้</h2>
-    <p>โปรแกรมนี้สร้างขึ้นโดยใช้ซอฟต์แวร์โอเพนซอร์สของผู้อื่นหลายตัวช่วย เช่น ตัวตรวจจับท่าทางจาก
-       Google (MediaPipe) และตัวจัดการกล้อง (OpenCV) ซึ่งทั้งหมดอนุญาตให้นำมาใช้ได้อย่างถูกต้อง</p>
-    <p>มีตัวหนึ่งที่เราต้องแจ้งให้คุณทราบเป็นพิเศษตามเงื่อนไขของผู้สร้าง:</p>
+    <h2>6. การแจ้งปัญหาการใช้งาน</h2>
+    <p>เมื่อผู้ใช้เลือกเมนู “แจ้งปัญหาการใช้งาน” โปรแกรมจะสร้างร่างอีเมลในโปรแกรมอีเมลของผู้ใช้หรือใน Gmail
+       พร้อมข้อมูลประกอบ ได้แก่ เวอร์ชันของโปรแกรม เวอร์ชันของ Windows อีเมลของบัญชีผู้ใช้ และชื่อกล้องที่ใช้
+       อีเมลดังกล่าวจะไม่ถูกส่งจนกว่าผู้ใช้จะตรวจสอบและกดส่งด้วยตนเอง</p>
+
+    <h2>7. สิทธิ์ของผู้ใช้</h2>
     <ul>
-      <li><b>pystray</b> — ตัวที่ทำให้โปรแกรมมีไอคอนอยู่ในถาดระบบ (มุมขวาล่างข้างนาฬิกา)
-          ใช้ภายใต้สัญญาอนุญาต <b>LGPL เวอร์ชัน 3</b></li>
+      <li><b>ใช้งานโดยไม่เข้าสู่ระบบ</b> — โปรแกรมสามารถตรวจจับท่านั่งได้โดยไม่ต้องมีบัญชีผู้ใช้</li>
+      <li><b>ขอลบบัญชีและข้อมูล</b> — ติดต่อผู้พัฒนาตามช่องทางด้านล่าง ผู้พัฒนาจะลบบัญชีและข้อมูลสมาชิกของผู้ใช้ออกจาก Firebase</li>
+      <li><b>ยกเลิกสิทธิ์การเข้าถึงกล้อง</b> — ได้ทุกเมื่อที่ Windows Settings &gt; Privacy &amp; security &gt; Camera</li>
+      <li><b>ลบข้อมูลบนเครื่องคอมพิวเตอร์</b> — ลบโฟลเดอร์ <code>%LOCALAPPDATA%\PostureMonitor</code>
+        หรือถอนการติดตั้งโปรแกรม</li>
+      <li><b>ยุติการเชื่อมต่อกับสมาร์ทโฟน</b> — ยกเลิกการจับคู่ในแอปพลิเคชัน 8Hrs Companion
+        หรือถอนการติดตั้งแอปพลิเคชัน</li>
     </ul>
-    <p><b>เรื่องนี้มีความหมายกับคุณอย่างไร</b> — สัญญาอนุญาตแบบนี้กำหนดว่าคุณมีสิทธิ์แก้ไขหรือเปลี่ยน
-       ส่วนประกอบตัวนี้เป็นรุ่นอื่นได้ด้วยตัวเอง เราจึงแจกโค้ดต้นฉบับของมันไปพร้อมโปรแกรมเสมอ
-       ไม่ได้บีบอัดซ่อนไว้ในไฟล์โปรแกรม คุณเปิดดูและแก้ไขได้ที่โฟลเดอร์ติดตั้ง ในโฟลเดอร์ย่อยชื่อ
-       <code>_internal\pystray</code> ส่วนตัวสัญญาอนุญาตฉบับเต็มอยู่ที่
+
+    <h2>8. ผู้ใช้ที่เป็นเด็ก</h2>
+    <p>โปรแกรมและแอปพลิเคชันไม่ได้ออกแบบมาสำหรับเด็กอายุต่ำกว่า 13 ปี และผู้พัฒนาไม่มีเจตนาเก็บรวบรวมข้อมูลจากเด็ก</p>
+
+    <h2>9. ซอฟต์แวร์โอเพนซอร์สที่ใช้ในโปรแกรม</h2>
+    <p>โปรแกรมพัฒนาขึ้นโดยใช้ซอฟต์แวร์โอเพนซอร์สหลายรายการ เช่น MediaPipe ของ Google สำหรับการตรวจจับท่าทาง
+       และ OpenCV สำหรับการเชื่อมต่อกล้อง โดยใช้งานตามเงื่อนไขสัญญาอนุญาตของแต่ละรายการ</p>
+    <p>ในจำนวนนี้ <b>pystray</b> ซึ่งเป็นส่วนประกอบที่แสดงไอคอนของโปรแกรมในถาดระบบ อยู่ภายใต้สัญญาอนุญาต
+       <b>GNU LGPL เวอร์ชัน 3</b> ซึ่งให้สิทธิ์ผู้ใช้แก้ไขหรือเปลี่ยนส่วนประกอบนี้เป็นรุ่นอื่นได้ด้วยตนเอง
+       ผู้พัฒนาจึงแจกจ่ายซอร์สโค้ดของ pystray เป็นไฟล์แยกพร้อมกับโปรแกรม ผู้ใช้สามารถตรวจสอบได้ที่โฟลเดอร์ติดตั้งโปรแกรม ในโฟลเดอร์ย่อย <code>_internal\pystray</code> และอ่านสัญญาอนุญาตฉบับเต็มได้ที่
        <code>_internal\pystray-0.19.5.dist-info\COPYING.LGPL</code></p>
-    <p class="muted">สำหรับผู้ใช้ทั่วไป: ไม่ต้องทำอะไรกับข้อมูลส่วนนี้เลย เราแจ้งไว้เพื่อความโปร่งใส
-       และเพื่อทำตามเงื่อนไขของผู้สร้างซอฟต์แวร์ที่เรานำมาใช้เท่านั้น</p>
 
-    <h2>8. การเปลี่ยนแปลงนโยบาย</h2>
-    <p>หากมีการแก้ไข จะปรับปรุงวันที่ด้านบนหน้านี้ การเปลี่ยนแปลงที่กระทบข้อมูลของคุณอย่างมีนัยสำคัญจะแจ้งในตัวโปรแกรมด้วย</p>
+    <h2>10. การเปลี่ยนแปลงนโยบาย</h2>
+    <p>หากมีการแก้ไขนโยบายฉบับนี้ ผู้พัฒนาจะปรับปรุงวันที่ด้านบนของหน้านี้ และจะแจ้งในโปรแกรมด้วยหากการเปลี่ยนแปลงนั้นมีผลต่อข้อมูลของผู้ใช้อย่างมีนัยสำคัญ</p>
 
-    <h2>9. ติดต่อ</h2>
+    <h2>11. ช่องทางติดต่อ</h2>
     <p>อีเมล: <a href="mailto:contact@saantie.com">contact@saantie.com</a><br>
        LINE: <code>@341jvvzy</code></p>
   </div>
 
   <div class="card" data-lang="en">
     <h1>Privacy Policy</h1>
-    <p class="muted">8Hrs Posture Monitor · Last updated 19 August 2026</p>
+    <p class="muted">8Hrs Posture Monitor and 8Hrs Companion · Last updated 8 October 2026</p>
 
     <div class="key">
-      <b>In short:</b> Your camera images and posture data <b>never leave your computer</b>.
-      Everything is processed locally. The only data sent out is your email address and membership
-      status, and only if you choose to sign in.
+      <b>At a glance:</b> Camera images are processed only on your computer — they are never saved or
+      transmitted. The only information sent over the internet is the account data needed to verify a
+      Pro membership, and only if you choose to sign in.
     </div>
 
-    <h2>1. Processed locally only (never transmitted)</h2>
+    <p>This policy explains what information is collected, how it is used and when it is shared by the
+       following products, developed by Saantie, an independent developer (“we”):</p>
     <ul>
-      <li><b>Camera images</b> — used in real time to detect shoulder and eye positions.
-        <b>Never saved to disk, never uploaded anywhere.</b> Each frame is discarded immediately after processing.</li>
-      <li><b>Daily posture statistics</b> — seconds spent in good/warning/bad posture per day, stored locally at
-        <code>%LOCALAPPDATA%\PostureMonitor\posture_history.db</code></li>
-      <li><b>Settings</b> — posture calibration, selected camera. Also stored locally.</li>
+      <li><b>8Hrs Posture Monitor</b> — a desktop application for Windows (“the app”)</li>
+      <li><b>8Hrs Companion</b> — a companion application for Android smartphones (“the companion app”)</li>
     </ul>
-    <p>You can delete all of the above by removing the <code>%LOCALAPPDATA%\PostureMonitor</code> folder or uninstalling the app.</p>
 
-    <h2>2. Data sent off your device (only when signed in)</h2>
-    <p>The app's core features work <b>without signing in</b>, in which case no data leaves your device at all.
-       If you choose to create an account or sign in, the following is transmitted:</p>
+    <h2>1. Information that stays on your computer</h2>
+    <ul>
+      <li><b>Camera images.</b> Each frame is analysed in real time to locate your eyes and shoulders and
+        assess your posture, then discarded immediately. Images and video are never written to disk or
+        sent to any server.</li>
+      <li><b>Daily posture statistics</b> — how long you spent at each posture level and how many
+        reminders you received — are kept in a local database at
+        <code>%LOCALAPPDATA%\PostureMonitor\posture_history.db</code>.</li>
+      <li><b>App settings</b>, such as your posture calibration, chosen camera and display name, are also
+        stored locally.</li>
+    </ul>
+    <p>You can remove all of the above by deleting the <code>%LOCALAPPDATA%\PostureMonitor</code> folder or
+       uninstalling the app. If you installed the app from the Microsoft Store, this data is removed
+       automatically when you uninstall it.</p>
+
+    <h2>2. Information sent when you sign in</h2>
+    <p>Signing in is optional. Without an account the app still detects your posture, and none of your
+       information leaves your computer; alert sounds, status messages and account features require a
+       free account. When you sign in, the app sends the following:</p>
     <div class="table-wrap"><table>
-      <tr><th>Data</th><th>Sent to</th><th>Purpose</th></tr>
-      <tr><td>Email address and password</td><td>Firebase Authentication (Google LLC)</td><td>Account authentication</td></tr>
+      <tr><th>Information</th><th>Recipient</th><th>Purpose</th></tr>
+      <tr><td>Email address and password, or your Google account</td><td>Firebase Authentication (Google LLC)</td><td>Signing you in</td></tr>
       <tr><td>Email address and membership expiry date</td><td>Cloud Firestore (Google LLC)</td><td>Verifying Pro membership</td></tr>
     </table></div>
-    <p class="muted">We do not transmit images, posture data, or usage analytics. The app contains no tracking and no advertising.</p>
+    <p>If you sign in with Google, you do so on Google's own sign-in page, so the app never receives your
+       Google password.</p>
+    <p class="muted">The app does not send camera images, posture statistics or usage data to us or to
+       anyone else, and it contains no advertising or behavioural tracking.</p>
 
-    <h2>3. Payments</h2>
-    <p>Payments are handled outside the app via PromptPay bank transfer or a PayPal.Me link.
-       <b>The app never collects or processes credit card or any financial information.</b>
-       The only thing we receive is the email address you send us so we can activate your membership.</p>
+    <h2>3. 8Hrs Companion</h2>
+    <p>If you pair a phone by scanning the QR code shown in the app, your computer sends reminders, posture
+       report data, your display name and your account status directly to that phone over your local Wi-Fi
+       network, using an encrypted connection. This data never passes through our servers or any third
+       party, and images from your computer's camera are never sent to the phone.</p>
+    <p>The companion app uses your phone's camera only to scan the pairing QR code, and does so on the
+       phone itself. It stores your pairing details in encrypted form, together with your alert history and
+       copies of reports you have opened so they remain available offline. To stop sharing, unpair the
+       phone in the companion app or uninstall it.</p>
 
-    <h2>4. How sign-in data is stored</h2>
-    <p>Your automatic sign-in token is stored locally and <b>encrypted using Windows DPAPI</b>, which ties the
-       encryption key to your Windows account. If someone copies this file to another machine it will not work.
-       <b>We never write your password to any file.</b></p>
-
-    <h2>5. Your rights</h2>
+    <h2>4. Payments</h2>
+    <p>Payments take place outside the app. <b>The app never collects or processes credit card, debit card or
+       bank account details.</b> Two payment methods are available:</p>
     <ul>
-      <li><b>Use anonymously</b> — all core features work without signing in.</li>
-      <li><b>Request account and data deletion</b> — contact us at the email below and we will delete your account and membership data from Firebase.</li>
-      <li><b>Revoke camera access anytime</b> — via Windows Settings &gt; Privacy &amp; security &gt; Camera.</li>
-      <li><b>Delete local data</b> — remove the <code>%LOCALAPPDATA%\PostureMonitor</code> folder.</li>
+      <li><b>PromptPay (Thailand)</b> — you transfer the payment to us directly and tell us the email address
+        you use in the app. We activate Pro once the payment has been confirmed.</li>
+      <li><b>Credit card, debit card or PayPal through Lemon Squeezy</b> — Lemon Squeezy acts as the seller and payment
+        processor (merchant of record) and handles your payment information under its own privacy policy.
+        The checkout link carries your account ID so that Pro can be activated automatically. We receive
+        only the order details needed for activation, such as your email address, the plan purchased and
+        the payment status — never your card number.</li>
     </ul>
 
-    <h2>6. Children</h2>
-    <p>This app is not directed at children under 13, and we do not knowingly collect data from children.</p>
+    <h2>5. How sign-in data is stored</h2>
+    <p>The token used to sign you in automatically is stored on your computer and <b>encrypted with Windows
+       DPAPI</b>, which ties the encryption key to your Windows account. A copy of the file taken to another
+       computer cannot be used. <b>Your password is never written to any file.</b></p>
 
-    <h2>7. Other people's software used in this app</h2>
-    <p>This app is built with the help of several open-source components made by others — for example
-       Google's posture detection (MediaPipe) and the camera handling (OpenCV). All of them are used
-       under licences that permit it.</p>
-    <p>One of them comes with a condition that we tell you about it:</p>
+    <h2>6. Problem reports</h2>
+    <p>When you choose “Report a problem”, the app drafts an email in your mail app or in Gmail, pre-filled
+       with supporting details: the app version, your Windows version, your account email and the name of
+       your camera. Nothing is sent until you have reviewed the email and sent it yourself.</p>
+
+    <h2>7. Your choices and rights</h2>
     <ul>
-      <li><b>pystray</b> — the component that puts the app's icon in your system tray (next to the clock).
-          Used under the <b>LGPL version 3</b> licence.</li>
+      <li><b>Use the app without an account</b> — posture detection works without signing in.</li>
+      <li><b>Delete your account and data</b> — contact us using the details below and we will delete your
+        account and membership records from Firebase.</li>
+      <li><b>Revoke camera access</b> at any time in Windows Settings &gt; Privacy &amp; security &gt; Camera.</li>
+      <li><b>Delete local data</b> by removing the <code>%LOCALAPPDATA%\PostureMonitor</code> folder or
+        uninstalling the app.</li>
+      <li><b>Disconnect your phone</b> by unpairing it in 8Hrs Companion or uninstalling 8Hrs Companion.</li>
     </ul>
-    <p><b>What this means for you</b> — that licence gives you the right to modify this component or swap
-       it for a different version yourself. So we always ship its source code alongside the app rather than
-       compressing it away inside the program file. You can open and edit it in the installation folder,
-       under <code>_internal\pystray</code>. The full licence text is at
-       <code>_internal\pystray-0.19.5.dist-info\COPYING.LGPL</code></p>
-    <p class="muted">If you're a regular user: there is nothing here you need to do. We mention it for
-       transparency and to honour the terms of the software we build on.</p>
 
-    <h2>8. Changes to this policy</h2>
-    <p>If this policy changes, the date at the top of this page will be updated. Changes that materially affect
-       your data will also be announced inside the app.</p>
+    <h2>8. Children</h2>
+    <p>Neither 8Hrs Posture Monitor nor 8Hrs Companion is intended for children under 13, and we do not knowingly
+       collect information from children.</p>
 
-    <h2>9. Contact</h2>
+    <h2>9. Open-source software</h2>
+    <p>The app is built on several open-source components, including Google's MediaPipe for pose
+       detection and OpenCV for camera access, each used in accordance with its licence.</p>
+    <p>One of these, <b>pystray</b> — which places the app's icon in the system tray — is licensed under the
+       <b>GNU LGPL version 3</b>. That licence gives you the right to modify the component or replace it with
+       another version. For this reason we distribute its source code as separate files alongside the app.
+       You will find it in the installation folder under <code>_internal\pystray</code>, with the full licence
+       text at <code>_internal\pystray-0.19.5.dist-info\COPYING.LGPL</code>.</p>
+
+    <h2>10. Changes to this policy</h2>
+    <p>If we revise this policy, we will update the date at the top of this page. Changes that materially
+       affect your information will also be announced in the app.</p>
+
+    <h2>11. Contact</h2>
     <p>Email: <a href="mailto:contact@saantie.com">contact@saantie.com</a><br>
        LINE: <code>@341jvvzy</code></p>
   </div>
