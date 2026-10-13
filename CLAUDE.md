@@ -28,6 +28,8 @@ index.html              → saantie.com                  หน้าหลั�
 8hrs/index.html          → saantie.com/8hrs              landing page ของ 8Hrs (2 ภาษา + ฟอร์ม waitlist)
 8hrs/guide.html          → saantie.com/8hrs/guide        คู่มือการใช้งาน 8 ขั้นตอน (2 ภาษา)
 8hrs/privacy.html        → saantie.com/8hrs/privacy      นโยบายความเป็นส่วนตัวของ 8Hrs
+pms/index.html           → saantie.com/pms               หน้าดาวน์โหลด Saantie PMS (แอปจัดการที่พัก Android, ติดตั้งนอก Store)
+pms/version.json         → saantie.com/pms/version.json  ⚠️ แอปฝัง URL นี้ไว้ตรวจอัปเดต ห้ามย้าย/เปลี่ยนชื่อ — อัปเดตไฟล์นี้หลังสร้าง GitHub Release ของ saantie/saantie-pms-small-hotel แล้วเท่านั้น
 assets/8hrs-icon.png     → ไอคอนแอปบนการ์ดหน้าหลัก
 assets/lang-toggle.js    → สคริปต์สลับภาษา ใช้ร่วมกันทุกหน้า (ดูหัวข้อถัดไป)
 ```

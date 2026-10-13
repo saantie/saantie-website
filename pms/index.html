@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saantie PMS — แอปพลิเคชันจัดการที่พักขนาดเล็ก | Small-property booking manager</title>
+<meta name="description" content="Saantie PMS แอปพลิเคชัน Android สำหรับเจ้าของที่พักขนาดเล็ก บันทึกการจอง ตรวจสอบบ้านพักว่าง และติดตามยอดค้างชำระ — An Android app for small guesthouses to record bookings, see vacancies and track unpaid balances.">
+<meta name="theme-color" content="#070C18">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Cpath d='M14 32 32 16 50 32V50H14Z' fill='none' stroke='%2338BDF8' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    /* โทนสีชุดเดียวกับ index.html (คัดลอกไว้ในแต่ละไฟล์ตามที่ CLAUDE.md ระบุ) */
+    --bg: #070C18;
+    --bg-soft: #0B1224;
+    --surface: #0E1730;
+    --surface-2: #121D3A;
+    --border: #1D2B4D;
+    --border-lit: #2E4374;
+    --text: #E9EFFA;
+    --muted: #8DA2C8;
+    --accent: #38BDF8;
+    --accent-2: #2563EB;
+    --accent-soft: rgba(56, 189, 248, 0.12);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", "Sarabun", -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  .bg-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(to right, rgba(56,189,248,.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(56,189,248,.055) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 90% 55% at 50% 0%, #000 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 55% at 50% 0%, #000 30%, transparent 78%);
+  }
+  .wrap { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  a { color: var(--accent); }
+
+  .langbar { max-width: 880px; margin: 0 auto; padding: 18px 20px 0; text-align: right; position: relative; z-index: 3; }
+  .langbtn {
+    background: rgba(14,23,48,.7); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 18px; font: inherit; font-size: .85em;
+    cursor: pointer; backdrop-filter: blur(8px); transition: .25s;
+  }
+  .langbtn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+
+  header.site { position: relative; z-index: 2; border-bottom: 1px solid var(--border); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 13px 0; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-weight: 700; }
+  .brand svg { width: 26px; height: 26px; flex-shrink: 0; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+    font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+    border-radius: 999px; padding: 14px 28px; border: 1px solid transparent; transition: .22s;
+  }
+  .btn-primary { background: var(--accent); color: #06121F; }
+  .btn-primary:hover { box-shadow: 0 0 0 4px var(--accent-soft); transform: translateY(-2px); }
+
+  section { padding: 48px 0; border-top: 1px solid var(--border); }
+  .hero { padding: 48px 0 40px; border-top: none; }
+  .eyebrow { display: inline-block; color: var(--accent); font-size: .85em; font-weight: 600; letter-spacing: .06em; margin-bottom: 10px; }
+  h1 { font-size: clamp(1.8em, 4vw, 2.5em); margin: 0 0 12px; line-height: 1.3; }
+  h2 { font-size: 1.4em; margin: 0 0 18px; line-height: 1.4; }
+  h3 { font-size: 1.05em; margin: 0 0 6px; }
+  html[lang="th"] h1, html[lang="th"] h2, html[lang="th"] h3 { line-height: 1.7; }
+  .lead { color: var(--muted); font-size: 1.08em; max-width: 620px; margin: 0 0 26px; }
+
+  .download-box { background: var(--surface); border: 1px solid var(--border-lit); border-radius: 18px; padding: 24px; max-width: 520px; }
+  .meta { color: var(--muted); font-size: .9em; margin-top: 12px; }
+  .notes { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft); font-size: .92em; }
+  .notes:empty { display: none; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .card p { margin: 0; color: var(--muted); font-size: .94em; }
+
+  ol.steps { margin: 0; padding-left: 1.3em; }
+  ol.steps li { margin-bottom: 10px; }
+  .callout { margin-top: 18px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 12px 12px 0; color: var(--muted); font-size: .93em; }
+
+  footer.site { border-top: 1px solid var(--border); padding: 34px 0 44px; color: var(--muted); font-size: .87em; }
+  .footer-row { display: flex; flex-wrap: wrap; gap: 14px 26px; justify-content: space-between; align-items: center; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .footer-links a { color: var(--muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--accent); }
+
+  [data-lang] { display: none; }
+  html[lang="th"] [data-lang="th"], html[lang="en"] [data-lang="en"] { display: block; }
+  html[lang="th"] span[data-lang="th"], html[lang="en"] span[data-lang="en"] { display: inline; }
+  html[lang="th"] li[data-lang="th"], html[lang="en"] li[data-lang="en"] { display: list-item; }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<div class="langbar">
+  <button class="langbtn" id="langbtn" type="button"></button>
+</div>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="/pms">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5 15 16 5 27 15V27H5Z" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M13 27V19H19V27" stroke="var(--accent)" stroke-width="1.8"/>
+      </svg>
+      <span>Saantie PMS</span>
+    </a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">
+      <span data-lang="th">แอปพลิเคชันสำหรับอุปกรณ์ Android</span>
+      <span data-lang="en">Android application</span>
+    </span>
+    <h1>
+      <span data-lang="th">จัดการการจองที่พักขนาดเล็กได้ครบในแอปพลิเคชันเดียว</span>
+      <span data-lang="en">Run a small guesthouse’s bookings from one app</span>
+    </h1>
+    <p class="lead" data-lang="th">บันทึกการจอง ตรวจสอบบ้านพักว่างรายวัน ดูปฏิทินการเข้าพัก และติดตามยอดค้างชำระ ใช้งานร่วมกันได้ทั้งเจ้าของที่พักและพนักงาน</p>
+    <p class="lead" data-lang="en">Record bookings, check daily vacancies, follow the stay calendar and keep track of unpaid balances — shared between the owner and staff.</p>
+
+    <div class="download-box">
+      <a id="dl" class="btn btn-primary" href="https://github.com/saantie/saantie-pms-small-hotel/releases/latest">
+        <span data-lang="th">ดาวน์โหลดแอปพลิเคชัน</span>
+        <span data-lang="en">Download the app</span>
+      </a>
+      <div class="meta" id="meta">
+        <span data-lang="th">กำลังตรวจสอบเวอร์ชันล่าสุด…</span>
+        <span data-lang="en">Checking the latest version…</span>
+      </div>
+      <div class="notes" id="notes"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>
+      <span data-lang="th">ความสามารถหลัก</span>
+      <span data-lang="en">What it does</span>
+    </h2>
+    <div class="grid">
+      <div class="card">
+        <h3><span data-lang="th">บ้านพักว่างรายวัน</span><span data-lang="en">Daily vacancies</span></h3>
+        <p data-lang="th">แสดงสถานะว่างหรือมีผู้เข้าพักของทุกหลัง เลื่อนดูวันอื่นได้ทันที</p>
+        <p data-lang="en">See which units are free or occupied each night, and swipe to other dates.</p>
+      </div>
+      <div class="card">
+        <h3><span data-lang="th">ปฏิทินและการจอง</span><span data-lang="en">Calendar and bookings</span></h3>
+        <p data-lang="th">ตรวจสอบการจองซ้ำโดยอัตโนมัติ และสร้างข้อความสรุปส่งให้ลูกค้าได้ในขั้นตอนเดียว</p>
+        <p data-lang="en">Double bookings are blocked automatically, and a booking summary for the guest is one tap away.</p>
+      </div>
+      <div class="card">
+        <h3><span data-lang="th">ติดตามยอดค้างชำระ</span><span data-lang="en">Unpaid balances</span></h3>
+        <p data-lang="th">แจ้งเตือนช่วงค่ำเมื่อผู้เข้าพักที่เช็คอินแล้วยังชำระเงินไม่ครบ</p>
+        <p data-lang="en">An evening reminder lists guests who have checked in but have not fully paid.</p>
+      </div>
+      <div class="card">
+        <h3><span data-lang="th">ใช้งานร่วมกับพนักงาน</span><span data-lang="en">Staff accounts</span></h3>
+        <p data-lang="th">เจ้าของที่พักสร้างบัญชีให้พนักงาน และกำหนดสิทธิ์การใช้งานได้สามระดับ</p>
+        <p data-lang="en">The owner creates staff accounts with one of three permission levels.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>
+      <span data-lang="th">วิธีติดตั้งครั้งแรก</span>
+      <span data-lang="en">First-time installation</span>
+    </h2>
+    <ol class="steps">
+      <li data-lang="th">กดปุ่ม “ดาวน์โหลดแอปพลิเคชัน” ด้านบน และรอให้ดาวน์โหลดเสร็จสิ้น</li>
+      <li data-lang="en">Tap “Download the app” above and wait for the download to finish.</li>
+      <li data-lang="th">เปิดไฟล์ที่ดาวน์โหลดจากแถบการแจ้งเตือน หรือจากแอปพลิเคชันจัดการไฟล์ในโฟลเดอร์ดาวน์โหลด</li>
+      <li data-lang="en">Open the downloaded file from the notification shade or from the Downloads folder.</li>
+      <li data-lang="th">หากระบบสอบถามเรื่องการติดตั้งแอปพลิเคชันจากแหล่งที่ไม่รู้จัก ให้อนุญาตสำหรับเบราว์เซอร์ที่ใช้งาน</li>
+      <li data-lang="en">If Android asks about installing apps from unknown sources, allow it for your browser.</li>
+      <li data-lang="th">หาก Google Play Protect แสดงคำเตือน ให้เลือก “ติดตั้งต่อไป”</li>
+      <li data-lang="en">If Google Play Protect shows a warning, choose “Install anyway”.</li>
+      <li data-lang="th">เปิดแอปพลิเคชัน และเข้าสู่ระบบด้วยอีเมลที่เจ้าของที่พักสร้างให้</li>
+      <li data-lang="en">Open the app and sign in with the email address your property owner created for you.</li>
+    </ol>
+    <p class="callout" data-lang="th">ติดตั้งเพียงครั้งเดียว เมื่อมีเวอร์ชันใหม่ แอปพลิเคชันจะแจ้งให้ทราบและอัปเดตได้จากภายในแอปพลิเคชัน รองรับ Android 8.0 ขึ้นไป (อุปกรณ์ 64 บิต)</p>
+    <p class="callout" data-lang="en">You only install it once — new versions are announced and installed from inside the app. Requires Android 8.0 or later on a 64-bit device.</p>
+  </section>
+
+</div>
+
+<footer class="site">
+  <div class="wrap footer-row">
+    <span>
+      <span data-lang="th">© 2026 Saantie · นักพัฒนาอิสระ · ประเทศไทย</span>
+      <span data-lang="en">© 2026 Saantie · Independent developer · Thailand</span>
+    </span>
+    <div class="footer-links">
+      <a href="https://line.me/R/ti/p/%40341jvvzy" target="_blank" rel="noopener">LINE @341jvvzy</a>
+      <a href="mailto:contact@saantie.com">contact@saantie.com</a>
+      <a href="/">saantie.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/lang-toggle.js"></script>
+<script>
+  // อ่านเวอร์ชันล่าสุดจาก /pms/version.json (ไฟล์เดียวกับที่แอปพลิเคชันใช้ตรวจอัปเดต)
+  // แล้วชี้ปุ่มไปที่ไฟล์ติดตั้งโดยตรง — ถ้าอ่านไม่ได้ ปุ่มยังพาไปหน้า Release ล่าสุดบน GitHub
+  fetch("/pms/version.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (v) {
+      document.getElementById("dl").href = v.apkUrl;
+      document.getElementById("meta").innerHTML =
+        '<span data-lang="th">เวอร์ชัน ' + v.versionName + ' · Android 8.0 ขึ้นไป</span>' +
+        '<span data-lang="en">Version ' + v.versionName + ' · Android 8.0 or later</span>';
+      if (v.notes) document.getElementById("notes").textContent = v.notes;
+    })
+    .catch(function () {
+      document.getElementById("meta").innerHTML =
+        '<span data-lang="th">แตะปุ่มแล้วเลือกไฟล์ที่ลงท้ายด้วย .apk</span>' +
+        '<span data-lang="en">Tap the button, then pick the file ending in .apk</span>';
+    });
+</script>
+</body>
+</html>
