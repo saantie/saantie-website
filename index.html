@@ -133,6 +133,8 @@
   }
   .app:hover .icon img { box-shadow: 0 0 26px -4px rgba(56,189,248,.55); }
   .app p { color: var(--muted); font-size: .96em; }
+  /* กลุ่มคำไทยที่ห้ามตัดกลาง (ไทยไม่มีช่องว่างระหว่างคำ เบราว์เซอร์เคยตัด "การเข้า / พัก") */
+  .nw { white-space: nowrap; }
   .badge {
     display: inline-flex; align-items: center; gap: 7px;
     background: var(--accent-soft); color: var(--accent);
@@ -312,6 +314,28 @@
           <a href="/8hrs/guide"><span data-lang="th">คู่มือการใช้งาน</span><span data-lang="en">Guide</span></a>
           <span class="applinks-sep">·</span>
           <a href="/8hrs/privacy"><span data-lang="th">นโยบายความเป็นส่วนตัว</span><span data-lang="en">Privacy policy</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card app reveal">
+      <div class="icon"><img src="assets/pms-icon.svg" alt="Saantie PMS"></div>
+      <div>
+        <h3>Saantie PMS</h3>
+        <p data-lang="th">
+          แอปพลิเคชัน Android สำหรับเจ้าของที่พักขนาดเล็ก บันทึกการจอง ตรวจสอบ<span class="nw">บ้านพักว่างรายวัน</span>
+          ดู<span class="nw">ปฏิทินการเข้าพัก</span> และติดตาม<span class="nw">ยอดค้างชำระ</span> โดย<b>ป้องกันการจอง<span class="nw">ซ้ำซ้อน</span>ให้โดยอัตโนมัติ</b>
+          และใช้งานร่วมกับพนักงานได้
+        </p>
+        <p data-lang="en">
+          An Android app for small guesthouse owners to record bookings, check daily vacancies,
+          follow the stay calendar and track unpaid balances. <b>Double bookings are blocked
+          automatically</b>, and staff can work from the same data.
+        </p>
+        <span class="badge" data-lang="th">ดาวน์โหลดได้แล้วสำหรับ Android</span>
+        <span class="badge" data-lang="en">Available now for Android</span>
+        <div class="applinks">
+          <a href="/pms"><span data-lang="th">รายละเอียดและดาวน์โหลด</span><span data-lang="en">Details &amp; download</span></a>
         </div>
       </div>
     </div>

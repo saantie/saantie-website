@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72">
+  <!-- แปลงจาก ic_launcher_background/foreground.xml ของแอป Saantie PMS (ตัดเฉพาะส่วนที่ launcher แสดง) -->
+  <defs>
+    <linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="108" y2="108">
+      <stop offset="0" stop-color="#2AA892"/><stop offset="1" stop-color="#053A32"/>
+    </linearGradient>
+    <linearGradient id="disc" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="86" y2="86">
+      <stop offset="0" stop-color="#4CCF9C"/><stop offset="1" stop-color="#158A62"/>
+    </linearGradient>
+  </defs>
+  <rect width="108" height="108" fill="url(#bg)"/>
+  <circle cx="30" cy="30" r="56" fill="url(#disc)"/>
+  <path d="M54,30 L78,51 L72,51 L72,78 L36,78 L36,51 L30,51 Z" fill="#FFF" stroke="#FFF" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M51.8,66.04 L50.6,74 L57.4,74 L56.2,66.04 A5.5,5.5 0 1 0 51.8,66.04 Z" fill="#0E6B5C"/>
+</svg>
