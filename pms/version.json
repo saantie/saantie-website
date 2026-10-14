@@ -1,8 +1,8 @@
 {
-    "versionCode":  3,
-    "versionName":  "0.2.1",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.1/saantie-pms-0.2.1.apk",
-    "sha256":  "230db54292f938ac7fbbd40d892b60830026b46574711a5771d2a060bd82d29b",
-    "notes":  "ย้ายหน้าดาวน์โหลดมาที่ www.saantie.com/pms, แจ้งเตือนยอดค้างตอนค่ำ, หลายผู้ใช้/พนักงาน, หน้าตั้งค่าแบบหุบ-ยืด, เลือกเรียกบ้าน/ห้อง, พิมพ์ด้วยเสียง",
+    "versionCode":  4,
+    "versionName":  "0.2.2",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.2/saantie-pms-0.2.2.apk",
+    "sha256":  "4506948bf921d91bea0d597dcc884d82855918e2177a4229412bc03307a10bc6",
+    "notes":  "ไอคอนแอปใหม่",
     "minVersionCode":  0
 }
