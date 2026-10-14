@@ -1,8 +1,8 @@
 {
-    "versionCode":  4,
-    "versionName":  "0.2.2",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.2/saantie-pms-0.2.2.apk",
-    "sha256":  "4506948bf921d91bea0d597dcc884d82855918e2177a4229412bc03307a10bc6",
-    "notes":  "ไอคอนแอปใหม่",
+    "versionCode":  5,
+    "versionName":  "0.2.3",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.3/saantie-pms-0.2.3.apk",
+    "sha256":  "3653f6d6602ef83efe9c594c2e0a0cabd6be2a01a06e32fcc3cc333874ba7a39",
+    "notes":  "บันทึกเช็คอิน ร.ร.3 + ถ่ายรูปบัตร/สลิปได้หลายรูป (เก็บในเครื่อง ลบเองหลังเช็คเอาท์ 30 วัน), แชร์ข้อมูลไป LINE, เบอร์โทรบังคับ 10 หลัก, บ้านที่มีจองขึ้นก่อน, เก็บข้อมูลการจองในเครื่องให้โหลดเร็วและประหยัดขึ้น",
     "minVersionCode":  0
 }
