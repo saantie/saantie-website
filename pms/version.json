@@ -1,8 +1,8 @@
 {
-    "versionCode":  10,
-    "versionName":  "0.2.8",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.8/saantie-pms-0.2.8.apk",
-    "sha256":  "d470fd7d8b0b2830834d2cf74c05c1cc69113c9aef651f4e8587aad9aca320e1",
-    "notes":  "รวมปุ่มถ่ายรูปกับบันทึกเช็คอินเป็นปุ่มเดียว \"บันทึกการเช็คอิน\" (บอกจำนวนผู้เข้าพักและรูปในปุ่ม)",
+    "versionCode":  11,
+    "versionName":  "0.2.9",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.9/saantie-pms-0.2.9.apk",
+    "sha256":  "b3f68181e5abe66224ef715850ce073df46c8fc68241ceb1633e8af131f785fb",
+    "notes":  "รายละเอียดบ้าน (จำนวนผู้เข้าพักที่รองรับ ห้องนอน เตียง สิ่งอำนวยความสะดวก) + ฝากรูปบ้าน + ข้อมูลเว็บไซต์ที่พัก, เตือนเมื่อคนเกินที่รองรับ, หน้ารายการวันนี้แยกสีเข้าพัก/เช็คเอาท์",
     "minVersionCode":  0
 }
