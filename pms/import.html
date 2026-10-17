@@ -80,7 +80,16 @@
   }
   textarea { min-height: 90px; font-size: .88em; }
   select:focus, input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-  details summary { cursor: pointer; color: var(--accent); margin: 14px 0 8px; }
+  /* ทุกอย่างที่กดได้ต้องดูเป็นปุ่ม (ผู้ใช้แจ้งว่าข้อความลิงก์เฉย ๆ ดูไม่ออกว่ากดได้) */
+  details { margin-top: 14px; }
+  details summary { list-style: none; display: inline-flex; margin-bottom: 10px; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▸"; display: inline-block; transition: transform .2s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  .drop { display: block; }
+  .drop .btn { margin: 4px 0 10px; pointer-events: none; }
+  .drop:hover .btn { border-color: var(--accent); }
+  .tpl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
 
   .map { display: grid; grid-template-columns: minmax(150px, 240px) 1fr; gap: 8px 14px; align-items: center; }
   .map label { font-size: .93em; }
@@ -146,13 +155,14 @@
     <h2><span class="num">1</span><span data-lang="th">เลือกไฟล์ข้อมูลเดิม</span><span data-lang="en">Choose your old data</span></h2>
     <label class="drop" id="drop">
       <input type="file" id="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.ods,.numbers" hidden>
-      <div data-lang="th"><b>แตะเพื่อเลือกไฟล์</b> หรือลากไฟล์มาวางที่นี่<br><span class="muted small">รองรับ Excel (.xlsx, .xls), CSV, ODS — จาก Google Sheet ให้ใช้เมนู ไฟล์ → ดาวน์โหลด → .xlsx หรือ .csv</span></div>
-      <div data-lang="en"><b>Tap to choose a file</b> or drop it here<br><span class="muted small">Excel (.xlsx, .xls), CSV or ODS — from Google Sheets use File → Download → .xlsx or .csv</span></div>
+      <span class="btn btn-primary"><span data-lang="th">📂 เลือกไฟล์</span><span data-lang="en">📂 Choose file</span></span>
+      <div data-lang="th">หรือลากไฟล์มาวางในกรอบนี้<br><span class="muted small">รองรับ Excel (.xlsx, .xls), CSV, ODS — จาก Google Sheet ให้ใช้เมนู ไฟล์ → ดาวน์โหลด → .xlsx หรือ .csv</span></div>
+      <div data-lang="en">or drop a file into this box<br><span class="muted small">Excel (.xlsx, .xls), CSV or ODS — from Google Sheets use File → Download → .xlsx or .csv</span></div>
     </label>
     <div id="fileInfo" class="small muted" style="margin-top:10px"></div>
 
     <details>
-      <summary><span data-lang="th">หรือคัดลอกตารางมาวาง</span><span data-lang="en">…or paste a table</span></summary>
+      <summary class="btn"><span data-lang="th">📋 หรือคัดลอกตารางมาวาง</span><span data-lang="en">📋 Or paste a table</span></summary>
       <textarea id="paste" placeholder="ชื่อลูกค้า	วันเช็คอิน	วันเช็คเอาท์	บ้าน …"></textarea>
       <div class="row" style="margin-top:8px">
         <button class="btn" id="usePaste" type="button"><span data-lang="th">ใช้ข้อมูลที่วาง</span><span data-lang="en">Use pasted data</span></button>
@@ -167,11 +177,10 @@
       <input type="number" id="headerRow" min="1" value="1" style="width:90px">
     </div>
 
-    <p class="small muted" style="margin:14px 0 0">
-      <span data-lang="th">ยังไม่มีไฟล์? ดาวน์โหลด</span><span data-lang="en">No file yet? Download the</span>
-      <a href="#" id="tpl"><span data-lang="th">ตารางตัวอย่าง (.csv)</span><span data-lang="en">sample template (.csv)</span></a>
-      <span data-lang="th">แล้วกรอกข้อมูลตามหัวตาราง</span><span data-lang="en">and fill in the columns.</span>
-    </p>
+    <div class="tpl-row">
+      <button class="btn" id="tpl" type="button"><span data-lang="th">⬇ ดาวน์โหลดตารางตัวอย่าง (.csv)</span><span data-lang="en">⬇ Download sample template (.csv)</span></button>
+      <span class="small muted"><span data-lang="th">ยังไม่มีไฟล์? ดาวน์โหลดตารางตัวอย่างแล้วกรอกข้อมูลตามหัวตาราง</span><span data-lang="en">No file yet? Download the template and fill in the columns.</span></span>
+    </div>
   </section>
 
   <!-- 2. จับคู่คอลัมน์ -->
