@@ -19,6 +19,7 @@
 | โดเมน + DNS | **Cloudflare** (ซื้อโดเมนที่นี่ด้วย) | `saantie.com` เป็นโดเมนหลัก, `www.saantie.com` redirect มาหา (มีไฟล์ `CNAME` เดิมจาก GitHub Pages หลงเหลืออยู่ — ไม่มีผลอะไรตราบใดที่ยังใช้ Cloudflare Pages เป็นตัว serve จริง) |
 | รับอีเมล | **Cloudflare Email Routing** | `contact@saantie.com` ยืนยันแล้วว่า MX ชี้มาที่ Cloudflare จริง (`route1/2/3.mx.cloudflare.net`) |
 | ส่งอีเมลจากฟอร์มติดต่อ | **Firebase Cloud Functions** (`contactForm`) + **Gmail SMTP** (nodemailer) | ✅ deploy แล้ว ทดสอบส่งจริงสำเร็จ (ส.ค. 2569) — โค้ดอยู่ที่ `F:\posture_monitor\posture_monitor\functions\index.js` โปรเจกต์ `posture-monitor-program` เดียวกับ 8Hrs ดูหัวข้อ "ระบบอีเมลของฟอร์มติดต่อ" ด้านล่าง |
+| Saantie PMS เวอร์ชันเว็บ (PWA) | **Firebase Hosting** `saantie-hotel-pms.web.app` | การ์ด Saantie PMS ในหน้าหลักลิงก์ไปตรงๆ — โค้ดอยู่ที่ `F:\SaantiePMS\SaantiePMS App\web` (คนละ repo/โฮสต์กับเว็บนี้) |
 | Firebase project ของ 8Hrs | `posture-monitor-program` | **ไม่ได้เชื่อมกับเว็บนี้โดยตรง** เว็บนี้แค่ลิงก์ไปหน้านโยบาย ตัว auth/Firestore ทั้งหมดอยู่ในตัวโปรแกรม `posture_monitor.py` คนละที่ |
 
 ## โครงสร้างไฟล์ปัจจุบัน

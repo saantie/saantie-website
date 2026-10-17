@@ -141,6 +141,9 @@
     border: 1px solid rgba(56,189,248,.28);
     border-radius: 999px; padding: 4px 13px; font-size: .8em; font-weight: 600;
   }
+  /* หลายป้ายในการ์ดเดียว: ขึ้นบรรทัดใหม่ทั้งป้าย ไม่ให้ข้อความในป้ายตกบรรทัดครึ่งๆ */
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badges .badge { white-space: nowrap; }
   .applinks { margin-top: 14px; font-size: .9em; }
   .applinks a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
   .applinks a:hover { border-bottom-color: var(--accent); }
@@ -332,10 +335,16 @@
           follow the stay calendar and track unpaid balances. <b>Double bookings are blocked
           automatically</b>, and staff can work from the same data.
         </p>
-        <span class="badge" data-lang="th">ดาวน์โหลดได้แล้วสำหรับ Android</span>
-        <span class="badge" data-lang="en">Available now for Android</span>
+        <div class="badges">
+          <span class="badge" data-lang="th">ดาวน์โหลดได้แล้วสำหรับ Android</span>
+          <span class="badge" data-lang="en">Available now for Android</span>
+          <span class="badge" data-lang="th">ใช้งานผ่านเว็บได้บน iPhone และ Android</span>
+          <span class="badge" data-lang="en">Web app for iPhone and Android</span>
+        </div>
         <div class="applinks">
           <a href="/pms"><span data-lang="th">รายละเอียดและดาวน์โหลด</span><span data-lang="en">Details &amp; download</span></a>
+          <span class="applinks-sep">·</span>
+          <a href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener"><span data-lang="th" class="nw">เปิดเวอร์ชันเว็บ (iPhone / Android)</span><span data-lang="en" class="nw">Open the web app (iPhone / Android)</span></a>
         </div>
       </div>
     </div>
