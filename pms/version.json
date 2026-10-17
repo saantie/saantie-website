@@ -1,8 +1,8 @@
 {
-    "versionCode":  7,
-    "versionName":  "0.2.5",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.5/saantie-pms-0.2.5.apk",
-    "sha256":  "92fc81f2d83a04ba6c2d5337341089258c8d6f7be1c0d54bb3e610392a1c80a1",
-    "notes":  "นำเข้าการจอง: หน้าตรวจสอบก่อนบันทึก ค้นหา/สุ่มตรวจได้ แยกรายการที่ยังไม่เช็คอิน และแสดงรายการที่บ้านไม่ว่างก่อนนำเข้า",
+    "versionCode":  8,
+    "versionName":  "0.2.6",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.6/saantie-pms-0.2.6.apk",
+    "sha256":  "d9f26b8c9c0ca9c2f212ab073991ceba0fae7a8954411076f8f2fed5a652b325",
+    "notes":  "เลือกบ้าน/ห้องด้วยเสียง (พูดชื่อหรือหมายเลขห้องได้), ปุ่มหน้ายอดค้างเปลี่ยนเป็น \"บันทึกที่ค้างชำระ\", ถามยืนยันก่อนอนุมัติ/ระงับที่พัก",
     "minVersionCode":  0
 }
