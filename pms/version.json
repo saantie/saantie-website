@@ -1,8 +1,8 @@
 {
-    "versionCode":  8,
-    "versionName":  "0.2.6",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.6/saantie-pms-0.2.6.apk",
-    "sha256":  "d9f26b8c9c0ca9c2f212ab073991ceba0fae7a8954411076f8f2fed5a652b325",
-    "notes":  "เลือกบ้าน/ห้องด้วยเสียง (พูดชื่อหรือหมายเลขห้องได้), ปุ่มหน้ายอดค้างเปลี่ยนเป็น \"บันทึกที่ค้างชำระ\", ถามยืนยันก่อนอนุมัติ/ระงับที่พัก",
+    "versionCode":  9,
+    "versionName":  "0.2.7",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.7/saantie-pms-0.2.7.apk",
+    "sha256":  "1ed1c003bba17ac1a4e664adcf4b38c9a38d00619cd9931b1dd7dd82519d3e9c",
+    "notes":  "ธีมสี 7 แบบ (Diary, Ocean, Forest, Rose, Citrus, Violet, Carbon) เลือกได้ที่ ตั้งค่า → บัญชีของฉัน ปุ่มและสีทั้งแอปเปลี่ยนตามธีม",
     "minVersionCode":  0
 }
