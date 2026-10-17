@@ -10,6 +10,7 @@
 <!-- ทำเครื่องหมายว่า JS ใช้ได้ ก่อนที่ body จะเรนเดอร์ — CSS ที่ซ่อนเนื้อหาไว้รอ animation
      จะทำงานต่อเมื่อมีคลาสนี้ ถ้า JS พังหรือถูกปิด เนื้อหาจะแสดงครบตามปกติ ไม่กลายเป็นหน้าว่าง -->
 <script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="/assets/crumbs.css">
 <style>
   :root {
     /* โทนสีดึงมาจากไอคอนแอปจริง (พื้นน้ำเงินเข้ม #151821 + เส้นเรืองแสงฟ้า) จะได้เป็นชุดเดียวกัน */
@@ -135,15 +136,15 @@
   .app p { color: var(--muted); font-size: .96em; }
   /* กลุ่มคำไทยที่ห้ามตัดกลาง (ไทยไม่มีช่องว่างระหว่างคำ เบราว์เซอร์เคยตัด "การเข้า / พัก") */
   .nw { white-space: nowrap; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--accent-soft); color: var(--accent);
-    border: 1px solid rgba(56,189,248,.28);
-    border-radius: 999px; padding: 4px 13px; font-size: .8em; font-weight: 600;
+  /* สถานะของแอป (กดไม่ได้) = ข้อความธรรมดามีจุดนำหน้า ห้ามทำเป็นแคปซูลมีพื้น/กรอบ
+     เพราะผู้ใช้เข้าใจว่าเป็นปุ่ม (เคยเป็นแบบนั้น ผู้ใช้แจ้ง ต.ค. 2569) — ส่วนที่กดได้อยู่ใน .applinks */
+  /* display ตั้งเฉพาะภาษาที่เลือก — ถ้าตั้งใน .app .status ตรงๆ จะชนะกฎซ่อนภาษา [data-lang] แล้วขึ้นทั้งสองภาษา */
+  .app .status { align-items: baseline; gap: 8px; color: var(--muted); font-size: .88em; margin: 2px 0; }
+  html[lang="th"] .app .status[data-lang="th"], html[lang="en"] .app .status[data-lang="en"] { display: flex; }
+  .status::before {
+    content: ""; flex-shrink: 0; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); transform: translateY(-1px);
   }
-  /* หลายป้ายในการ์ดเดียว: ขึ้นบรรทัดใหม่ทั้งป้าย ไม่ให้ข้อความในป้ายตกบรรทัดครึ่งๆ */
-  .badges { display: flex; flex-wrap: wrap; gap: 6px; }
-  .badges .badge { white-space: nowrap; }
   .applinks { margin-top: 14px; font-size: .9em; }
   .applinks a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
   .applinks a:hover { border-bottom-color: var(--accent); }
@@ -237,6 +238,7 @@
 <div class="aurora"><span class="a1"></span><span class="a2"></span></div>
 
 <div class="langbar">
+  <nav id="crumbs"></nav>
   <button class="langbtn" id="langbtn" type="button"></button>
 </div>
 
@@ -309,8 +311,8 @@
           A Windows app that follows your posture through your webcam and alerts you when you
           hunch, tilt or slouch for too long. <b>Your camera feed never leaves your computer.</b>
         </p>
-        <span class="badge" data-lang="th">เตรียมเปิดให้ดาวน์โหลดบน Microsoft Store</span>
-        <span class="badge" data-lang="en">Coming soon to the Microsoft Store</span>
+        <p class="status" data-lang="th">เตรียมเปิดให้ดาวน์โหลดบน Microsoft Store</p>
+        <p class="status" data-lang="en">Coming soon to the Microsoft Store</p>
         <div class="applinks">
           <a href="/8hrs"><span data-lang="th">รายละเอียด</span><span data-lang="en">Learn more</span></a>
           <span class="applinks-sep">·</span>
@@ -335,12 +337,10 @@
           follow the stay calendar and track unpaid balances. <b>Double bookings are blocked
           automatically</b>, and staff can work from the same data.
         </p>
-        <div class="badges">
-          <span class="badge" data-lang="th">ดาวน์โหลดได้แล้วสำหรับ Android</span>
-          <span class="badge" data-lang="en">Available now for Android</span>
-          <span class="badge" data-lang="th">ใช้งานผ่านเว็บได้บน iPhone และ Android</span>
-          <span class="badge" data-lang="en">Web app for iPhone and Android</span>
-        </div>
+        <p class="status" data-lang="th">ดาวน์โหลดได้แล้วสำหรับ Android</p>
+        <p class="status" data-lang="en">Available now for Android</p>
+        <p class="status" data-lang="th">ใช้งานผ่านเว็บได้บน iPhone และ Android</p>
+        <p class="status" data-lang="en">Web app for iPhone and Android</p>
         <div class="applinks">
           <a href="/pms"><span data-lang="th">รายละเอียดและดาวน์โหลด</span><span data-lang="en">Details &amp; download</span></a>
           <span class="applinks-sep">·</span>
@@ -408,6 +408,7 @@
 </div>
 
 <script src="/assets/lang-toggle.js"></script>
+<script src="/assets/crumbs.js"></script>
 <script>
   // ---------- ให้เนื้อหาค่อยๆ ปรากฏตอนเลื่อนถึง ----------
   //

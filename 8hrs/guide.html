@@ -7,6 +7,7 @@
 <meta name="description" content="คู่มือการใช้งาน 8Hrs Posture Monitor ตั้งแต่การติดตั้ง การจัดตำแหน่งกล้อง การปรับเทียบท่านั่ง ไปจนถึงการอ่านรายงาน — A guide to 8Hrs Posture Monitor, from installation and calibration to reading your posture reports.">
 <meta name="theme-color" content="#070C18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Ctext x='32' y='46' font-family='Segoe UI,sans-serif' font-size='40' font-weight='700' fill='%2338BDF8' text-anchor='middle'%3E8%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/assets/crumbs.css">
 <style>
   :root {
     /* โทนสีชุดเดียวกับ index.html / 8hrs/index.html (คัดลอกไว้ในแต่ละไฟล์ตามที่ CLAUDE.md ระบุ) */
@@ -48,10 +49,10 @@
     background: rgba(7,12,24,.72); backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
   }
-  .top-row { max-width: 1060px; margin: 0 auto; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .top-row { max-width: 1060px; margin: 0 auto; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
   .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-weight: 700; }
   .brand svg { width: 24px; height: 24px; }
-  .top-actions { display: flex; align-items: center; gap: 16px; }
+  .top-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .back-link { font-size: .88em; text-decoration: none; color: var(--muted); }
   .back-link:hover { color: var(--text); }
   .langbtn {
@@ -88,10 +89,10 @@
   .step-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
   .step-num { font-size: .9em; color: var(--accent); font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
   .step-head h2 { font-size: 1.4em; margin: 0; letter-spacing: -.02em; }
+  /* ข้อความที่กดไม่ได้ ห้ามทำเป็นแคปซูลมีพื้น/กรอบ (ผู้ใช้เข้าใจว่าเป็นปุ่ม — ดู CLAUDE.md) */
   .pro-tag {
-    display: inline-block; vertical-align: middle; margin-left: 8px; font-size: .5em; font-weight: 700;
-    letter-spacing: .06em; padding: 3px 9px; border-radius: 999px;
-    background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(56,189,248,.3);
+    display: inline-block; vertical-align: middle; margin-left: 10px; font-size: .5em; font-weight: 700;
+    letter-spacing: .12em; color: var(--accent);
   }
   .step-body { max-width: 66ch; }
   .step-body p { margin: 0 0 14px; }
@@ -152,7 +153,7 @@
       <span>8Hrs</span>
     </a>
     <div class="top-actions">
-      <a class="back-link" href="/8hrs"><span data-lang="th">← หน้าหลัก 8Hrs</span><span data-lang="en">← 8Hrs home</span></a>
+      <nav id="crumbs"></nav>
       <button class="langbtn" id="langbtn" type="button"></button>
     </div>
   </div>
@@ -427,5 +428,6 @@
 </footer>
 
 <script src="/assets/lang-toggle.js"></script>
+<script src="/assets/crumbs.js"></script>
 </body>
 </html>

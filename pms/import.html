@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#070C18">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Cpath d='M14 32 32 16 50 32V50H14Z' fill='none' stroke='%2338BDF8' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/assets/crumbs.css">
 <style>
   :root {
     /* โทนสีชุดเดียวกับ index.html (คัดลอกไว้ในแต่ละไฟล์ตามที่ CLAUDE.md ระบุ) */
@@ -113,7 +114,8 @@
   .stat.ok b { color: var(--ok); } .stat.warn b { color: var(--warn); } .stat.err b { color: var(--err); }
   ul.issues { margin: 6px 0 14px; padding-left: 1.2em; max-height: 260px; overflow-y: auto; font-size: .9em; }
   ul.issues.err li::marker { color: var(--err); } ul.issues.warn li::marker { color: var(--warn); }
-  .tag { display: inline-block; font-size: .78em; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 4px; }
+  /* ข้อความที่กดไม่ได้ ห้ามทำเป็นแคปซูลมีพื้น/กรอบ (ผู้ใช้เข้าใจว่าเป็นปุ่ม — ดู CLAUDE.md) */
+  .tag { display: inline-block; font-size: .78em; font-weight: 600; color: var(--accent); margin-left: 6px; }
 
   ol.steps { margin: 0; padding-left: 1.3em; } ol.steps li { margin-bottom: 8px; }
   footer.site { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: .87em; margin-top: 30px; }
@@ -126,7 +128,7 @@
 </head>
 <body>
 
-<div class="langbar"><button class="langbtn" id="langbtn" type="button"></button></div>
+<div class="langbar"><nav id="crumbs"></nav><button class="langbtn" id="langbtn" type="button"></button></div>
 
 <header class="site">
   <div class="wrap nav">
@@ -256,6 +258,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="/assets/lang-toggle.js"></script>
+<script src="/assets/crumbs.js"></script>
 <script>
 /*
  * แปลงตารางการจองจากระบบเดิม → ไฟล์นำเข้า Saantie PMS รูปแบบ version 2

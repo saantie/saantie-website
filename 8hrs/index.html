@@ -11,6 +11,7 @@
 <!-- ทำเครื่องหมายว่า JS ใช้ได้ ก่อน body เรนเดอร์ — CSS ที่ซ่อนเนื้อหาไว้รอ animation จะทำงานต่อเมื่อมีคลาสนี้
      ถ้า JS พัง/ถูกปิด เนื้อหาแสดงครบตามปกติ ไม่กลายเป็นหน้าว่าง (กลไกเดียวกับ index.html) -->
 <script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="/assets/crumbs.css">
 <style>
   :root {
     /* โทนสีชุดเดียวกับ index.html (ยังคัดลอกไว้ในแต่ละไฟล์ตามที่ CLAUDE.md ระบุ — ยังไม่คุ้ม build step) */
@@ -241,10 +242,12 @@
     display: flex; flex-direction: column; gap: 16px;
   }
   .plan.featured { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-soft); }
+  /* ป้าย "แนะนำ" = ข้อความวางบนเส้นขอบการ์ด (พื้นสีเดียวกับหน้าเพื่อตัดเส้น) ไม่ใช่แคปซูล
+     ข้อความที่กดไม่ได้ ห้ามทำเป็นแคปซูลมีพื้น/กรอบ (ผู้ใช้เข้าใจว่าเป็นปุ่ม — ดู CLAUDE.md) */
   .plan-badge {
-    position: absolute; top: -12px; left: 24px; background: var(--accent); color: #06121F;
-    font-size: .7em; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-    padding: 4px 11px; border-radius: 999px;
+    position: absolute; top: -.8em; left: 20px; background: var(--bg); color: var(--accent);
+    font-size: .74em; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 0 8px; line-height: 1.6;
   }
   .plan h3 { margin: 0; font-size: 1.3em; }
   .plan .price { font-size: 2em; font-weight: 700; }
@@ -339,6 +342,7 @@
 <div class="aurora"><span class="a1"></span><span class="a2"></span></div>
 
 <div class="langbar">
+  <nav id="crumbs"></nav>
   <button class="langbtn" id="langbtn" type="button"></button>
 </div>
 
@@ -867,6 +871,7 @@
 </footer>
 
 <script src="/assets/lang-toggle.js"></script>
+<script src="/assets/crumbs.js"></script>
 <script>
   // ---------- ให้เนื้อหาค่อยๆ ปรากฏตอนเลื่อนถึง (คัดลอกกลไก + failsafe 3 ชั้นจาก index.html) ----------
   // ⚠️ animation นี้เป็นแค่ "ของแถม" — ความมองเห็นของเนื้อหาห้ามขึ้นกับมัน ถ้า .reveal ไม่ได้คลาส .in

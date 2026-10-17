@@ -1,0 +1,43 @@
+/* แถบบอกตำแหน่งหน้า (ดู /assets/crumbs.js) — สีมาจากตัวแปรของแต่ละหน้า จึงใช้ได้ทั้งธีมมืดและธีมสว่าง (privacy.html) */
+
+/* แถวบนสุด: แถบตำแหน่งชิดซ้าย ปุ่มสลับภาษาชิดขวา */
+.langbar, .crumbbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.langbar .langbtn { margin-left: auto; }
+
+.crumbs { font-size: .88em; min-width: 0; text-align: left; line-height: 1.6; }
+.crumbs[hidden] { display: none; }
+.crumbs ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; row-gap: 4px; }
+.crumbs .crumb { display: inline-flex; align-items: center; position: relative; }
+/* ตัวคั่น › อยู่ระหว่างระดับ (ไม่ใช่ปุ่ม จึงเป็นแค่เครื่องหมายสีจาง) */
+.crumbs .crumb + .crumb::before { content: "›"; color: var(--muted); margin: 0 8px; opacity: .7; }
+
+/* ส่วนที่กดได้ = ลิงก์ (ขีดเส้นใต้เมื่อชี้) ส่วนหน้าปัจจุบัน = ข้อความธรรมดา ไม่ทำให้ดูเหมือนกดได้ */
+.crumbs a { color: var(--accent); text-decoration: none; }
+.crumbs a:hover, .crumbs a:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+.crumbs .crumb-cur { color: var(--text); font-weight: 600; }
+.crumbs .crumb-go-label { color: var(--muted); }
+
+/* ▾ เปิดเมนูข้ามไปหน้าอื่นในระดับเดียวกัน — เป็นปุ่มจริง จึงมีกรอบให้เห็นว่ากดได้ */
+.crumb-menu { position: relative; display: inline-block; margin-left: 4px; }
+.crumb-menu summary {
+  list-style: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); color: var(--muted);
+  transition: border-color .2s, color .2s;
+}
+.crumb-menu summary::-webkit-details-marker { display: none; }
+.crumb-menu summary:hover, .crumb-menu summary:focus-visible, .crumb-menu[open] summary { border-color: var(--accent); color: var(--accent); outline: none; }
+.crumb-caret { width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: translateY(-2px) rotate(45deg); }
+.crumb-menu[open] .crumb-caret { transform: translateY(2px) rotate(225deg); }
+
+.crumb-menu ul {
+  position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; min-width: 220px; max-width: min(320px, 86vw);
+  margin: 0; padding: 6px; list-style: none; border-radius: 10px;
+  background: var(--surface-2, var(--surface, var(--card, #FFFFFF)));
+  border: 1px solid var(--border-lit, var(--border));
+  box-shadow: 0 14px 36px -12px rgba(0, 0, 0, .45);
+}
+.crumb-menu li a, .crumb-menu li .crumb-cur { display: block; padding: 8px 10px; border-radius: 7px; line-height: 1.45; }
+.crumb-menu li a { color: var(--text); }
+.crumb-menu li a:hover, .crumb-menu li a:focus-visible { background: var(--accent-soft, var(--highlight, rgba(56, 189, 248, .12))); color: var(--accent); text-decoration: none; }
+.crumb-menu li .crumb-cur { color: var(--muted); font-weight: 600; }
+.crumb-menu li .crumb-cur::after { content: " ✓"; color: var(--accent); }
