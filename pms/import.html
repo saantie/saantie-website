@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>นำเข้าข้อมูลการจอง — Saantie PMS | Import bookings</title>
+<meta name="description" content="แปลงข้อมูลการจองจากระบบเดิม (Excel, CSV, Google Sheet) เป็นไฟล์สำหรับนำเข้า Saantie PMS ประมวลผลภายในเบราว์เซอร์ ไม่มีการอัปโหลดข้อมูล — Convert bookings from a previous system into a Saantie PMS import file, entirely in your browser.">
+<meta name="theme-color" content="#070C18">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Cpath d='M14 32 32 16 50 32V50H14Z' fill='none' stroke='%2338BDF8' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    /* โทนสีชุดเดียวกับ index.html (คัดลอกไว้ในแต่ละไฟล์ตามที่ CLAUDE.md ระบุ) */
+    --bg: #070C18;
+    --bg-soft: #0B1224;
+    --surface: #0E1730;
+    --surface-2: #121D3A;
+    --border: #1D2B4D;
+    --border-lit: #2E4374;
+    --text: #E9EFFA;
+    --muted: #8DA2C8;
+    --accent: #38BDF8;
+    --accent-2: #2563EB;
+    --accent-soft: rgba(56, 189, 248, 0.12);
+    --ok: #34D399;
+    --warn: #FBBF24;
+    --err: #F87171;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", "Sarabun", -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  a { color: var(--accent); }
+
+  .langbar { max-width: 960px; margin: 0 auto; padding: 18px 16px 0; text-align: right; position: relative; z-index: 3; }
+  .langbtn {
+    background: rgba(14,23,48,.7); border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 7px 18px; font: inherit; font-size: .85em; cursor: pointer; transition: .25s;
+  }
+  .langbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+  header.site { border-bottom: 1px solid var(--border); }
+  .nav { display: flex; align-items: center; gap: 18px; padding: 13px 0; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-weight: 700; }
+  .brand svg { width: 26px; height: 26px; flex-shrink: 0; }
+
+  h1 { font-size: clamp(1.6em, 4vw, 2.2em); margin: 32px 0 8px; line-height: 1.3; }
+  h2 { font-size: 1.2em; margin: 0 0 12px; line-height: 1.4; display: flex; align-items: center; gap: 10px; }
+  html[lang="th"] h1, html[lang="th"] h2 { line-height: 1.7; }
+  .lead { color: var(--muted); margin: 0 0 22px; max-width: 700px; }
+  .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 50%; background: var(--accent); color: #06121F; font-size: .85em; font-weight: 700; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+  .card.off { opacity: .45; pointer-events: none; }
+  .muted { color: var(--muted); }
+  .small { font-size: .88em; }
+  .privacy { border-left: 3px solid var(--ok); padding: 10px 14px; background: var(--surface); border-radius: 0 12px 12px 0; color: var(--muted); font-size: .92em; margin-bottom: 22px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+    font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+    border-radius: 999px; padding: 10px 22px; border: 1px solid var(--border-lit); background: var(--surface-2); color: var(--text); transition: .2s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn-primary { background: var(--accent); color: #06121F; border-color: var(--accent); }
+  .btn-primary:hover { box-shadow: 0 0 0 4px var(--accent-soft); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+  .drop { border: 2px dashed var(--border-lit); border-radius: 14px; padding: 22px; text-align: center; cursor: pointer; transition: .2s; }
+  .drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+  textarea, select, input[type=text], input[type=number], input[type=search] {
+    font: inherit; color: var(--text); background: var(--bg-soft); border: 1px solid var(--border-lit);
+    border-radius: 10px; padding: 8px 10px; width: 100%; max-width: 100%;
+  }
+  textarea { min-height: 90px; font-size: .88em; }
+  select:focus, input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  details summary { cursor: pointer; color: var(--accent); margin: 14px 0 8px; }
+
+  .map { display: grid; grid-template-columns: minmax(150px, 240px) 1fr; gap: 8px 14px; align-items: center; }
+  .map label { font-size: .93em; }
+  .req { color: var(--warn); }
+  .opts { display: grid; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .opts label { display: flex; gap: 10px; align-items: flex-start; }
+  .opts input[type=checkbox] { margin-top: .45em; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent); }
+  @media (max-width: 600px) { .map { grid-template-columns: 1fr; gap: 2px; } .map select { margin-bottom: 10px; } }
+
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: .88em; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; white-space: nowrap; }
+  th { background: var(--surface-2); color: var(--muted); font-weight: 600; position: sticky; top: 0; }
+  td.wrap-cell { white-space: normal; min-width: 220px; }
+  td input[type=text] { min-width: 200px; padding: 5px 8px; }
+  .right { text-align: right; }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .stat { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 8px 14px; }
+  .stat b { font-size: 1.3em; display: block; line-height: 1.3; }
+  .stat.ok b { color: var(--ok); } .stat.warn b { color: var(--warn); } .stat.err b { color: var(--err); }
+  ul.issues { margin: 6px 0 14px; padding-left: 1.2em; max-height: 260px; overflow-y: auto; font-size: .9em; }
+  ul.issues.err li::marker { color: var(--err); } ul.issues.warn li::marker { color: var(--warn); }
+  .tag { display: inline-block; font-size: .78em; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 4px; }
+
+  ol.steps { margin: 0; padding-left: 1.3em; } ol.steps li { margin-bottom: 8px; }
+  footer.site { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: .87em; margin-top: 30px; }
+
+  [data-lang] { display: none; }
+  html[lang="th"] [data-lang="th"], html[lang="en"] [data-lang="en"] { display: block; }
+  html[lang="th"] span[data-lang="th"], html[lang="en"] span[data-lang="en"] { display: inline; }
+  html[lang="th"] li[data-lang="th"], html[lang="en"] li[data-lang="en"] { display: list-item; }
+</style>
+</head>
+<body>
+
+<div class="langbar"><button class="langbtn" id="langbtn" type="button"></button></div>
+
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="/pms">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5 15 16 5 27 15V27H5Z" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M13 27V19H19V27" stroke="var(--accent)" stroke-width="1.8"/>
+      </svg>
+      <span>Saantie PMS</span>
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>
+    <span data-lang="th">นำเข้าข้อมูลการจองจากระบบเดิม</span>
+    <span data-lang="en">Bring bookings over from your previous system</span>
+  </h1>
+  <p class="lead" data-lang="th">แปลงข้อมูลการจองจากโปรแกรมหรือระบบที่เคยใช้ (Excel, CSV, Google Sheet หรือไฟล์ที่ส่งออกจากระบบจองอื่น) ให้เป็นไฟล์ที่แอปพลิเคชัน Saantie PMS นำเข้าได้ ใช้ได้ทั้งบนคอมพิวเตอร์และโทรศัพท์มือถือ</p>
+  <p class="lead" data-lang="en">Turn the booking list from whatever you used before — Excel, CSV, Google Sheets or an export from another booking system — into a file the Saantie PMS app can import. Works on a computer or a phone.</p>
+  <p class="privacy" data-lang="th">ข้อมูลทั้งหมดประมวลผลภายในเบราว์เซอร์ของผู้ใช้เท่านั้น ไม่มีการอัปโหลดหรือส่งข้อมูลลูกค้าไปยังเซิร์ฟเวอร์ใด</p>
+  <p class="privacy" data-lang="en">Everything is processed inside your browser. Guest data is never uploaded or sent to any server.</p>
+
+  <!-- 1. เลือกไฟล์ -->
+  <section class="card" id="step1">
+    <h2><span class="num">1</span><span data-lang="th">เลือกไฟล์ข้อมูลเดิม</span><span data-lang="en">Choose your old data</span></h2>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.ods,.numbers" hidden>
+      <div data-lang="th"><b>แตะเพื่อเลือกไฟล์</b> หรือลากไฟล์มาวางที่นี่<br><span class="muted small">รองรับ Excel (.xlsx, .xls), CSV, ODS — จาก Google Sheet ให้ใช้เมนู ไฟล์ → ดาวน์โหลด → .xlsx หรือ .csv</span></div>
+      <div data-lang="en"><b>Tap to choose a file</b> or drop it here<br><span class="muted small">Excel (.xlsx, .xls), CSV or ODS — from Google Sheets use File → Download → .xlsx or .csv</span></div>
+    </label>
+    <div id="fileInfo" class="small muted" style="margin-top:10px"></div>
+
+    <details>
+      <summary><span data-lang="th">หรือคัดลอกตารางมาวาง</span><span data-lang="en">…or paste a table</span></summary>
+      <textarea id="paste" placeholder="ชื่อลูกค้า	วันเช็คอิน	วันเช็คเอาท์	บ้าน …"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" id="usePaste" type="button"><span data-lang="th">ใช้ข้อมูลที่วาง</span><span data-lang="en">Use pasted data</span></button>
+        <span class="small muted"><span data-lang="th">เลือกช่วงตารางใน Excel/Google Sheet (รวมแถวหัวตาราง) แล้วคัดลอกมาวาง</span><span data-lang="en">Select the range in Excel/Google Sheets, header row included, and paste.</span></span>
+      </div>
+    </details>
+
+    <div id="sheetPick" class="row" style="margin-top:14px; display:none">
+      <span class="small"><span data-lang="th">ชีต</span><span data-lang="en">Sheet</span></span>
+      <select id="sheet" style="width:auto"></select>
+      <span class="small"><span data-lang="th">หัวตารางอยู่แถวที่</span><span data-lang="en">Header row</span></span>
+      <input type="number" id="headerRow" min="1" value="1" style="width:90px">
+    </div>
+
+    <p class="small muted" style="margin:14px 0 0">
+      <span data-lang="th">ยังไม่มีไฟล์? ดาวน์โหลด</span><span data-lang="en">No file yet? Download the</span>
+      <a href="#" id="tpl"><span data-lang="th">ตารางตัวอย่าง (.csv)</span><span data-lang="en">sample template (.csv)</span></a>
+      <span data-lang="th">แล้วกรอกข้อมูลตามหัวตาราง</span><span data-lang="en">and fill in the columns.</span>
+    </p>
+  </section>
+
+  <!-- 2. จับคู่คอลัมน์ -->
+  <section class="card off" id="step2">
+    <h2><span class="num">2</span><span data-lang="th">จับคู่คอลัมน์</span><span data-lang="en">Match the columns</span></h2>
+    <p class="small muted" data-lang="th">ระบบเดาให้จากชื่อหัวตารางแล้ว ตรวจสอบและแก้ไขเฉพาะช่องที่ไม่ถูกต้อง ช่องที่มี <span class="req">*</span> จำเป็นต้องเลือก</p>
+    <p class="small muted" data-lang="en">Columns have been guessed from the header names. Check them and fix any that are wrong. Fields marked <span class="req">*</span> are required.</p>
+    <div class="map" id="map"></div>
+    <div class="opts">
+      <label for="dateOrder" style="display:block">
+        <span data-lang="th">รูปแบบวันที่ที่เขียนด้วยตัวเลข</span><span data-lang="en">Numeric date format</span>
+        <select id="dateOrder" style="margin-top:4px">
+          <option value="auto"></option><option value="dmy"></option><option value="mdy"></option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="pastPaid" checked>
+        <span><span data-lang="th">การจองที่เช็คเอาท์ไปแล้ว ถือว่าชำระครบ</span><span data-lang="en">Treat stays that have already checked out as fully paid</span><br>
+        <span class="small muted"><span data-lang="th">ระบบเดิมส่วนใหญ่ไม่ได้บันทึกการรับเงินครบทุกรายการ หากไม่เลือก แอปพลิเคชันจะแสดงการจองเก่าเป็นยอดค้างชำระ</span><span data-lang="en">Most old systems did not record every payment. If unticked, old stays will show up as unpaid in the app.</span></span></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- 3. ชื่อบ้าน -->
+  <section class="card off" id="step3">
+    <h2><span class="num">3</span><span data-lang="th">ตรวจสอบชื่อบ้าน/ห้อง</span><span data-lang="en">Check room / house names</span></h2>
+    <p class="small muted" data-lang="th">ชื่อในช่อง “ชื่อในแอปพลิเคชัน” ต้องตรงกับชื่อบ้านหรือห้องที่ตั้งไว้ในแอปพลิเคชัน (ไม่คำนึงถึงช่องว่างและตัวพิมพ์เล็กใหญ่) ชื่อที่ยังไม่มีในแอปพลิเคชัน แอปพลิเคชันจะเสนอให้เพิ่มให้อัตโนมัติตอนนำเข้า หากชื่อเดิมหมายถึงหลายหลัง ให้คั่นด้วยเครื่องหมายจุลภาค เช่น “บ้านเอ, บ้านบี”</p>
+    <p class="small muted" data-lang="en">The “Name in the app” column must match the room or house names set up in the app (spacing and letter case are ignored). Names the app does not know yet can be added automatically when you import. If one old name covers several units, separate them with commas, e.g. “Villa A, Villa B”.</p>
+    <div class="scroll"><table id="houses"></table></div>
+  </section>
+
+  <!-- 4. ตรวจสอบและดาวน์โหลด -->
+  <section class="card off" id="step4">
+    <h2><span class="num">4</span><span data-lang="th">ตรวจสอบและสร้างไฟล์นำเข้า</span><span data-lang="en">Review and create the import file</span></h2>
+    <div class="stats" id="stats"></div>
+    <div id="issues"></div>
+    <div class="row" style="margin-bottom:10px">
+      <input type="search" id="q" autocomplete="off" style="flex:1; min-width:200px" placeholder="">
+      <select id="filter" style="width:auto"></select>
+    </div>
+    <div class="scroll" style="max-height:520px; overflow-y:auto"><table id="preview"></table></div>
+    <div id="more" style="margin-top:8px"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn btn-primary" id="download" type="button" disabled>
+        <span data-lang="th">ดาวน์โหลดไฟล์นำเข้า (.json)</span><span data-lang="en">Download import file (.json)</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 5. นำเข้าในแอป -->
+  <section class="card">
+    <h2><span class="num">5</span><span data-lang="th">นำเข้าในแอปพลิเคชัน</span><span data-lang="en">Import in the app</span></h2>
+    <ol class="steps">
+      <li data-lang="th">ส่งไฟล์ .json ที่ดาวน์โหลดไปยังโทรศัพท์ที่ติดตั้งแอปพลิเคชัน (เช่น ส่งผ่าน LINE Keep, Google Drive หรืออีเมล) หากสร้างไฟล์บนโทรศัพท์เครื่องเดียวกัน ไฟล์จะอยู่ในโฟลเดอร์ดาวน์โหลด</li>
+      <li data-lang="en">Send the downloaded .json file to the phone running the app (LINE Keep, Google Drive or email all work). If you made it on that phone, it is already in Downloads.</li>
+      <li data-lang="th">เปิดแอปพลิเคชันด้วยบัญชีเจ้าของที่พัก ไปที่ ตั้งค่า → ข้อมูลเก่า → นำเข้าการจองจากไฟล์ แล้วเลือกไฟล์</li>
+      <li data-lang="en">Sign in to the app as the property owner, go to Settings → Old data → Import bookings from file, and pick the file.</li>
+      <li data-lang="th">แอปพลิเคชันจะแสดงหน้าตรวจสอบก่อนบันทึก ค้นหาด้วยชื่อ เบอร์โทร ชื่อบ้าน หรือวันที่ เพื่อสุ่มตรวจได้ โดยเฉพาะรายการที่ยังไม่เช็คอิน รายการที่ชนกับการจองที่มีอยู่แล้วในแอปพลิเคชันจะแสดงให้เห็นและจะไม่ถูกนำเข้า ชื่อบ้านหรือห้องที่ยังไม่มีในแอปพลิเคชันจะถูกเพิ่มให้ (ตั้งราคาภายหลังในหน้าตั้งค่า)</li>
+      <li data-lang="en">The app shows a review screen before saving anything. Search by name, phone, room or date to spot-check the bookings, especially upcoming ones. Bookings that clash with ones already in the app are listed and left out. Rooms the app does not know yet are added for you (set their prices in Settings afterwards).</li>
+      <li data-lang="th">เมื่อตรวจสอบแล้ว ให้ติ๊กยืนยันรายการที่ยังไม่เช็คอิน แล้วกด “นำเข้า”</li>
+      <li data-lang="en">Once you are satisfied, tick the box confirming the upcoming bookings and tap Import.</li>
+      <li data-lang="th">ต้องเชื่อมต่ออินเทอร์เน็ตและเปิดหน้าจอไว้จนนำเข้าเสร็จ การนำเข้าไฟล์เดิมซ้ำจะเขียนทับรายการเดิม ไม่เกิดรายการซ้ำ</li>
+      <li data-lang="en">Stay online with the screen on until it finishes. Importing the same file again overwrites the earlier copy instead of duplicating it.</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span data-lang="th">© 2026 Saantie · <a href="/pms">Saantie PMS</a> · ต้องการความช่วยเหลือในการย้ายข้อมูล ติดต่อ <a href="https://line.me/R/ti/p/%40341jvvzy" target="_blank" rel="noopener">LINE @341jvvzy</a></span>
+    <span data-lang="en">© 2026 Saantie · <a href="/pms">Saantie PMS</a> · Need help moving your data? <a href="https://line.me/R/ti/p/%40341jvvzy" target="_blank" rel="noopener">LINE @341jvvzy</a></span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="/assets/lang-toggle.js"></script>
+<script>
+/*
+ * แปลงตารางการจองจากระบบเดิม → ไฟล์นำเข้า Saantie PMS รูปแบบ version 2
+ * { version: 2, bookings: [{ id, guestName, guestPhone, guestCount, checkIn, checkOut,
+ *   roomLines: [{ houseName, nights, highNights, amount }], extras, payments, discount, note, source }] }
+ * version 2 = อ้างบ้านด้วยชื่อ (ไม่มี houseIds) แอปจับคู่ชื่อกับบ้านในแอปเอง — ดู ImportJson.kt / web/src/data/importJson.ts
+ * ใน repo saantie-pms-small-hotel ถ้าเปลี่ยนรูปแบบไฟล์ต้องแก้ทั้งสามที่
+ * ทำงานในเบราว์เซอร์ทั้งหมด (PDPA: ไม่ส่งข้อมูลลูกค้าออกจากเครื่อง) — ห้ามเพิ่ม fetch/analytics ที่ส่งข้อมูลในตาราง
+ */
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var th = function () { return document.documentElement.lang !== "en"; };
+  var t = function (a, b) { return th() ? a : b; };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var fmt = function (n) { return Number(n).toLocaleString("th-TH"); };
+
+  // ---------- ช่องข้อมูล + คำที่ใช้เดาจากหัวตาราง ----------
+  var FIELDS = [
+    { k: "guestName", th: "ชื่อลูกค้า", en: "Guest name", req: true, kw: ["ชื่อลูกค้า", "ลูกค้า", "ผู้จอง", "ชื่อผู้", "guest", "customer", "name", "ชื่อ"], not: ["บ้าน", "ห้อง", "room", "house"] },
+    { k: "guestPhone", th: "เบอร์โทร", en: "Phone", kw: ["โทร", "เบอร์", "phone", "tel", "mobile"] },
+    { k: "checkIn", th: "วันเช็คอิน", en: "Check-in date", req: true, kw: ["เช็คอิน", "เช็กอิน", "check-in", "checkin", "check in", "วันเข้า", "วันที่เข้า", "arrival", "วันที่พัก"] },
+    { k: "checkOut", th: "วันเช็คเอาท์", en: "Check-out date", kw: ["เช็คเอาท์", "เช็คเอาต์", "เช็กเอาต์", "check-out", "checkout", "check out", "วันออก", "departure"] },
+    { k: "nights", th: "จำนวนคืน (ใช้เมื่อไม่มีวันเช็คเอาท์)", en: "Nights (used when there is no check-out date)", kw: ["จำนวนคืน", "คืน", "nights", "night"] },
+    { k: "houses", th: "บ้าน/ห้อง", en: "Room / house", req: true, kw: ["บ้าน", "ห้อง", "room", "house", "unit", "villa", "ที่พัก"], not: ["ราคา", "ค่า", "rate", "price", "total", "ยอด", "จำนวน", "type"] },
+    { k: "guestCount", th: "จำนวนผู้เข้าพัก", en: "Number of guests", kw: ["จำนวนคน", "จำนวนผู้", "ผู้เข้าพัก", "pax", "guests", "adults", "คน"] },
+    { k: "roomTotal", th: "ค่าห้องรวม (บาท)", en: "Room total (THB)", kw: ["ค่าห้อง", "ค่าที่พัก", "ยอดรวม", "ราคา", "total", "amount", "price", "rate", "ยอด"] },
+    { k: "discount", th: "ส่วนลด", en: "Discount", kw: ["ส่วนลด", "discount"] },
+    { k: "deposit", th: "มัดจำ", en: "Deposit", kw: ["มัดจำ", "deposit"] },
+    { k: "paid", th: "ชำระแล้ว (รวมมัดจำ)", en: "Paid so far (incl. deposit)", kw: ["ชำระแล้ว", "จ่ายแล้ว", "ยอดชำระ", "รับเงิน", "paid"] },
+    { k: "balance", th: "ยอดค้างชำระ (ใช้เมื่อไม่มีช่องชำระแล้ว)", en: "Balance due (used when there is no paid column)", kw: ["ค้างชำระ", "คงเหลือ", "ค้างจ่าย", "balance", "outstanding", "due"] },
+    { k: "note", th: "หมายเหตุ", en: "Note", kw: ["หมายเหตุ", "note", "remark", "comment"] },
+    { k: "status", th: "สถานะ (แถวที่ยกเลิกจะถูกข้าม)", en: "Status (cancelled rows are skipped)", kw: ["สถานะ", "status"] }
+  ];
+  // เดาช่องที่คำเฉพาะเจาะจงก่อน เพื่อไม่ให้คำกว้าง ๆ เช่น "ชื่อ" "ยอด" แย่งคอลัมน์ไป
+  var GUESS_ORDER = ["discount", "deposit", "balance", "paid", "guestCount", "nights", "checkIn", "checkOut", "guestPhone", "houses", "roomTotal", "note", "status", "guestName"];
+
+  var S = { wb: null, grid: [], fileName: "", map: {}, houseMap: {}, firstSpell: {}, result: null };
+
+  // ---------- อ่านไฟล์ ----------
+  function decodeText(buf) {
+    // CSV จาก Excel ภาษาไทยมักเป็น Windows-874 (TIS-620) ไม่ใช่ UTF-8
+    try { return new TextDecoder("utf-8", { fatal: true }).decode(buf); }
+    catch (e) { return new TextDecoder("windows-874").decode(buf); }
+  }
+
+  function loadFile(f) {
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var buf = new Uint8Array(r.result);
+        var isText = /\.(csv|tsv|txt)$/i.test(f.name);
+        // raw: true = เก็บข้อความวันที่ตามที่พิมพ์ ไม่ให้ไลบรารีเดาเป็นวันแบบอเมริกัน
+        S.wb = isText ? XLSX.read(decodeText(buf), { type: "string", raw: true }) : XLSX.read(buf, { type: "array" });
+        S.fileName = f.name;
+        afterWorkbook();
+      } catch (e) {
+        $("fileInfo").textContent = t("อ่านไฟล์ไม่ได้: ", "Could not read the file: ") + e.message;
+      }
+    };
+    r.readAsArrayBuffer(f);
+  }
+
+  function afterWorkbook() {
+    var sel = $("sheet");
+    sel.innerHTML = S.wb.SheetNames.map(function (n, i) { return '<option value="' + i + '">' + esc(n) + "</option>"; }).join("");
+    // ชีตแรกที่มีข้อมูลมากที่สุดมักเป็นตารางการจอง
+    var best = 0, bestRows = -1;
+    S.wb.SheetNames.forEach(function (n, i) {
+      var ref = S.wb.Sheets[n]["!ref"]; if (!ref) return;
+      var rows = XLSX.utils.decode_range(ref).e.r;
+      if (rows > bestRows) { bestRows = rows; best = i; }
+    });
+    sel.value = String(best);
+    $("sheetPick").style.display = "flex";
+    loadSheet(true);
+  }
+
+  function loadSheet(guessHeader) {
+    var ws = S.wb.Sheets[S.wb.SheetNames[+$("sheet").value]];
+    // blankrows: true = เก็บแถวว่างไว้ ให้เลขแถวที่แจ้งตรงกับ Excel (เคยคลาดเมื่อมีแถวว่างเหนือหรือกลางตาราง)
+    S.grid = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: "", blankrows: true });
+    if (guessHeader) {
+      // หัวตาราง = แถวแรกที่มีข้อความอย่างน้อย 3 ช่อง (ข้ามชื่อรายงาน/แถวว่างด้านบน)
+      var h = 0;
+      for (var i = 0; i < Math.min(S.grid.length, 20); i++) {
+        var filled = S.grid[i].filter(function (c) { return String(c).trim() !== ""; }).length;
+        if (filled >= 3) { h = i; break; }
+      }
+      $("headerRow").value = h + 1;
+    }
+    var nonEmpty = dataRows().filter(function (r) { return r.some(function (c) { return String(c).trim() !== ""; }); }).length;
+    $("fileInfo").textContent = (S.fileName ? S.fileName + " · " : "") + t("ข้อมูล ", "") + fmt(nonEmpty) + t(" แถว", " data rows");
+    // ไฟล์ใหม่: เริ่มตัวกรอง/คำค้นใหม่ (ไม่ค้างจากไฟล์ก่อน)
+    $("filter").innerHTML = ""; $("q").value = "";
+    guessMap();
+    S.houseMap = {};
+    compute();
+  }
+
+  function headerIndex() { return Math.max(0, (+$("headerRow").value || 1) - 1); }
+  function header() { return (S.grid[headerIndex()] || []).map(function (c) { return String(c).trim(); }); }
+  function dataRows() { return S.grid.slice(headerIndex() + 1); }
+
+  function guessMap() {
+    var hs = header().map(function (h) { return h.toLowerCase(); });
+    var used = {};
+    S.map = {};
+    GUESS_ORDER.forEach(function (k) {
+      var f = FIELDS.filter(function (x) { return x.k === k; })[0];
+      S.map[k] = -1;
+      for (var w = 0; w < f.kw.length && S.map[k] < 0; w++) {
+        for (var c = 0; c < hs.length; c++) {
+          if (used[c] || !hs[c]) continue;
+          if (hs[c].indexOf(f.kw[w]) < 0) continue;
+          if ((f.not || []).some(function (n) { return hs[c].indexOf(n) >= 0; })) continue;
+          S.map[k] = c; used[c] = true; break;
+        }
+      }
+    });
+  }
+
+  // ---------- แปลงค่า ----------
+  var TH_MONTHS = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+  var TH_ABBR = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+  var EN_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+  function fixYear(y) {
+    // ปี 2 หลัก: 43–99 ถือเป็น พ.ศ. 25xx (ข้อมูลที่พักไทย), 00–42 ถือเป็น ค.ศ. 20xx; ปีเกิน 2400 = พ.ศ.
+    if (y < 100) y = y >= 43 ? 2500 + y : 2000 + y;
+    if (y > 2400) y -= 543;
+    return y;
+  }
+  function ymd(y, m, d) {
+    y = fixYear(y);
+    if (!(m >= 1 && m <= 12 && d >= 1 && d <= 31) || y < 1990 || y > 2100) return null;
+    var dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCDate() !== d) return null;
+    return dt.toISOString().slice(0, 10);
+  }
+  function serialToDate(v) {
+    // เลขลำดับวันของ Excel (ถ้าพิมพ์ปี พ.ศ. ลงช่องวันที่ จะได้ปี 25xx แล้ว fixYear ลบ 543 ให้)
+    var dt = new Date(Date.UTC(1899, 11, 30) + Math.round(v) * 86400000);
+    return ymd(dt.getUTCFullYear(), dt.getUTCMonth() + 1, dt.getUTCDate());
+  }
+  function parseDate(v, order) {
+    if (v === "" || v == null) return null;
+    if (typeof v === "number") return v > 1000 && v < 300000 ? serialToDate(v) : null;
+    if (v instanceof Date) return ymd(v.getFullYear(), v.getMonth() + 1, v.getDate());
+    var s = String(v).trim(), m;
+    if ((m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/))) return ymd(+m[1], +m[2], +m[3]);
+    var low = s.toLowerCase(), mon = 0, i;
+    for (i = 0; i < 12 && !mon; i++) if (low.indexOf(TH_MONTHS[i]) >= 0) mon = i + 1;
+    for (i = 0; i < 12 && !mon; i++) if (low.indexOf(TH_ABBR[i]) >= 0 || low.indexOf(TH_ABBR[i].replace(/\./g, "")) >= 0) mon = i + 1;
+    for (i = 0; i < 12 && !mon; i++) if (new RegExp("(^|[^a-z])" + EN_MONTHS[i]).test(low)) mon = i + 1;
+    if (mon) {
+      var nums = (low.match(/\d+/g) || []).map(Number);
+      if (nums.length < 2) return null;
+      var d = nums[0] <= 31 ? nums[0] : nums[1], y = d === nums[0] ? nums[1] : nums[0];
+      return ymd(y, mon, d);
+    }
+    if ((m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/))) {
+      return order === "mdy" ? ymd(+m[3], +m[1], +m[2]) : ymd(+m[3], +m[2], +m[1]);
+    }
+    if (/^\d{5}(\.\d+)?$/.test(s)) return serialToDate(Number(s));
+    return null;
+  }
+  // ตัวเลขวันที่ 12/05 กำกวม: ดูทั้งคอลัมน์ ถ้ามีช่องแรกเกิน 12 = วัน/เดือน, ช่องที่สองเกิน 12 = เดือน/วัน
+  function detectOrder(values) {
+    var dmy = 0, mdy = 0;
+    values.forEach(function (v) {
+      var m = typeof v === "string" && v.trim().match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.]\d{2,4}/);
+      if (!m) return;
+      if (+m[1] > 12) dmy++; else if (+m[2] > 12) mdy++;
+    });
+    S.orderEvidence = dmy + mdy;
+    return mdy > dmy ? "mdy" : "dmy";
+  }
+  function money(v) {
+    if (v === "" || v == null) return null;
+    if (typeof v === "number") return Math.round(v);
+    var s = String(v).replace(/[,\s฿]|บาท|thb/gi, "");
+    var n = parseFloat(s);
+    return isNaN(n) ? null : Math.round(n);
+  }
+  function phone(v) {
+    var s = String(v).replace(/\D/g, "");
+    if (s.length === 11 && s.indexOf("66") === 0) s = "0" + s.slice(2);
+    if (s.length === 9 && s[0] !== "0") s = "0" + s; // Excel ตัดเลข 0 หน้าเบอร์ทิ้ง
+    return s;
+  }
+  function splitHouses(v) {
+    return String(v).split(/\s*(?:,|，|\+|;|、|\n|&|\s+และ\s+)\s*/).map(function (s) { return s.trim(); }).filter(Boolean);
+  }
+  function hkey(s) { return String(s).trim().toLowerCase().replace(/\s+/g, " "); }
+  function addDays(d, n) { var x = new Date(d + "T00:00:00Z"); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
+  function diffDays(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000); }
+  function today() { var d = new Date(); return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())).toISOString().slice(0, 10); }
+  function showDate(d) {
+    var p = d.split("-");
+    return th() ? (+p[2]) + " " + TH_ABBR[+p[1] - 1] + " " + String(+p[0] + 543).slice(2) : d;
+  }
+  // id คงที่จากข้อมูลในแถว (ไม่ใช่ลำดับแถว): นำเข้าไฟล์ที่แก้ไข/เรียงใหม่ซ้ำ จะเขียนทับรายการเดิมในแอป ไม่เกิดซ้ำ
+  function hashId(s) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return "imp_" + (h2 >>> 0).toString(16).padStart(8, "0") + (h1 >>> 0).toString(16).padStart(8, "0");
+  }
+  // ชื่อบ้านในไฟล์ → ชื่อในแอป (ช่องในขั้นที่ 3, คั่นด้วยจุลภาคได้หลายหลัง)
+  function targetsOf(name) {
+    var v = S.houseMap[hkey(name)];
+    if (v == null) v = S.firstSpell[hkey(name)] || name; // "Villa 1" กับ "villa  1" ใช้ตัวสะกดแรกที่พบ
+    return v.split(/\s*[,，]\s*/).map(function (s) { return s.trim(); }).filter(Boolean);
+  }
+
+  // ---------- แปลงทั้งตาราง ----------
+  function compute() {
+    var M = S.map, rows = dataRows();
+    var cell = function (r, k) { return M[k] >= 0 ? r[M[k]] : ""; };
+    var order = $("dateOrder").value;
+    if (order === "auto") {
+      order = detectOrder(rows.map(function (r) { return cell(r, "checkIn"); }).concat(rows.map(function (r) { return cell(r, "checkOut"); })));
+    }
+    S.detectedOrder = order;
+    var autoOrder = $("dateOrder").value === "auto";
+    var pastPaid = $("pastPaid").checked, now = today();
+    var ambiguous = 0, numericRe = /^\s*(\d{1,2})[-\/.](\d{1,2})[-\/.]\d{2,4}/;
+    var out = [], errors = [], warns = [], skipped = 0, houseCount = {}, houseOrder = [];
+    var ids = {}, nightsTaken = {};
+    S.firstSpell = {};
+    var missingReq = FIELDS.filter(function (f) { return f.req && !(M[f.k] >= 0); });
+
+    if (!missingReq.length) rows.forEach(function (r, idx) {
+      var rowNo = headerIndex() + idx + 2;
+      if (!r.some(function (c) { return String(c).trim() !== ""; })) return;
+      var err = function (msg) { errors.push([rowNo, msg]); };
+      var name = String(cell(r, "guestName")).trim();
+      var st = String(cell(r, "status")).toLowerCase();
+      if (/ยกเลิก|cancel|void|no.?show/.test(st)) { skipped++; return; }
+      if (!name) return err(t("ไม่มีชื่อลูกค้า", "No guest name"));
+
+      var ci = parseDate(cell(r, "checkIn"), order);
+      if (!ci) return err(t("อ่านวันเช็คอินไม่ได้: ", "Unreadable check-in date: ") + "“" + cell(r, "checkIn") + "”");
+      var rawOut = cell(r, "checkOut"), co = parseDate(rawOut, order);
+      if (!co && String(rawOut).trim() !== "") return err(t("อ่านวันเช็คเอาท์ไม่ได้: ", "Unreadable check-out date: ") + "“" + rawOut + "”");
+      // ยังไม่เช็คอิน (รวมเช็คอินวันนี้) ต้องไม่ผิดเลย: ข้อสงสัยที่ปกติเป็นแค่คำเตือน ให้เป็นปัญหาที่ต้องแก้ก่อน
+      var upcoming = ci >= now;
+      var flag = function (msg) { if (upcoming) { err(msg + t(" (ยังไม่เช็คอิน ต้องแก้ก่อน)", " (upcoming stay — must be fixed)")); return true; } warns.push([rowNo, msg]); return false; };
+      if (!co) {
+        var n = money(cell(r, "nights"));
+        if (n > 0) co = addDays(ci, n);
+        else { co = addDays(ci, 1); if (flag(t("ไม่มีวันเช็คเอาท์ ถือว่าพัก 1 คืน", "No check-out date — assumed 1 night"))) return; }
+      }
+      if (co <= ci) return err(t("วันเช็คเอาท์ต้องอยู่หลังวันเช็คอิน", "Check-out must be after check-in") + " (" + showDate(ci) + " → " + showDate(co) + ")");
+      var nights = diffDays(ci, co);
+      if (nights > 60 && flag(t("พักนานผิดปกติ ", "Unusually long stay: ") + nights + t(" คืน — ตรวจสอบวันที่", " nights — check the dates"))) return;
+      // วัน/เดือนสลับกันได้ (ทั้งคู่ไม่เกิน 12) และทั้งคอลัมน์ไม่มีหลักฐานว่าเป็นแบบไหน
+      var amb = upcoming && autoOrder && !S.orderEvidence && [cell(r, "checkIn"), rawOut].some(function (v) {
+        var m = typeof v === "string" && v.match(numericRe); return m && +m[1] !== +m[2];
+      });
+
+      var rawHouses = splitHouses(cell(r, "houses"));
+      if (!rawHouses.length) return err(t("ไม่ระบุบ้าน/ห้อง", "No room / house"));
+      rawHouses.forEach(function (h) {
+        var k = hkey(h);
+        if (!(k in houseCount)) { houseCount[k] = 0; houseOrder.push(h); S.firstSpell[k] = h; }
+        houseCount[k]++;
+      });
+      var houses = [], seen = {};
+      rawHouses.forEach(function (h) { targetsOf(h).forEach(function (x) { if (!seen[hkey(x)]) { seen[hkey(x)] = 1; houses.push(x); } }); });
+      if (!houses.length) return err(t("ชื่อบ้านในแอปพลิเคชันว่าง (ขั้นที่ 3)", "Empty app name for this room (step 3)"));
+
+      var total = money(cell(r, "roomTotal")) || 0;
+      var discount = money(cell(r, "discount")) || 0;
+      var deposit = money(cell(r, "deposit")) || 0;
+      var paid = money(cell(r, "paid")), balance = money(cell(r, "balance"));
+      if (paid == null) paid = balance != null && total ? Math.max(0, total - discount - balance) : deposit;
+
+      // ยอดค่าห้องรวมแบ่งเท่า ๆ กันทุกหลัง (เศษไปหลังแรก)
+      var per = Math.floor(total / houses.length), rem = total - per * houses.length;
+      var roomLines = houses.map(function (h, j) { return { houseName: h, nights: nights, highNights: 0, amount: per + (j === 0 ? rem : 0) }; });
+
+      var payments = [], note = t("นำเข้าจากระบบเดิม", "Imported from previous system");
+      var dep = Math.min(deposit, paid);
+      if (dep > 0) payments.push({ id: "p1", type: "DEPOSIT", amount: dep, method: "", date: ci, note: "นำเข้าจากระบบเดิม" });
+      if (paid - dep > 0) payments.push({ id: "p2", type: "PAYMENT", amount: paid - dep, method: "", date: ci, note: "นำเข้าจากระบบเดิม" });
+      var due = total - discount - paid;
+      if (pastPaid && co < now && due > 0) payments.push({ id: "p3", type: "PAYMENT", amount: due, method: "", date: co, note: "ถือว่าชำระครบ (ข้อมูลเก่า)" });
+
+      var ph = phone(cell(r, "guestPhone"));
+      var id = hashId([name, ph, ci, co, rawHouses.join("|")].join("#"));
+      if (ids[id]) { warns.push([rowNo, t("ซ้ำกับแถวที่ ", "Duplicate of row ") + ids[id] + t(" — ข้าม", " — skipped")]); return; }
+      ids[id] = rowNo;
+
+      // บ้านเดียวกันคืนเดียวกันซ้อนกันในไฟล์: แอปจะข้ามรายการหลัง เตือนไว้ก่อน
+      // ตรวจให้ครบก่อนแล้วค่อยจองคืน — รายการที่ชน (แอปข้าม) ต้องไม่กันคืนให้แถวถัดไป
+      var clash = null, keys = [];
+      houses.forEach(function (h) {
+        for (var d = ci; d < co; d = addDays(d, 1)) {
+          var k = hkey(h) + "_" + d;
+          if (nightsTaken[k] && !clash) clash = [h, d, nightsTaken[k]];
+          keys.push(k);
+        }
+      });
+      if (!clash) keys.forEach(function (k) { nightsTaken[k] = rowNo; });
+      if (clash && flag(t("“" + clash[0] + "” คืน " + showDate(clash[1]) + " ซ้อนกับแถวที่ " + clash[2] + " — แอปพลิเคชันจะข้ามรายการนี้",
+        "“" + clash[0] + "” on " + clash[1] + " overlaps row " + clash[2] + " — the app will skip this one"))) return;
+
+      if (amb) ambiguous++; // นับเฉพาะแถวที่ผ่านทุกด่านและจะอยู่ในไฟล์นำเข้า
+      var gc = money(cell(r, "guestCount"));
+      out.push({
+        rowNo: rowNo, upcoming: upcoming,
+        b: {
+          id: id, guestName: name, guestPhone: ph, guestCount: gc > 0 ? gc : 0,
+          checkIn: ci, checkOut: co, roomLines: roomLines, extras: [], payments: payments,
+          discount: discount, note: String(cell(r, "note")).trim(), source: "IMPORT"
+        }
+      });
+    });
+
+    S.result = { out: out, errors: errors, warns: warns, skipped: skipped, missingReq: missingReq, houseCount: houseCount, houseOrder: houseOrder, ambiguous: ambiguous };
+    render();
+  }
+
+  // ---------- ค้นหา (ตรรกะเดียวกับ matchesImportQuery / ImportJson.matches ในแอป) ----------
+  function queryYear(y) { if (y < 100) y = y >= 43 ? 2500 + y : 2000 + y; return y > 2400 ? y - 543 : y; }
+  function parseQueryDate(q) {
+    var s = q.trim().toLowerCase(), m = s.match(/^(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?$/), d, mo;
+    if (m) {
+      d = +m[1]; mo = +m[2];
+      if (d < 1 || d > 31 || mo < 1 || mo > 12) return null;
+      return { d: d, m: mo, y: m[3] ? queryYear(+m[3]) : null };
+    }
+    m = s.match(/^(\d{1,2})\s*([^\d\s]+)\s*(\d{2,4})?$/);
+    if (!m) return null;
+    var word = m[2].replace(/\./g, "");
+    if (word.length < 2) return null;
+    mo = -1;
+    for (var i = 0; i < 12 && mo < 0; i++) if (TH_MONTHS[i].indexOf(word) === 0 || TH_ABBR[i].replace(/\./g, "") === word) mo = i + 1;
+    d = +m[1];
+    if (mo < 0 || d < 1 || d > 31) return null;
+    return { d: d, m: mo, y: m[3] ? queryYear(+m[3]) : null };
+  }
+  // ช่วงพักรวมวันเช็คเอาท์ (ผู้ใช้มักค้นด้วยวันออก)
+  function stayCovers(b, q) {
+    for (var k = b.checkIn; k <= b.checkOut; k = addDays(k, 1)) {
+      var p = k.split("-").map(Number);
+      if (p[2] === q.d && p[1] === q.m && (q.y == null || p[0] === q.y)) return true;
+    }
+    return false;
+  }
+  function tokenMatches(b, tk) {
+    var dq = parseQueryDate(tk);
+    if (dq && stayCovers(b, dq)) return true;
+    var digits = tk.replace(/\D/g, "");
+    if (digits.length >= 3 && digits.length === tk.replace(/[\s-]/g, "").length && b.guestPhone.indexOf(digits) >= 0) return true;
+    return [b.guestName, b.note].concat(b.roomLines.map(function (l) { return l.houseName; })).join("\n").toLowerCase().indexOf(tk) >= 0;
+  }
+  function matchesQuery(b, query) {
+    var q = query.trim().toLowerCase().replace(/\s+/g, " ");
+    if (!q) return true;
+    var whole = parseQueryDate(q);
+    if (whole) return stayCovers(b, whole);
+    return q.split(" ").every(function (tk) { return tokenMatches(b, tk); });
+  }
+
+  // ---------- แสดงผล ----------
+  function render() {
+    var has = S.grid.length > 0;
+    ["step2", "step3", "step4"].forEach(function (id) { $(id).classList.toggle("off", !has); });
+    renderOrderOptions();
+    if (!has) return;
+    renderMap();
+    renderHouses();
+    renderResult();
+  }
+
+  function renderOrderOptions() {
+    var o = $("dateOrder").options;
+    o[0].textContent = t("อัตโนมัติ", "Automatic") + (S.detectedOrder ? " (" + (S.detectedOrder === "mdy" ? t("เดือน/วัน/ปี", "month/day/year") : t("วัน/เดือน/ปี", "day/month/year")) + ")" : "");
+    o[1].textContent = t("วัน/เดือน/ปี เช่น 15/10/2569", "day/month/year, e.g. 15/10/2026");
+    o[2].textContent = t("เดือน/วัน/ปี เช่น 10/15/2026", "month/day/year, e.g. 10/15/2026");
+  }
+
+  function sample(c) {
+    var rows = dataRows();
+    for (var i = 0; i < rows.length && i < 50; i++) {
+      var v = rows[i][c];
+      if (String(v).trim() !== "") return typeof v === "number" && v > 30000 && v < 300000 ? (parseDate(v) || v) : String(v).slice(0, 24);
+    }
+    return "";
+  }
+
+  function renderMap() {
+    var hs = header();
+    var opts = '<option value="-1">' + esc(t("— ไม่มี —", "— none —")) + "</option>" + hs.map(function (h, c) {
+      var col = XLSX.utils.encode_col(c), s = sample(c);
+      return '<option value="' + c + '">' + esc(col + ": " + (h || t("(ไม่มีหัว)", "(no header)")) + (s !== "" ? "  — " + s : "")) + "</option>";
+    }).join("");
+    $("map").innerHTML = FIELDS.map(function (f) {
+      return '<label for="m_' + f.k + '">' + esc(t(f.th, f.en)) + (f.req ? ' <span class="req">*</span>' : "") + "</label>" +
+        '<select id="m_' + f.k + '" data-k="' + f.k + '">' + opts + "</select>";
+    }).join("");
+    FIELDS.forEach(function (f) { $("m_" + f.k).value = String(S.map[f.k] >= 0 ? S.map[f.k] : -1); });
+  }
+
+  function renderHouses() {
+    var R = S.result;
+    if (!R.houseOrder.length) {
+      $("houses").innerHTML = '<tr><td class="muted">' + esc(R.missingReq.length ? t("เลือกคอลัมน์ที่จำเป็นในขั้นที่ 2 ก่อน", "Choose the required columns in step 2 first") : t("ไม่พบชื่อบ้าน/ห้อง", "No room names found")) + "</td></tr>";
+      return;
+    }
+    $("houses").innerHTML = "<tr><th>" + esc(t("ชื่อในไฟล์", "Name in file")) + '</th><th class="right">' + esc(t("จำนวนการจอง", "Bookings")) + "</th><th>" + esc(t("ชื่อในแอปพลิเคชัน", "Name in the app")) + "</th></tr>" +
+      R.houseOrder.map(function (h) {
+        var k = hkey(h), v = S.houseMap[k] != null ? S.houseMap[k] : h;
+        return "<tr><td>" + esc(h) + '</td><td class="right">' + fmt(R.houseCount[k]) + '</td><td><input type="text" data-house="' + esc(k) + '" value="' + esc(v) + '"></td></tr>';
+      }).join("");
+  }
+
+  function renderResult() {
+    var R = S.result;
+    var stat = function (cls, n, label) { return '<div class="stat ' + cls + '"><b>' + fmt(n) + "</b>" + esc(label) + "</div>"; };
+    if (R.missingReq.length) {
+      $("stats").innerHTML = "";
+      $("issues").innerHTML = '<p class="small" style="color:var(--warn)">' + esc(t("ยังไม่ได้เลือกคอลัมน์: ", "Still need a column for: ") + R.missingReq.map(function (f) { return t(f.th, f.en); }).join(", ")) + "</p>";
+      $("preview").innerHTML = "";
+      $("more").innerHTML = "";
+      $("download").disabled = true;
+      return;
+    }
+    var upcomingN = R.out.filter(function (x) { return x.upcoming; }).length;
+    $("stats").innerHTML = stat("ok", R.out.length, t("รายการพร้อมนำเข้า", "ready to import")) +
+      stat("", upcomingN, t("ยังไม่เช็คอิน", "upcoming stays")) +
+      stat("err", R.errors.length, t("แถวที่มีปัญหา (ไม่นำเข้า)", "rows with problems (left out)")) +
+      stat("warn", R.warns.length, t("คำเตือน", "warnings")) +
+      (R.skipped ? stat("", R.skipped, t("แถวที่ยกเลิก (ข้าม)", "cancelled rows (skipped)")) : "");
+    var list = function (cls, title, items) {
+      if (!items.length) return "";
+      return '<div class="small"><b>' + esc(title) + '</b></div><ul class="issues ' + cls + '">' + items.slice(0, 300).map(function (x) {
+        return "<li>" + esc(t("แถว ", "Row ") + x[0] + ": " + x[1]) + "</li>";
+      }).join("") + (items.length > 300 ? "<li>…</li>" : "") + "</ul>";
+    };
+    var fmtName = S.detectedOrder === "mdy";
+    var amb = R.ambiguous ? '<p class="small" style="color:var(--warn)">' + esc(t(
+      "วันที่ของการจองที่ยังไม่เช็คอิน " + R.ambiguous + " รายการเขียนเป็นตัวเลขที่สลับวันกับเดือนได้ (เช่น 05/11) และไม่มีวันที่ใดในไฟล์ที่บอกได้ว่าเป็นแบบวัน/เดือน หรือเดือน/วัน ระบบอ่านเป็น " + (fmtName ? "เดือน/วัน/ปี" : "วัน/เดือน/ปี") + " กรุณาเลือกรูปแบบวันที่ในขั้นที่ 2 ให้ถูกต้อง แล้วตรวจสอบวันในสัปดาห์ในตารางด้านล่าง",
+      R.ambiguous + " upcoming bookings use numeric dates where day and month could be swapped (e.g. 05/11), and nothing in the file shows which order is used. They are read as " + (fmtName ? "month/day/year" : "day/month/year") + ". Pick the right date format in step 2, then check the weekdays in the table below.")) + "</p>" : "";
+    $("issues").innerHTML = amb + list("err", t("แถวที่มีปัญหา — แก้ในไฟล์ต้นฉบับหรือเปลี่ยนการจับคู่คอลัมน์ แล้วเลือกไฟล์ใหม่", "Rows with problems — fix them in the source file or change the column matching, then load the file again"), R.errors) +
+      list("warn", t("คำเตือน (ยังนำเข้าได้)", "Warnings (these still import)"), R.warns);
+    renderPreview();
+    $("download").disabled = R.out.length === 0;
+  }
+
+  var PAGE = 200, limit = PAGE;
+  function renderPreview() {
+    var R = S.result, sel = $("filter");
+    var upN = R.out.filter(function (x) { return x.upcoming; }).length;
+    var cur = sel.value || (upN ? "up" : "all");
+    sel.innerHTML = '<option value="up">' + esc(t("ยังไม่เช็คอิน (", "Upcoming (") + fmt(upN) + ")") + '</option><option value="past">' +
+      esc(t("เช็คอินแล้ว (", "Already checked in (") + fmt(R.out.length - upN) + ")") + '</option><option value="all">' + esc(t("ทั้งหมด (", "All (") + fmt(R.out.length) + ")") + "</option>";
+    sel.value = cur;
+    $("q").placeholder = t("ค้นหา: ชื่อ เบอร์โทร ชื่อบ้าน หรือวันที่ เช่น 15/11/69", "Search: name, phone, room, or a date such as 15/11/2026");
+    var q = $("q").value;
+    var rows = R.out.filter(function (x) { return (cur === "all" || (cur === "up") === x.upcoming) && matchesQuery(x.b, q); });
+    rows.sort(function (a, c) { return a.b.checkIn < c.b.checkIn ? -1 : a.b.checkIn > c.b.checkIn ? 1 : a.rowNo - c.rowNo; });
+    var head = "<tr><th>" + [t("แถว", "Row"), t("ลูกค้า", "Guest"), t("โทร", "Phone"), t("เช็คอิน", "In"), t("เช็คเอาท์", "Out"), t("คืน", "Nights"), t("บ้าน/ห้อง", "Rooms"), t("ยอด", "Total"), t("ชำระแล้ว", "Paid"), t("หมายเหตุ", "Note")].map(esc).join("</th><th>") + "</th></tr>";
+    var body = rows.slice(0, limit).map(function (x) {
+      var b = x.b, total = b.roomLines.reduce(function (s2, l) { return s2 + l.amount; }, 0);
+      var paid = b.payments.reduce(function (s2, p2) { return s2 + p2.amount; }, 0);
+      return "<tr><td>" + x.rowNo + (x.upcoming ? ' <span class="tag">' + esc(t("ยังไม่เช็คอิน", "upcoming")) + "</span>" : "") + "</td><td>" + esc(b.guestName) + "</td><td>" + esc(b.guestPhone) +
+        "</td><td>" + showDateLong(b.checkIn) + "</td><td>" + showDateLong(b.checkOut) + '</td><td class="right">' + diffDays(b.checkIn, b.checkOut) +
+        '</td><td class="wrap-cell">' + esc(b.roomLines.map(function (l) { return l.houseName; }).join(", ")) + '</td><td class="right">' + fmt(total - b.discount) +
+        '</td><td class="right">' + fmt(paid) + '</td><td class="wrap-cell">' + esc(b.note) + "</td></tr>";
+    }).join("");
+    $("preview").innerHTML = rows.length ? head + body : '<tr><td class="muted">' + esc(t("ไม่พบรายการ", "Nothing found")) + "</td></tr>";
+    $("more").innerHTML = rows.length > limit ? '<button class="btn" type="button" id="moreBtn">' + esc(t("แสดงเพิ่ม (แสดง ", "Show more (") + fmt(limit) + t(" จาก ", " of ") + fmt(rows.length) + ")") + "</button>" : "";
+  }
+  // วันที่พร้อมวันในสัปดาห์ ช่วยจับวันกับเดือนที่สลับกัน (เช่น ลูกค้าจองวันศุกร์ แต่ตารางขึ้นวันอังคาร)
+  function showDateLong(d) {
+    var dow = new Date(d + "T00:00:00Z").getUTCDay();
+    return (th() ? ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"])[dow] + " " + showDate(d);
+  }
+
+  // ---------- ดาวน์โหลด ----------
+  function saveBlob(blob, name) {
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+  $("download").addEventListener("click", function () {
+    var data = { version: 2, generator: "saantie.com/pms/import", bookings: S.result.out.map(function (x) { return x.b; }) };
+    saveBlob(new Blob([JSON.stringify(data)], { type: "application/json" }), "saantie-import-" + today() + ".json");
+  });
+  $("tpl").addEventListener("click", function (e) {
+    e.preventDefault();
+    var csv = [
+      "ชื่อลูกค้า,เบอร์โทร,วันเช็คอิน,วันเช็คเอาท์,บ้าน/ห้อง,จำนวนผู้เข้าพัก,ค่าห้องรวม,ส่วนลด,มัดจำ,ชำระแล้ว,หมายเหตุ,สถานะ",
+      "ตัวอย่าง หนึ่ง,0812345678,15/11/2569,17/11/2569,บ้านริมน้ำ,4,3000,0,1000,1000,มาถึงประมาณบ่ายสามโมง,ยืนยัน",
+      "ตัวอย่าง สอง,0898765432,20/11/2569,21/11/2569,\"บ้านริมน้ำ, บ้านบนเนิน\",8,4000,200,2000,3800,,ยืนยัน",
+      "ตัวอย่าง สาม,0861112222,1/12/2569,3/12/2569,บ้านบนเนิน,2,2400,0,0,0,,ยกเลิก"
+    ].join("\r\n");
+    // BOM ให้ Excel เปิดภาษาไทยถูก
+    saveBlob(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }), "saantie-import-template.csv");
+  });
+
+  // ---------- เหตุการณ์ ----------
+  $("file").addEventListener("change", function () { var f = this.files[0]; this.value = ""; if (f) loadFile(f); });
+  var drop = $("drop");
+  drop.addEventListener("dragover", function (e) { e.preventDefault(); drop.classList.add("over"); });
+  drop.addEventListener("dragleave", function () { drop.classList.remove("over"); });
+  drop.addEventListener("drop", function (e) { e.preventDefault(); drop.classList.remove("over"); var f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+  $("usePaste").addEventListener("click", function () {
+    var text = $("paste").value;
+    if (!text.trim()) return;
+    // ตารางที่คัดลอกจาก Excel/Google Sheet คั่นด้วย Tab — แยกเองตรง ๆ (ไม่ให้ไลบรารีเดารูปแบบวันที่)
+    if (text.indexOf("\t") >= 0) {
+      var aoa = text.replace(/\r/g, "").split("\n").map(function (l) { return l.split("\t"); });
+      S.wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(S.wb, XLSX.utils.aoa_to_sheet(aoa), "Sheet1");
+    } else {
+      S.wb = XLSX.read(text, { type: "string", raw: true });
+    }
+    S.fileName = t("ข้อมูลที่วาง", "Pasted data");
+    afterWorkbook();
+  });
+  $("sheet").addEventListener("change", function () { loadSheet(true); });
+  $("headerRow").addEventListener("change", function () { loadSheet(false); });
+  $("map").addEventListener("change", function (e) { var k = e.target.getAttribute("data-k"); if (k) { S.map[k] = +e.target.value; compute(); } });
+  $("houses").addEventListener("change", function (e) { var k = e.target.getAttribute("data-house"); if (k != null) { S.houseMap[k] = e.target.value; compute(); } });
+  $("dateOrder").addEventListener("change", compute);
+  $("q").addEventListener("input", function () { limit = PAGE; if (S.result && !S.result.missingReq.length) renderPreview(); });
+  $("filter").addEventListener("change", function () { limit = PAGE; renderPreview(); });
+  $("more").addEventListener("click", function (e) { if (e.target.id === "moreBtn") { limit += PAGE; renderPreview(); } });
+  $("pastPaid").addEventListener("change", compute);
+  // ปุ่มสลับภาษา (lang-toggle.js) เปลี่ยน <html lang> ก่อน แล้วค่อยวาดข้อความที่สร้างด้วยสคริปต์ใหม่
+  $("langbtn").addEventListener("click", function () { if (S.grid.length) compute(); else renderOrderOptions(); });
+  renderOrderOptions();
+})();
+</script>
+</body>
+</html>

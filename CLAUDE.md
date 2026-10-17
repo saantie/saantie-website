@@ -29,6 +29,7 @@ index.html              → saantie.com                  หน้าหลั�
 8hrs/guide.html          → saantie.com/8hrs/guide        คู่มือการใช้งาน 8 ขั้นตอน (2 ภาษา)
 8hrs/privacy.html        → saantie.com/8hrs/privacy      นโยบายความเป็นส่วนตัวของ 8Hrs
 pms/index.html           → saantie.com/pms               หน้าดาวน์โหลด Saantie PMS (แอปจัดการที่พัก Android, ติดตั้งนอก Store)
+pms/import.html          → saantie.com/pms/import        แปลงข้อมูลการจองจากระบบเดิม (Excel/CSV) เป็นไฟล์นำเข้าของแอป — ทำงานในเบราว์เซอร์ล้วน ห้ามเพิ่มโค้ดที่ส่งข้อมูลในตารางออกไป (PDPA), แอปฝังลิงก์ URL นี้ไว้ ห้ามย้าย
 pms/version.json         → saantie.com/pms/version.json  ⚠️ แอปฝัง URL นี้ไว้ตรวจอัปเดต ห้ามย้าย/เปลี่ยนชื่อ — อัปเดตไฟล์นี้หลังสร้าง GitHub Release ของ saantie/saantie-pms-small-hotel แล้วเท่านั้น
 assets/8hrs-icon.png     → ไอคอนแอปบนการ์ดหน้าหลัก
 assets/pms-icon.svg      → ไอคอน Saantie PMS บนการ์ดหน้าหลัก (แปลงจาก ic_launcher_*.xml ของแอป — เปลี่ยนไอคอนแอปต้องแก้ที่นี่ด้วย)
