@@ -1,8 +1,8 @@
 {
-    "versionCode":  13,
-    "versionName":  "0.2.11",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.11/saantie-pms-0.2.11.apk",
-    "sha256":  "e4c0da13f4c04885cea83fb2bb2195330e18d80ce6547d72acfcd192a477eb57",
-    "notes":  "เตือนสำรองข้อมูลเดือนละครั้ง (เจ้าของ/ผู้จัดการ) กดสำรองได้จากหน้าต่างเตือนทันที และแสดงวันที่สำรองล่าสุดในหน้าตั้งค่า",
+    "versionCode":  14,
+    "versionName":  "0.2.12",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.12/saantie-pms-0.2.12.apk",
+    "sha256":  "343f70c49f2c8212b76978eb0263e5136811363396d01e49ab7cb22e9468a748",
+    "notes":  "หน้าสรุปเช็คอินพรุ่งนี้ (การจอง → สรุปพรุ่งนี้) ส่งทาง LINE หรือคัดลอกข้อความได้ทันที",
     "minVersionCode":  0
 }
