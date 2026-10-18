@@ -1,8 +1,8 @@
 {
-    "versionCode":  11,
-    "versionName":  "0.2.9",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.9/saantie-pms-0.2.9.apk",
-    "sha256":  "b3f68181e5abe66224ef715850ce073df46c8fc68241ceb1633e8af131f785fb",
-    "notes":  "รายละเอียดบ้าน (จำนวนผู้เข้าพักที่รองรับ ห้องนอน เตียง สิ่งอำนวยความสะดวก) + ฝากรูปบ้าน + ข้อมูลเว็บไซต์ที่พัก, เตือนเมื่อคนเกินที่รองรับ, หน้ารายการวันนี้แยกสีเข้าพัก/เช็คเอาท์",
+    "versionCode":  12,
+    "versionName":  "0.2.10",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.10/saantie-pms-0.2.10.apk",
+    "sha256":  "30fd977121cadc14afa6fc20e876aaa6c83c1872b495d534eb9af72e29fe588c",
+    "notes":  "ปุ่มสำรองข้อมูลการจองเป็นไฟล์ (ตั้งค่า → สำรอง / นำเข้าข้อมูล), กันการลบเอกสารการจอง, นำเข้าไฟล์สำรองไม่ฟื้นการจองที่ยกเลิกแล้ว",
     "minVersionCode":  0
 }
