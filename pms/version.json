@@ -1,8 +1,8 @@
 {
-    "versionCode":  14,
-    "versionName":  "0.2.12",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.12/saantie-pms-0.2.12.apk",
-    "sha256":  "343f70c49f2c8212b76978eb0263e5136811363396d01e49ab7cb22e9468a748",
-    "notes":  "หน้าสรุปเช็คอินพรุ่งนี้ (การจอง → สรุปพรุ่งนี้) ส่งทาง LINE หรือคัดลอกข้อความได้ทันที",
+    "versionCode":  15,
+    "versionName":  "0.2.13",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.13/saantie-pms-0.2.13.apk",
+    "sha256":  "7f35331b2f23e8393b6c244c08e4ef324904dbb5eade51217be4bc43f83e84ef",
+    "notes":  "สรุปเช็คอินพรุ่งนี้: ขึ้นต้นด้วยชื่อลูกค้า \"คุณ... โทร. ... จองบ้าน ...\" เบอร์โทรเต็ม เรียงตามชื่อลูกค้า",
     "minVersionCode":  0
 }
