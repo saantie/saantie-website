@@ -1,8 +1,8 @@
 {
-    "versionCode":  15,
-    "versionName":  "0.2.13",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.13/saantie-pms-0.2.13.apk",
-    "sha256":  "7f35331b2f23e8393b6c244c08e4ef324904dbb5eade51217be4bc43f83e84ef",
-    "notes":  "สรุปเช็คอินพรุ่งนี้: ขึ้นต้นด้วยชื่อลูกค้า \"คุณ... โทร. ... จองบ้าน ...\" เบอร์โทรเต็ม เรียงตามชื่อลูกค้า",
+    "versionCode":  16,
+    "versionName":  "0.2.14",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.14/saantie-pms-0.2.14.apk",
+    "sha256":  "0ba34d02cedcaa0b6ad7d31f2ce5c58f9dab9ea8e70ff43e21c4694e6918298f",
+    "notes":  "เปลี่ยนชื่อแอปที่แสดงเป็น \"Saantie จัดการที่พัก\"",
     "minVersionCode":  0
 }
