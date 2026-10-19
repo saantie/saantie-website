@@ -1,8 +1,8 @@
 {
-    "versionCode":  16,
-    "versionName":  "0.2.14",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.14/saantie-pms-0.2.14.apk",
-    "sha256":  "0ba34d02cedcaa0b6ad7d31f2ce5c58f9dab9ea8e70ff43e21c4694e6918298f",
-    "notes":  "เปลี่ยนชื่อแอปที่แสดงเป็น \"Saantie จัดการที่พัก\"",
+    "versionCode":  17,
+    "versionName":  "0.2.15",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.15/saantie-pms-0.2.15.apk",
+    "sha256":  "d8aa47e1301679cb8cf55ac771fe6caf2dfac119148ea58479efafac83a80b66",
+    "notes":  "หน้าบันทึกเช็คอิน: เพิ่มปุ่ม \"ชำระที่ค้างจ่าย\" รับเงินส่วนที่ค้างได้ทันที",
     "minVersionCode":  0
 }
