@@ -1,8 +1,8 @@
 {
-    "versionCode":  19,
-    "versionName":  "0.2.17",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.17/saantie-pms-0.2.17.apk",
-    "sha256":  "3436ff187c4870ae79d99f0f7b01ee3823e0811e5f09c6ea6c62fbdd463f6e55",
-    "notes":  "ปุ่ม \"บันทึกการเช็คอิน\" และ \"ชำระที่ค้างจ่าย\" เป็นแบบเส้นขอบ ไม่มีพื้นหลัง",
+    "versionCode":  20,
+    "versionName":  "0.2.18",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.18/saantie-pms-0.2.18.apk",
+    "sha256":  "f58bc9848acd650698aadf4740eab7be80331fa4b66a56cf04cffacafbce1dd9",
+    "notes":  "ฟอร์มจอง: พิมพ์ยอดรับเงินได้เลย (บอกมัดจำ/ชำระครบอัตโนมัติ เลือกเงินสด/โอน/อื่นๆ) แนบสลิปได้ (ทุกคนในที่พักดู ลบเองหลังเช็คเอาท์ 15 วัน) และเพิ่มค่าบริการแบบแตะหมวดแล้วพิมพ์เงิน",
     "minVersionCode":  0
 }
