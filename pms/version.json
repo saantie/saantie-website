@@ -1,8 +1,8 @@
 {
-    "versionCode":  18,
-    "versionName":  "0.2.16",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.16/saantie-pms-0.2.16.apk",
-    "sha256":  "862d1aba635090efd8abee51eb61619cab8a2ec98130a1e041550ce668ff45d4",
-    "notes":  "อ่านบัตรประชาชนภาษาไทยอัตโนมัติ (ชื่อไทย ที่อยู่ เลขบัตร) ในเครื่อง ไม่ส่งรูปออกนอกเครื่อง — เปิดที่ ตั้งค่า → อ่านบัตรประชาชน (ดาวน์โหลดครั้งเดียว ~13 MB) แล้วถ่ายบัตรในหน้าเช็คอินหรือหน้าจอง ตรวจชื่อ/ที่อยู่ก่อนบันทึกทุกครั้ง",
+    "versionCode":  19,
+    "versionName":  "0.2.17",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.17/saantie-pms-0.2.17.apk",
+    "sha256":  "3436ff187c4870ae79d99f0f7b01ee3823e0811e5f09c6ea6c62fbdd463f6e55",
+    "notes":  "ปุ่ม \"บันทึกการเช็คอิน\" และ \"ชำระที่ค้างจ่าย\" เป็นแบบเส้นขอบ ไม่มีพื้นหลัง",
     "minVersionCode":  0
 }
