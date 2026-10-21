@@ -1,8 +1,8 @@
 {
-    "versionCode":  26,
-    "versionName":  "0.2.24",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.24/saantie-pms-0.2.24.apk",
-    "sha256":  "6d4adc859bb1a33ba63b03d76ba059bfb40574db2f5cf9bcddef71ef00a6ffc9",
-    "notes":  "- แก้ปุ่ม \"ถ่ายรูป / เลือกรูป\" และ \"แนบสลิป\" ที่กดแล้วเลือกได้แค่ไฟล์ ถ่ายรูปไม่ได้: ตอนนี้กดแล้วขึ้นหน้าต่างให้เลือก \"ถ่ายรูป\" หรือ \"เลือกจากแฟ้ม\"\n",
+    "versionCode":  27,
+    "versionName":  "0.2.25",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.25/saantie-pms-0.2.25.apk",
+    "sha256":  "afcc343ceacb837bdf28ecc1131fc251a3724d29fcf3f737ffc2ba316fcd03a1",
+    "notes":  "- ป๊อปอัปสรุปเช็คอินอัตโนมัติ: 3 ทุ่ม 5 นาที \"สรุปเช็คอินพรุ่งนี้\" และ 7 โมงเช้า \"สรุปเช็คอินวันนี้\" พร้อมปุ่มส่งทาง LINE / คัดลอก\n- แอป Android แจ้งเตือนบนจอแม้ไม่ได้เปิดแอป แตะแล้วเปิดป๊อปอัปสรุป (อาจช้าไม่กี่นาทีจากระบบประหยัดแบต)\n",
     "minVersionCode":  0
 }
