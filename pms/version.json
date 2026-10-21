@@ -1,8 +1,8 @@
 {
-    "versionCode":  25,
-    "versionName":  "0.2.23",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.23/saantie-pms-0.2.23.apk",
-    "sha256":  "8bb1858a6154c7bf14ba104c9fdf8cfe9331dee706241104a50165cabb6eb0c7",
-    "notes":  "- ปุ่มถ่ายรูปในหน้าบันทึกเช็คอินและปุ่ม \"แนบสลิป\" (ฟอร์มจอง/ช่องรับเงิน) รวมเป็นปุ่มเดียว: กดแล้วเลือกได้ทั้งถ่ายภาพและเลือกภาพจากแฟ้ม ไม่มีปุ่มเลือกรูปแยกอีก\n",
+    "versionCode":  26,
+    "versionName":  "0.2.24",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.24/saantie-pms-0.2.24.apk",
+    "sha256":  "6d4adc859bb1a33ba63b03d76ba059bfb40574db2f5cf9bcddef71ef00a6ffc9",
+    "notes":  "- แก้ปุ่ม \"ถ่ายรูป / เลือกรูป\" และ \"แนบสลิป\" ที่กดแล้วเลือกได้แค่ไฟล์ ถ่ายรูปไม่ได้: ตอนนี้กดแล้วขึ้นหน้าต่างให้เลือก \"ถ่ายรูป\" หรือ \"เลือกจากแฟ้ม\"\n",
     "minVersionCode":  0
 }
