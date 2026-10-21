@@ -1,8 +1,8 @@
 {
-    "versionCode":  30,
-    "versionName":  "0.2.28",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.28/saantie-pms-0.2.28.apk",
-    "sha256":  "d898aa85234278f13a2adab68d6ad928dd78a63a6b15cbec06731c87cb48b010",
-    "notes":  "- สำรองข้อมูล: สร้างไฟล์เสร็จแล้วมีป๊อปอัปให้เลือกแชร์ไป Google Drive/LINE/อีเมล หรือบันทึกเป็นไฟล์เอง\n- ปิดป๊อปอัปโดยไม่เก็บไฟล์ จะไม่นับว่าสำรองแล้ว (ยังเตือนต่อ)",
+    "versionCode":  31,
+    "versionName":  "0.2.29",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.29/saantie-pms-0.2.29.apk",
+    "sha256":  "d81d46707473b80ed42753a674f54061e711be6d1b5895845ccc40c130fc8a03",
+    "notes":  "- สำรองข้อมูล: บันทึกไฟล์ลงเครื่องให้อัตโนมัติ (โฟลเดอร์ Download/SAANTIE) แล้วมีปุ่มแชร์สำเนาไป Google Drive อีกชั้น\n- ไฟล์สำรองตั้งชื่อว่า SAANTIE backup ตามด้วยชื่อที่พักและวันที่\n- PWA บน iPhone: แก้ปุ่มแชร์ไฟล์สำรองที่แชร์ไม่ได้ (ลองส่งเป็นไฟล์ข้อความก่อน)",
     "minVersionCode":  0
 }
