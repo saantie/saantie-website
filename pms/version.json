@@ -1,8 +1,8 @@
 {
-    "versionCode":  28,
-    "versionName":  "0.2.26",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.26/saantie-pms-0.2.26.apk",
-    "sha256":  "223f6fcde253640cddf19c7c561c9d2ecd10e17f36106f2cb400e8b4905508b0",
-    "notes":  "- PWA: ป๊อปอัปอัปเดตบอกรายละเอียดว่าเวอร์ชันใหม่มีอะไรบ้าง\n- PWA บน iPhone: ตรวจเวอร์ชันใหม่ทุกครั้งที่กลับเข้าแอป ป๊อปอัปอัปเดตจึงขึ้นได้ (เดิมตรวจแค่ตอนเปิดแอปใหม่)\n",
+    "versionCode":  29,
+    "versionName":  "0.2.27",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.27/saantie-pms-0.2.27.apk",
+    "sha256":  "b8455d86b6a402bfc359c949e8e7c37cbbe7204b346d839124e3d1d718bdbe2a",
+    "notes":  "- ดูรูปสลิป/รูปบ้าน/รูปในหน้าเช็คอิน: รูปยาวไม่ล้นจอแล้ว ปุ่มปิดและปุ่มลบอยู่ในจอเสมอ\n- ปุ่ม ✕ ที่มุมรูปสลิปลบได้ทันที (ถามยืนยันก่อนลบสลิปที่บันทึกแล้ว)\n",
     "minVersionCode":  0
 }
