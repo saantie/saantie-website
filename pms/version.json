@@ -1,8 +1,8 @@
 {
-    "versionCode":  23,
-    "versionName":  "0.2.21",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.21/saantie-pms-0.2.21.apk",
-    "sha256":  "cefbc74582824b3a589be997acd8aafb08f468ee3fd35df18069eb09ed6f7e90",
-    "notes":  "- กันลืมกดบันทึกรับเงิน: เมื่อพิมพ์ยอดแล้วแต่ยังไม่ได้บันทึก ปุ่ม \"บันทึกรับเงิน\" จะเต้นเบาๆ พร้อมข้อความเตือนสีแดง\n- ถ้าจะออกจากหน้า (หน้ารายละเอียด/หน้าเช็คอิน) ทั้งที่ยังมียอดค้างพิมพ์อยู่ จะมีหน้าต่างถามก่อน \"กลับไปบันทึก / ออกโดยไม่บันทึก\"\n",
+    "versionCode":  24,
+    "versionName":  "0.2.22",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.22/saantie-pms-0.2.22.apk",
+    "sha256":  "3b52ba1eef024eb06f524ebf8242dfef48ada8effd1ef6b5a3419dc80dc5f5d6",
+    "notes":  "- หน้าบันทึกเช็คอิน: ถ่ายรูปสลิปหรือเลือกรูปสลิปแล้ว ช่อง \"ชำระที่ค้างจ่าย\" จะเด้งขึ้นเอง พร้อมกรอกยอดที่อ่านได้จากสลิปให้ (ตรวจแล้วกดบันทึกรับเงินเอง) — เด้งเฉพาะเมื่อการจองยังมียอดค้าง\n",
     "minVersionCode":  0
 }
