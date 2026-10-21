@@ -1,8 +1,8 @@
 {
-    "versionCode":  24,
-    "versionName":  "0.2.22",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.22/saantie-pms-0.2.22.apk",
-    "sha256":  "3b52ba1eef024eb06f524ebf8242dfef48ada8effd1ef6b5a3419dc80dc5f5d6",
-    "notes":  "- หน้าบันทึกเช็คอิน: ถ่ายรูปสลิปหรือเลือกรูปสลิปแล้ว ช่อง \"ชำระที่ค้างจ่าย\" จะเด้งขึ้นเอง พร้อมกรอกยอดที่อ่านได้จากสลิปให้ (ตรวจแล้วกดบันทึกรับเงินเอง) — เด้งเฉพาะเมื่อการจองยังมียอดค้าง\n",
+    "versionCode":  25,
+    "versionName":  "0.2.23",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.23/saantie-pms-0.2.23.apk",
+    "sha256":  "8bb1858a6154c7bf14ba104c9fdf8cfe9331dee706241104a50165cabb6eb0c7",
+    "notes":  "- ปุ่มถ่ายรูปในหน้าบันทึกเช็คอินและปุ่ม \"แนบสลิป\" (ฟอร์มจอง/ช่องรับเงิน) รวมเป็นปุ่มเดียว: กดแล้วเลือกได้ทั้งถ่ายภาพและเลือกภาพจากแฟ้ม ไม่มีปุ่มเลือกรูปแยกอีก\n",
     "minVersionCode":  0
 }
