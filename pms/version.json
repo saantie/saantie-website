@@ -1,8 +1,8 @@
 {
-    "versionCode":  27,
-    "versionName":  "0.2.25",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.25/saantie-pms-0.2.25.apk",
-    "sha256":  "afcc343ceacb837bdf28ecc1131fc251a3724d29fcf3f737ffc2ba316fcd03a1",
-    "notes":  "- ป๊อปอัปสรุปเช็คอินอัตโนมัติ: 3 ทุ่ม 5 นาที \"สรุปเช็คอินพรุ่งนี้\" และ 7 โมงเช้า \"สรุปเช็คอินวันนี้\" พร้อมปุ่มส่งทาง LINE / คัดลอก\n- แอป Android แจ้งเตือนบนจอแม้ไม่ได้เปิดแอป แตะแล้วเปิดป๊อปอัปสรุป (อาจช้าไม่กี่นาทีจากระบบประหยัดแบต)\n",
+    "versionCode":  28,
+    "versionName":  "0.2.26",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.26/saantie-pms-0.2.26.apk",
+    "sha256":  "223f6fcde253640cddf19c7c561c9d2ecd10e17f36106f2cb400e8b4905508b0",
+    "notes":  "- PWA: ป๊อปอัปอัปเดตบอกรายละเอียดว่าเวอร์ชันใหม่มีอะไรบ้าง\n- PWA บน iPhone: ตรวจเวอร์ชันใหม่ทุกครั้งที่กลับเข้าแอป ป๊อปอัปอัปเดตจึงขึ้นได้ (เดิมตรวจแค่ตอนเปิดแอปใหม่)\n",
     "minVersionCode":  0
 }
