@@ -71,6 +71,9 @@
   .btn-primary { background: var(--accent); color: #06121F; border-color: var(--accent); }
   .btn-primary:hover { box-shadow: 0 0 0 4px var(--accent-soft); }
   .btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+  /* ข้อความยืนยันหลังกดดาวน์โหลดไฟล์ (เบราว์เซอร์ไม่บอกว่าดาวน์โหลดเสร็จเมื่อไร หน้านี้จึงบอกว่าสั่งแล้วและไฟล์ไปอยู่ที่ไหน) */
+  .dl-done { flex-basis: 100%; border-left: 3px solid var(--ok); background: var(--surface); border-radius: 0 12px 12px 0; padding: 10px 14px; font-size: .94em; }
+  .dl-done b { color: var(--ok); }
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
   .drop { border: 2px dashed var(--border-lit); border-radius: 14px; padding: 22px; text-align: center; cursor: pointer; transition: .2s; }
@@ -228,6 +231,7 @@
       <button class="btn btn-primary" id="download" type="button" disabled>
         <span data-lang="th">ดาวน์โหลดไฟล์นำเข้า (.json)</span><span data-lang="en">Download import file (.json)</span>
       </button>
+      <div id="dlDone" class="dl-done" role="status" aria-live="polite" hidden></div>
     </div>
   </section>
 
@@ -481,6 +485,8 @@
 
   // ---------- แปลงทั้งตาราง ----------
   function compute() {
+    // ค่าที่ตั้งเปลี่ยนแล้ว ไฟล์ที่ดาวน์โหลดไปก่อนหน้าเป็นรุ่นเก่า — เอาข้อความ "ดาวน์โหลดเรียบร้อย" ออก ไม่ให้เข้าใจผิด
+    $("dlDone").hidden = true;
     var M = S.map, rows = dataRows();
     var cell = function (r, k) { return M[k] >= 0 ? r[M[k]] : ""; };
     var order = $("dateOrder").value;
@@ -755,7 +761,16 @@
   }
   $("download").addEventListener("click", function () {
     var data = { version: 2, generator: "saantie.com/pms/import", bookings: S.result.out.map(function (x) { return x.b; }) };
-    saveBlob(new Blob([JSON.stringify(data)], { type: "application/json" }), "saantie-import-" + today() + ".json");
+    var blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+    var name = "saantie-import-" + today() + ".json";
+    saveBlob(blob, name);
+    var kb = Math.max(1, Math.round(blob.size / 1024)), n = data.bookings.length;
+    var box = $("dlDone");
+    box.innerHTML = "<b>✓ " + esc(t("ดาวน์โหลดไฟล์เรียบร้อยแล้ว", "Download complete")) + "</b> — " + esc(name) + " (" + fmt(n) + esc(t(" รายการ, ", " bookings, ")) + fmt(kb) + " KB)<br>" +
+      '<span class="muted small">' + esc(t(
+        "ไฟล์อยู่ในโฟลเดอร์ดาวน์โหลดของเครื่อง (บนมือถือ: แอปไฟล์ → ดาวน์โหลด) ถ้าไม่เห็นไฟล์ ให้กดปุ่มอีกครั้ง จากนั้นทำตามขั้นที่ 5 เพื่อนำเข้าในแอปพลิเคชัน",
+        "The file is in your device's Downloads folder (on a phone: Files app → Downloads). If you can't find it, press the button again. Then follow step 5 to import it in the app.")) + "</span>";
+    box.hidden = false;
   });
   $("tpl").addEventListener("click", function (e) {
     e.preventDefault();
