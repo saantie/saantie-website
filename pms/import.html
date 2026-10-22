@@ -522,7 +522,9 @@
       if (!co) {
         var n = money(cell(r, "nights"));
         if (n > 0) co = addDays(ci, n);
-        else { co = addDays(ci, 1); if (flag(t("ไม่มีวันเช็คเอาท์ ถือว่าพัก 1 คืน", "No check-out date — assumed 1 night"))) return; }
+        // คอลัมน์วันเช็คเอาท์ต้องเลือก แต่บางรายการไม่มีวันเช็คเอาท์ได้ — ถือว่าพัก 1 คืนทุกแถว (รวมแถวที่ยังไม่เช็คอิน) เตือนไว้ให้ตรวจ
+        // ไม่ใช้ flag(): flag ทำให้แถวที่ยังไม่เช็คอินเป็นข้อผิดพลาดแล้วถูกตัดออก (เคยทำให้การจองใหม่หายจากไฟล์นำเข้า)
+        else { co = addDays(ci, 1); warns.push([rowNo, t("ไม่มีวันเช็คเอาท์ ถือว่าพัก 1 คืน", "No check-out date — assumed 1 night")]); }
       }
       if (co <= ci) return err(t("วันเช็คเอาท์ต้องอยู่หลังวันเช็คอิน", "Check-out must be after check-in") + " (" + showDate(ci) + " → " + showDate(co) + ")");
       var nights = diffDays(ci, co);
