@@ -1,8 +1,8 @@
 {
-    "versionCode":  31,
-    "versionName":  "0.2.29",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.29/saantie-pms-0.2.29.apk",
-    "sha256":  "d81d46707473b80ed42753a674f54061e711be6d1b5895845ccc40c130fc8a03",
-    "notes":  "- สำรองข้อมูล: บันทึกไฟล์ลงเครื่องให้อัตโนมัติ (โฟลเดอร์ Download/SAANTIE) แล้วมีปุ่มแชร์สำเนาไป Google Drive อีกชั้น\n- ไฟล์สำรองตั้งชื่อว่า SAANTIE backup ตามด้วยชื่อที่พักและวันที่\n- PWA บน iPhone: แก้ปุ่มแชร์ไฟล์สำรองที่แชร์ไม่ได้ (ลองส่งเป็นไฟล์ข้อความก่อน)",
+    "versionCode":  32,
+    "versionName":  "0.2.30",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.30/saantie-pms-0.2.30.apk",
+    "sha256":  "395127e35e04bab7af443eba97ad9077022c2a42df5d94c672a62ea0e75beac0",
+    "notes":  "- ปฏิทิน: คอลัมน์วันนี้มีพื้นหลังสีเหลืองอ่อน มองเห็นได้ทันที\n- หน้าบ้านว่าง: การ์ดบ้านที่มีจองแสดงสถานะ \"ชำระครบ\" หรือ \"ค้าง X บาท\"\n",
     "minVersionCode":  0
 }
