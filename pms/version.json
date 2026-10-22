@@ -1,8 +1,8 @@
 {
-    "versionCode":  32,
-    "versionName":  "0.2.30",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.30/saantie-pms-0.2.30.apk",
-    "sha256":  "395127e35e04bab7af443eba97ad9077022c2a42df5d94c672a62ea0e75beac0",
-    "notes":  "- ปฏิทิน: คอลัมน์วันนี้มีพื้นหลังสีเหลืองอ่อน มองเห็นได้ทันที\n- หน้าบ้านว่าง: การ์ดบ้านที่มีจองแสดงสถานะ \"ชำระครบ\" หรือ \"ค้าง X บาท\"\n",
+    "versionCode":  33,
+    "versionName":  "0.2.31",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.31/saantie-pms-0.2.31.apk",
+    "sha256":  "450335f04aa1ba9ba2e1d6c910e99435737a24b8abdfeb69ea44f6d4e073fcb5",
+    "notes":  "- หน้ารายการจองรายวัน: เอาบรรทัดสรุปด้านบนออก แล้วแสดงจำนวนในหัวข้อแทน เช่น \"เข้าพักคืนนี้ 2 รายการ · 3 หลัง\" และ \"เช็คเอาท์วันนี้ 1 รายการ · 1 หลัง\" (หน่วยหลัง/ห้องตามที่ตั้งไว้)\n",
     "minVersionCode":  0
 }
