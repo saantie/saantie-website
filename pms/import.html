@@ -285,7 +285,8 @@
     { k: "guestName", th: "ชื่อลูกค้า", en: "Guest name", req: true, kw: ["ชื่อลูกค้า", "ลูกค้า", "ผู้จอง", "ชื่อผู้", "guest", "customer", "name", "ชื่อ"], not: ["บ้าน", "ห้อง", "room", "house"] },
     { k: "guestPhone", th: "เบอร์โทร", en: "Phone", kw: ["โทร", "เบอร์", "phone", "tel", "mobile"] },
     { k: "checkIn", th: "วันเช็คอิน", en: "Check-in date", req: true, kw: ["เช็คอิน", "เช็กอิน", "check-in", "checkin", "check in", "วันเข้า", "วันที่เข้า", "arrival", "วันที่พัก"] },
-    { k: "checkOut", th: "วันเช็คเอาท์", en: "Check-out date", kw: ["เช็คเอาท์", "เช็คเอาต์", "เช็กเอาต์", "check-out", "checkout", "check out", "วันออก", "departure"] },
+    // req: ต้องเลือกคอลัมน์ — ไม่งั้นทุกแถวไม่มีวันเช็คเอาท์ แล้วถูกเดาว่าพัก 1 คืนเงียบ ๆ (เคยทำให้การจองหลายคืนนำเข้าผิด/แถวที่ยังไม่เช็คอินถูกตัดออก)
+    { k: "checkOut", th: "วันเช็คเอาท์", en: "Check-out date", req: true, kw: ["เช็คเอาท์", "เช็คเอาต์", "เช็กเอาต์", "check-out", "checkout", "check out", "วันออก", "departure"] },
     { k: "nights", th: "จำนวนคืน (ใช้เมื่อไม่มีวันเช็คเอาท์)", en: "Nights (used when there is no check-out date)", kw: ["จำนวนคืน", "คืน", "nights", "night"] },
     { k: "houses", th: "บ้าน/ห้อง", en: "Room / house", req: true, kw: ["บ้าน", "ห้อง", "room", "house", "unit", "villa", "ที่พัก"], not: ["ราคา", "ค่า", "rate", "price", "total", "ยอด", "จำนวน", "type"] },
     { k: "guestCount", th: "จำนวนผู้เข้าพัก", en: "Number of guests", kw: ["จำนวนคน", "จำนวนผู้", "ผู้เข้าพัก", "pax", "guests", "adults", "คน"] },
