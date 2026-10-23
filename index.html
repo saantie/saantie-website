@@ -149,6 +149,10 @@
   .applinks a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
   .applinks a:hover { border-bottom-color: var(--accent); }
   .applinks-sep { color: var(--border-lit); margin: 0 8px; }
+  /* ไอคอนเล็กหน้าลิงก์ Saantie PMS: เขียว = แอป Android, ส้ม = เวอร์ชันเว็บ (PWA) ให้เห็นว่าเป็นคนละตัว */
+  /* inline-block + nowrap: ไอคอนกับข้อความขึ้นบรรทัดใหม่ไปด้วยกัน (จอมือถือเคยเหลือไอคอนค้างท้ายบรรทัดแรก) */
+  .applinks a.applink { display: inline-block; white-space: nowrap; }
+  .applink-icon { width: 18px; height: 18px; border-radius: 5px; vertical-align: -4px; margin-right: 6px; }
 
   .note { color: var(--muted); font-size: .92em; margin-top: 20px; }
 
@@ -342,9 +346,9 @@
         <p class="status" data-lang="th">ใช้งานผ่านเว็บได้บน iPhone และ Android</p>
         <p class="status" data-lang="en">Web app for iPhone and Android</p>
         <div class="applinks">
-          <a href="/pms"><span data-lang="th">รายละเอียดและดาวน์โหลด</span><span data-lang="en">Details &amp; download</span></a>
+          <a class="applink" href="/pms"><img class="applink-icon" src="assets/pms-icon.svg" alt=""><span data-lang="th">รายละเอียดและดาวน์โหลด</span><span data-lang="en">Details &amp; download</span></a>
           <span class="applinks-sep">·</span>
-          <a href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener"><span data-lang="th" class="nw">เปิดเวอร์ชันเว็บ (iPhone / Android)</span><span data-lang="en" class="nw">Open the web app (iPhone / Android)</span></a>
+          <a class="applink" href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener"><img class="applink-icon" src="assets/pms-web-icon.svg" alt=""><span data-lang="th" class="nw">เปิดเวอร์ชันเว็บ (iPhone / Android)</span><span data-lang="en" class="nw">Open the web app (iPhone / Android)</span></a>
         </div>
       </div>
     </div>

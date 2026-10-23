@@ -33,7 +33,8 @@ pms/index.html           → saantie.com/pms               หน้าดาว
 pms/import.html          → saantie.com/pms/import        แปลงข้อมูลการจองจากระบบเดิม (Excel/CSV) เป็นไฟล์นำเข้าของแอป — ทำงานในเบราว์เซอร์ล้วน ห้ามเพิ่มโค้ดที่ส่งข้อมูลในตารางออกไป (PDPA), แอปฝังลิงก์ URL นี้ไว้ ห้ามย้าย
 pms/version.json         → saantie.com/pms/version.json  ⚠️ แอปฝัง URL นี้ไว้ตรวจอัปเดต ห้ามย้าย/เปลี่ยนชื่อ — อัปเดตไฟล์นี้หลังสร้าง GitHub Release ของ saantie/saantie-pms-small-hotel แล้วเท่านั้น
 assets/8hrs-icon.png     → ไอคอนแอปบนการ์ดหน้าหลัก
-assets/pms-icon.svg      → ไอคอน Saantie PMS บนการ์ดหน้าหลัก (แปลงจาก ic_launcher_*.xml ของแอป — เปลี่ยนไอคอนแอปต้องแก้ที่นี่ด้วย)
+assets/pms-icon.svg      → ไอคอน Saantie PMS บนการ์ดหน้าหลัก (แปลงจาก ic_launcher_*.xml ของแอป — เปลี่ยนไอคอนแอปต้องแก้ที่นี่ด้วย) + ไอคอนเล็กหน้าลิงก์ "รายละเอียดและดาวน์โหลด"
+assets/pms-web-icon.svg  → ไอคอน PWA สีส้มพาสเทล หน้าลิงก์ "เปิดเวอร์ชันเว็บ" (สำเนา web/public/icon.svg ของแอป — เปลี่ยนไอคอน PWA ต้องแก้ที่นี่ด้วย)
 assets/lang-toggle.js    → สคริปต์สลับภาษา ใช้ร่วมกันทุกหน้า (ดูหัวข้อถัดไป)
 assets/crumbs.js + .css  → แถบบอกตำแหน่งหน้า (breadcrumb) ทุกหน้า — แผนผังเว็บ SITE อยู่ในไฟล์นี้ที่เดียว
 ```

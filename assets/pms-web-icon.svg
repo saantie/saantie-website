@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72">
+  <!-- ไอคอน Saantie PMS เวอร์ชันเว็บ (PWA) สีส้มพาสเทล — สำเนาของ web/public/icon.svg ในโปรเจกต์แอป (เปลี่ยนไอคอน PWA ต้องแก้ที่นี่ด้วย) -->
+  <defs>
+    <linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="108" y2="108">
+      <stop offset="0" stop-color="#F5AE7E"/><stop offset="1" stop-color="#C8703F"/>
+    </linearGradient>
+    <linearGradient id="disc" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="86" y2="86">
+      <stop offset="0" stop-color="#FFD3AE"/><stop offset="1" stop-color="#F09A62"/>
+    </linearGradient>
+  </defs>
+  <rect width="108" height="108" fill="url(#bg)"/>
+  <circle cx="30" cy="30" r="56" fill="url(#disc)"/>
+  <path d="M54,30 L78,51 L72,51 L72,78 L36,78 L36,51 L30,51 Z" fill="#FFF" stroke="#FFF" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M51.8,66.04 L50.6,74 L57.4,74 L56.2,66.04 A5.5,5.5 0 1 0 51.8,66.04 Z" fill="#D07A48"/>
+</svg>
