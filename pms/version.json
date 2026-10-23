@@ -1,8 +1,8 @@
 {
-    "versionCode":  46,
-    "versionName":  "0.2.44",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.44/saantie-pms-0.2.44.apk",
-    "sha256":  "020bbc90a21cb70bfde18f4709bf372b4f8e2972b9766615e699526d1caa14a8",
-    "notes":  "- หน้าบันทึกเช็คอิน: เอาช่องติ๊กยินยอมออก ปุ่มเรียง 2 แถว — \"ถ่ายรูปบัตรประจำตัว\" (บน) และ \"ถ่าย/เลือกรูปสลิป\" (ล่าง) กดได้ทันที และเอาข้อความ \"ยังไม่มีรูป…\" ออก\n",
+    "versionCode":  47,
+    "versionName":  "0.2.45",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.45/saantie-pms-0.2.45.apk",
+    "sha256":  "d1d38a2dc5d28d90c687aa5c0310d15bdbe92245885194d5b07f239d30e9c936",
+    "notes":  "- ถ่ายรูปบัตรประจำตัว: เปิดกล้องในแอป โฟกัสอัตโนมัติ และถ่ายให้เองเมื่อภาพบัตรชัดและนิ่ง (กดปุ่มกลมถ่ายเองก็ได้) ถ่ายแล้วให้ตรวจรูป \"ถ่ายใหม่\" / \"ใช้รูปนี้\" (ใช้เองใน 3 วินาที)\n- ถ้าเปิดกล้องในแอปไม่ได้ (ไม่อนุญาตกล้อง) จะใช้กล้องของเครื่องแบบเดิม\n",
     "minVersionCode":  0
 }
