@@ -1,8 +1,8 @@
 {
-    "versionCode":  37,
-    "versionName":  "0.2.35",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.35/saantie-pms-0.2.35.apk",
-    "sha256":  "ffe59b8b9b209f09d6836dbca9d67dc99fadadfe26026c2888c88d30721de13e",
-    "notes":  "- หน้าบันทึกเช็คอิน ปุ่ม \"แชร์ข้อมูล + รูป (เช่น LINE)\": ส่งข้อความและรูปไปพร้อมกันในครั้งเดียว — ข้อความ ร.ร.3 ถูกทำเป็นรูปแรก ตามด้วยรูปบัตร/สลิป (LINE ไม่ทิ้งข้อความแล้ว) และยังคัดลอกข้อความเป็นตัวอักษรไว้ให้ด้วย\n",
+    "versionCode":  38,
+    "versionName":  "0.2.36",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.36/saantie-pms-0.2.36.apk",
+    "sha256":  "39e74ef8ae0cc4b88b556d4eb3c1903a37e02eb7b048e11b3db27cf0bc09c75f",
+    "notes":  "- แชร์ข้อมูลเช็คอินเข้า LINE: หัวข้อเป็น \"ข้อมูลลูกค้าเช็คอินวันนี้\" และจัดข้อความบรรทัดละเรื่อง (ชื่อ / สัญชาติ / เลขบัตร / ที่อยู่ ฯลฯ) ไม่ถูกตัดบรรทัดกลางคำ\n",
     "minVersionCode":  0
 }
