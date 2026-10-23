@@ -1,8 +1,8 @@
 {
-    "versionCode":  41,
-    "versionName":  "0.2.39",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.39/saantie-pms-0.2.39.apk",
-    "sha256":  "9db2649d3daa57026de1fdda21467727ec909d5af0f213ea6511fe9438721acf",
-    "notes":  "- ถ่ายรูปบัตรตอนเช็คอิน: ถ้าช่องชื่อ/ที่อยู่ยังเป็นของผู้จอง (ผู้เช็คอินไม่ใช่คนจอง) จะเปลี่ยนเป็นชื่อภาษาไทยและที่อยู่ตามบัตรให้เอง (ต้องเปิดตัวอ่านภาษาไทยในตั้งค่า) ชื่อที่พิมพ์แก้เองจะไม่ถูกทับ\n- ถ้ายังไม่ได้เปิดตัวอ่านภาษาไทย จะเตือนว่าชื่อยังเป็นชื่อผู้จอง ให้แก้ตามบัตร\n",
+    "versionCode":  42,
+    "versionName":  "0.2.40",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.40/saantie-pms-0.2.40.apk",
+    "sha256":  "a3548406f43ebbd1c726abb041a8c4ec6f6b7b25240e3e7933a37c4c34806336",
+    "notes":  "- หน้าบ้านว่าง: บ้านที่บันทึกข้อมูลเช็คอินแล้วมีเครื่องหมายถูกสีเขียวมุมขวาบนของการ์ด แตะที่เครื่องหมายจะบอกว่า \"บันทึกข้อมูลเช็คอินแล้ว\"\n",
     "minVersionCode":  0
 }
