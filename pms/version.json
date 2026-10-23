@@ -1,8 +1,8 @@
 {
-    "versionCode":  42,
-    "versionName":  "0.2.40",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.40/saantie-pms-0.2.40.apk",
-    "sha256":  "a3548406f43ebbd1c726abb041a8c4ec6f6b7b25240e3e7933a37c4c34806336",
-    "notes":  "- หน้าบ้านว่าง: บ้านที่บันทึกข้อมูลเช็คอินแล้วมีเครื่องหมายถูกสีเขียวมุมขวาบนของการ์ด แตะที่เครื่องหมายจะบอกว่า \"บันทึกข้อมูลเช็คอินแล้ว\"\n",
+    "versionCode":  43,
+    "versionName":  "0.2.41",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.41/saantie-pms-0.2.41.apk",
+    "sha256":  "03f336cd084f38d2e2b0238b2b5dd12be6637805b72272f2b11d77ad170779ef",
+    "notes":  "- หน้ารายละเอียดการจอง: ปุ่ม \"บันทึกการเช็คอิน\" กระพริบ 2 ครั้งตอนเปิดหน้า (เฉพาะการจองที่ยังไม่บันทึกเช็คอิน) เตือนให้ไม่ลืมบันทึก\n",
     "minVersionCode":  0
 }
