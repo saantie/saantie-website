@@ -1,8 +1,8 @@
 {
-    "versionCode":  45,
-    "versionName":  "0.2.43",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.43/saantie-pms-0.2.43.apk",
-    "sha256":  "f0ca60c93a0bf8be4beab2c1580ff7170f5fc17716906ff7fc0a9cc29484972f",
-    "notes":  "- บันทึกการจองใหม่ที่เช็คอินวันนี้: บันทึกแล้วจะถามว่า \"ผู้เข้าพักเช็คอินด้วยเลยไหม?\" กด \"เช็คอินเลย\" ไปหน้าบันทึกเช็คอินทันที หรือ \"ภายหลัง\" ไปหน้าสรุปตามเดิม\n",
+    "versionCode":  46,
+    "versionName":  "0.2.44",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.44/saantie-pms-0.2.44.apk",
+    "sha256":  "020bbc90a21cb70bfde18f4709bf372b4f8e2972b9766615e699526d1caa14a8",
+    "notes":  "- หน้าบันทึกเช็คอิน: เอาช่องติ๊กยินยอมออก ปุ่มเรียง 2 แถว — \"ถ่ายรูปบัตรประจำตัว\" (บน) และ \"ถ่าย/เลือกรูปสลิป\" (ล่าง) กดได้ทันที และเอาข้อความ \"ยังไม่มีรูป…\" ออก\n",
     "minVersionCode":  0
 }
