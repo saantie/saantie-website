@@ -1,8 +1,8 @@
 {
-    "versionCode":  34,
-    "versionName":  "0.2.32",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.32/saantie-pms-0.2.32.apk",
-    "sha256":  "ff7ef7bd52bdc2a8c9611a0db588a75d326bc7b5394d6e7923657b7f638e85a9",
-    "notes":  "- ป๊อปอัป/แจ้งเตือนสรุปเช็คอิน (3 ทุ่ม 5 นาที และ 7 โมงเช้า): ไม่แสดงรายการเช็คเอาท์แล้ว และแสดงผู้ที่พักต่อเนื่องด้วย เช่น \"พักต่อเนื่อง คืนที่ 2 จาก 3\"\n- บอกยอดเงินทุกรายการ: \"ชำระครบ 3,000 บาท\" หรือ \"ค้างชำระ 1,500 บาท\"\n- รายงานสถิติ: รายได้ อัตราเข้าพัก อันดับบ้าน ลูกค้าประจำ (ในตั้งค่า)\n",
+    "versionCode":  35,
+    "versionName":  "0.2.33",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.33/saantie-pms-0.2.33.apk",
+    "sha256":  "b10030330350d24f61d84741bb856f54ca7d67d5fed8b38161bfcbc3441a2802",
+    "notes":  "- หน้าสรุปเช็คอิน (ส่ง LINE / คัดลอก): ใช้รูปแบบเดียวกับป๊อปอัป — ไม่แสดงเช็คเอาท์, แสดงผู้พักต่อเนื่อง \"พักต่อเนื่อง คืนที่ N จาก M\", บอก \"ชำระครบ X บาท\" หรือ \"ค้างชำระ X บาท\"\n",
     "minVersionCode":  0
 }
