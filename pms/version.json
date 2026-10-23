@@ -1,8 +1,8 @@
 {
-    "versionCode":  44,
-    "versionName":  "0.2.42",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.42/saantie-pms-0.2.42.apk",
-    "sha256":  "7240240953022204e1575e983cc5f10e6814645ada395453da1ed40c0b9e41b3",
-    "notes":  "- แชร์ข้อมูลเช็คอิน (เช่น LINE) แล้วกลับหน้าแรกให้เอง — ข้อมูลผู้เข้าพักที่ยังไม่ได้กดบันทึกจะถูกบันทึกให้ก่อนแชร์\n- ปุ่ม \"บันทึกการเช็คอิน\" ในหน้ารายละเอียดกระพริบช้าลง (2 ครั้ง รวม 2 วินาที)\n",
+    "versionCode":  45,
+    "versionName":  "0.2.43",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.43/saantie-pms-0.2.43.apk",
+    "sha256":  "f0ca60c93a0bf8be4beab2c1580ff7170f5fc17716906ff7fc0a9cc29484972f",
+    "notes":  "- บันทึกการจองใหม่ที่เช็คอินวันนี้: บันทึกแล้วจะถามว่า \"ผู้เข้าพักเช็คอินด้วยเลยไหม?\" กด \"เช็คอินเลย\" ไปหน้าบันทึกเช็คอินทันที หรือ \"ภายหลัง\" ไปหน้าสรุปตามเดิม\n",
     "minVersionCode":  0
 }
