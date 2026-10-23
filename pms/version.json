@@ -1,8 +1,8 @@
 {
-    "versionCode":  38,
-    "versionName":  "0.2.36",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.36/saantie-pms-0.2.36.apk",
-    "sha256":  "39e74ef8ae0cc4b88b556d4eb3c1903a37e02eb7b048e11b3db27cf0bc09c75f",
-    "notes":  "- แชร์ข้อมูลเช็คอินเข้า LINE: หัวข้อเป็น \"ข้อมูลลูกค้าเช็คอินวันนี้\" และจัดข้อความบรรทัดละเรื่อง (ชื่อ / สัญชาติ / เลขบัตร / ที่อยู่ ฯลฯ) ไม่ถูกตัดบรรทัดกลางคำ\n",
+    "versionCode":  39,
+    "versionName":  "0.2.37",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.37/saantie-pms-0.2.37.apk",
+    "sha256":  "9ffbf2735ffc142521eb5675360c0bcbcec44d1123c2948e733f966d79da623f",
+    "notes":  "- แชร์ข้อมูลเช็คอินเข้า LINE: ส่งเป็นรูปข้อมูลรูปเดียว (ไม่แนบรูปบัตร/สลิปแล้ว) ออกแบบใหม่ — หัวข้อแถบสีเขียว, ป้าย \"ผู้เข้าพักคนที่ N\", หัวข้อย่อยสีต่างจากข้อมูล, พื้นหลังไล่สีอ่อน ข้อความตัวอักษรยังคัดลอกไว้ให้วางได้\n",
     "minVersionCode":  0
 }
