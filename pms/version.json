@@ -1,8 +1,8 @@
 {
-    "versionCode":  49,
-    "versionName":  "0.2.47",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.47/saantie-pms-0.2.47.apk",
-    "sha256":  "b1d2a58d5f5b0929d585ffc2edda46ac1b322a9410da5ed2376fde0d9ff462af",
-    "notes":  "- ปุ่ม \"บันทึกการเช็คอิน\" ในหน้ารายละเอียดกระพริบเป็นพื้นแดงตัวขาว 3 ครั้ง รวม 3 วินาที\n- หน้าบ้านว่าง: การ์ดบ้านที่มีจองเป็นพื้นสีเหลือง บ้านว่างเป็นสีเขียวเหมือนเดิม\n- ข้อความสรุปการจอง: เอา \"ขอบคุณที่เลือกพักกับเรา\" ออก (ท้ายข้อความเป็นข้อความที่ตั้งไว้ในตั้งค่า)\n",
+    "versionCode":  50,
+    "versionName":  "0.2.48",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.48/saantie-pms-0.2.48.apk",
+    "sha256":  "34ae58eff62a480b0ca2445611ef4e726dbce90548ab77863d1abe187bfdb99f",
+    "notes":  "- ปุ่ม \"บันทึกการเช็คอิน\" ในหน้ารายละเอียดกระพริบเป็นพื้นสีส้มตัวขาว (เดิมสีแดง)\r\n- กล้องถ่ายบัตร (PWA): ถ่ายเฉพาะภาพที่คมพอ อ่านข้อมูลจากภาพที่ชัดที่สุดในหลายภาพ และกดถ่ายเองได้\r\n",
     "minVersionCode":  0
 }
