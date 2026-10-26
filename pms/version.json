@@ -1,8 +1,8 @@
 {
-    "versionCode":  48,
-    "versionName":  "0.2.46",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.46/saantie-pms-0.2.46.apk",
-    "sha256":  "7c2931b59aa7b03d946af3e2c1a516af4fa009cad676abf44cee919d3a9f0922",
-    "notes":  "- PWA: แก้แอปค้างเลื่อนขึ้นลงไม่ได้ (เกิดเมื่อมีหน้าต่างเด้งซ้อนกันแล้วปิด)\n- PWA: ถ้าแอปมีข้อผิดพลาด จะขึ้นข้อความพร้อมปุ่ม \"โหลดแอปใหม่\" แทนจอขาว และเก็บรายละเอียดไว้ที่ ตั้งค่า → ข้อผิดพลาดล่าสุด\n",
+    "versionCode":  49,
+    "versionName":  "0.2.47",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.47/saantie-pms-0.2.47.apk",
+    "sha256":  "b1d2a58d5f5b0929d585ffc2edda46ac1b322a9410da5ed2376fde0d9ff462af",
+    "notes":  "- ปุ่ม \"บันทึกการเช็คอิน\" ในหน้ารายละเอียดกระพริบเป็นพื้นแดงตัวขาว 3 ครั้ง รวม 3 วินาที\n- หน้าบ้านว่าง: การ์ดบ้านที่มีจองเป็นพื้นสีเหลือง บ้านว่างเป็นสีเขียวเหมือนเดิม\n- ข้อความสรุปการจอง: เอา \"ขอบคุณที่เลือกพักกับเรา\" ออก (ท้ายข้อความเป็นข้อความที่ตั้งไว้ในตั้งค่า)\n",
     "minVersionCode":  0
 }
