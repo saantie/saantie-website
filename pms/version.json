@@ -1,8 +1,8 @@
 {
-    "versionCode":  47,
-    "versionName":  "0.2.45",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.45/saantie-pms-0.2.45.apk",
-    "sha256":  "d1d38a2dc5d28d90c687aa5c0310d15bdbe92245885194d5b07f239d30e9c936",
-    "notes":  "- ถ่ายรูปบัตรประจำตัว: เปิดกล้องในแอป โฟกัสอัตโนมัติ และถ่ายให้เองเมื่อภาพบัตรชัดและนิ่ง (กดปุ่มกลมถ่ายเองก็ได้) ถ่ายแล้วให้ตรวจรูป \"ถ่ายใหม่\" / \"ใช้รูปนี้\" (ใช้เองใน 3 วินาที)\n- ถ้าเปิดกล้องในแอปไม่ได้ (ไม่อนุญาตกล้อง) จะใช้กล้องของเครื่องแบบเดิม\n",
+    "versionCode":  48,
+    "versionName":  "0.2.46",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.46/saantie-pms-0.2.46.apk",
+    "sha256":  "7c2931b59aa7b03d946af3e2c1a516af4fa009cad676abf44cee919d3a9f0922",
+    "notes":  "- PWA: แก้แอปค้างเลื่อนขึ้นลงไม่ได้ (เกิดเมื่อมีหน้าต่างเด้งซ้อนกันแล้วปิด)\n- PWA: ถ้าแอปมีข้อผิดพลาด จะขึ้นข้อความพร้อมปุ่ม \"โหลดแอปใหม่\" แทนจอขาว และเก็บรายละเอียดไว้ที่ ตั้งค่า → ข้อผิดพลาดล่าสุด\n",
     "minVersionCode":  0
 }
