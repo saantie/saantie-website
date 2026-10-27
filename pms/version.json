@@ -1,8 +1,8 @@
 {
-    "versionCode":  52,
-    "versionName":  "0.2.50",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.50/saantie-pms-0.2.50.apk",
-    "sha256":  "9b20a861b445e933b8c1f7b0efe63572ff85156ccc150fcb23c9bebb2667958e",
-    "notes":  "- ตั้งเวลาป๊อปอัปสรุปเช็คอินได้เอง: ตั้งค่า → สรุปเช็คอินอัตโนมัติ (สรุปวันนี้ตอนเช้า / สรุปพรุ่งนี้ตอนค่ำ ค่าเริ่มต้น 07:00 / 21:05)\n- เวลาเก็บในเครื่องนี้ แต่ละเครื่องตั้งต่างกันได้ · เวลาเช้าต้องก่อนเวลาค่ำ\n",
+    "versionCode":  53,
+    "versionName":  "0.2.51",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.51/saantie-pms-0.2.51.apk",
+    "sha256":  "dbc0f5d110f1fe97700a98741006e34d45f1566d740907414a69593a59dedb39",
+    "notes":  "- เปลี่ยนชื่อหัวข้อในหน้าตั้งค่าให้บอกชัดว่าข้างในตั้งอะไร เช่น \"เวลาแจ้งรายชื่อผู้เข้าพัก\" \"เตือนลูกค้าที่ยังจ่ายไม่ครบ\" \"วันที่คิดราคา High\" \"รายการบ้านพักและราคา\"\n",
     "minVersionCode":  0
 }
