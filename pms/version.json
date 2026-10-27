@@ -1,8 +1,8 @@
 {
-    "versionCode":  53,
-    "versionName":  "0.2.51",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.51/saantie-pms-0.2.51.apk",
-    "sha256":  "dbc0f5d110f1fe97700a98741006e34d45f1566d740907414a69593a59dedb39",
-    "notes":  "- เปลี่ยนชื่อหัวข้อในหน้าตั้งค่าให้บอกชัดว่าข้างในตั้งอะไร เช่น \"เวลาแจ้งรายชื่อผู้เข้าพัก\" \"เตือนลูกค้าที่ยังจ่ายไม่ครบ\" \"วันที่คิดราคา High\" \"รายการบ้านพักและราคา\"\n",
+    "versionCode":  54,
+    "versionName":  "0.2.52",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.52/saantie-pms-0.2.52.apk",
+    "sha256":  "70d9af25edd241489612f30efcff3dfba4e873b1bcaedac2b4266ca88d404109",
+    "notes":  "- ปรับชื่อหัวข้อในหน้าตั้งค่า: \"เตือนรายการที่ยังจ่ายไม่ครบ\" \"เตือนรายการที่จะเข้าพัก\" \"อ่านข้อมูลจากรูปบัตรประชาชน\" \"กำหนดวันที่คิดราคาช่วง High Season\" \"สิทธิ์การใช้งานของพนักงาน\"\n",
     "minVersionCode":  0
 }
