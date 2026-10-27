@@ -1,8 +1,8 @@
 {
-    "versionCode":  50,
-    "versionName":  "0.2.48",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.48/saantie-pms-0.2.48.apk",
-    "sha256":  "34ae58eff62a480b0ca2445611ef4e726dbce90548ab77863d1abe187bfdb99f",
-    "notes":  "- ปุ่ม \"บันทึกการเช็คอิน\" ในหน้ารายละเอียดกระพริบเป็นพื้นสีส้มตัวขาว (เดิมสีแดง)\r\n- กล้องถ่ายบัตร (PWA): ถ่ายเฉพาะภาพที่คมพอ อ่านข้อมูลจากภาพที่ชัดที่สุดในหลายภาพ และกดถ่ายเองได้\r\n",
+    "versionCode":  51,
+    "versionName":  "0.2.49",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.49/saantie-pms-0.2.49.apk",
+    "sha256":  "46b07b79b27e382cfc19e82b32201bf6c70b6716fe6af2854c5e8e31b75d814f",
+    "notes":  "- ปุ่ม \"บันทึกการเช็คอิน\" กระพริบเป็นสีส้มโอรสพาสเทล ตัวอักษรน้ำตาลเข้มอ่านชัด\n- กล้องถ่ายบัตร (PWA): กลับไปใช้กล้องของเครื่องเหมือนเดิม\n",
     "minVersionCode":  0
 }
