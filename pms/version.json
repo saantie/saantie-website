@@ -1,8 +1,8 @@
 {
-    "versionCode":  51,
-    "versionName":  "0.2.49",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.49/saantie-pms-0.2.49.apk",
-    "sha256":  "46b07b79b27e382cfc19e82b32201bf6c70b6716fe6af2854c5e8e31b75d814f",
-    "notes":  "- ปุ่ม \"บันทึกการเช็คอิน\" กระพริบเป็นสีส้มโอรสพาสเทล ตัวอักษรน้ำตาลเข้มอ่านชัด\n- กล้องถ่ายบัตร (PWA): กลับไปใช้กล้องของเครื่องเหมือนเดิม\n",
+    "versionCode":  52,
+    "versionName":  "0.2.50",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.50/saantie-pms-0.2.50.apk",
+    "sha256":  "9b20a861b445e933b8c1f7b0efe63572ff85156ccc150fcb23c9bebb2667958e",
+    "notes":  "- ตั้งเวลาป๊อปอัปสรุปเช็คอินได้เอง: ตั้งค่า → สรุปเช็คอินอัตโนมัติ (สรุปวันนี้ตอนเช้า / สรุปพรุ่งนี้ตอนค่ำ ค่าเริ่มต้น 07:00 / 21:05)\n- เวลาเก็บในเครื่องนี้ แต่ละเครื่องตั้งต่างกันได้ · เวลาเช้าต้องก่อนเวลาค่ำ\n",
     "minVersionCode":  0
 }
