@@ -1,8 +1,8 @@
 {
-    "versionCode":  58,
-    "versionName":  "0.2.56",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.56/saantie-pms-0.2.56.apk",
-    "sha256":  "6983c9fb08b49fb1e993cc738f5be007dee67d11c96a90f615ce3962268ac1df",
-    "notes":  "- หน้าตั้งค่า: หัวข้อ \"เตือนรายการที่ยังจ่ายไม่ครบ\" และ \"เตือนรายการที่จะเข้าพัก\" ใช้ไอคอนกระดิ่ง\n",
+    "versionCode":  59,
+    "versionName":  "0.2.57",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.57/saantie-pms-0.2.57.apk",
+    "sha256":  "56d59ef193df47a13cf0321e08242d47caa820b1c877e79614b03cd35086e0d9",
+    "notes":  "- เว็บแอป (PWA): แจ้งเตือน \"สรุปเช็คอินวันนี้/พรุ่งนี้\" และ \"ยอดค้างชำระ\" ตรงเวลาแม้ปิดแอป ส่งจากเซิร์ฟเวอร์ (ช้าได้ไม่เกิน 5 นาที) ทั้ง Android และ iPhone (iOS 16.4+ ที่เพิ่มแอปลงหน้าจอโฮม)\n- ต้องอนุญาตแจ้งเตือนในแอปก่อน (ตั้งค่า → เตือนรายการที่ยังจ่ายไม่ครบ) แล้วเปิดแอป 1 ครั้งเพื่อลงทะเบียนเครื่อง\n",
     "minVersionCode":  0
 }
