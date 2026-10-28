@@ -1,8 +1,8 @@
 {
-    "versionCode":  57,
-    "versionName":  "0.2.55",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.55/saantie-pms-0.2.55.apk",
-    "sha256":  "3f0c4f9302d982dcdc1754cf95f94900dbbea13d00898fb3b4862f298083297a",
-    "notes":  "- ตั้งค่า → เตือนรายการที่จะเข้าพัก: เพิ่มปุ่ม \"ทดสอบแจ้งเตือนตอนนี้\" ส่งแจ้งเตือนสรุปเช็คอินรอบปัจจุบันขึ้นแถบแจ้งเตือนทันที\n",
+    "versionCode":  58,
+    "versionName":  "0.2.56",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.56/saantie-pms-0.2.56.apk",
+    "sha256":  "6983c9fb08b49fb1e993cc738f5be007dee67d11c96a90f615ce3962268ac1df",
+    "notes":  "- หน้าตั้งค่า: หัวข้อ \"เตือนรายการที่ยังจ่ายไม่ครบ\" และ \"เตือนรายการที่จะเข้าพัก\" ใช้ไอคอนกระดิ่ง\n",
     "minVersionCode":  0
 }
