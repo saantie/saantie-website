@@ -1,8 +1,8 @@
 {
-    "versionCode":  60,
-    "versionName":  "0.2.58",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.58/saantie-pms-0.2.58.apk",
-    "sha256":  "446f473a0f6a91cb119a563a560c41ebcdf37895109cb7cd73d4ce1f129f1607",
-    "notes":  "- แก้: แจ้งเตือน \"สรุปเช็คอินพรุ่งนี้\" (รอบค่ำ) จากเซิร์ฟเวอร์ไม่ส่ง ถ้าวันนั้นแจ้งรอบเช้าไปแล้ว\n- เปลี่ยนเวลาเตือนรายการที่จะเข้าพักเป็นเวลาที่ยังไม่ถึง → ป๊อปอัป/แจ้งเตือนเด้งตามเวลาใหม่ได้อีก แม้รอบนั้นวันนี้แสดงไปแล้ว (ทั้งแอป Android และเว็บ)\n",
+    "versionCode":  61,
+    "versionName":  "0.2.59",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.59/saantie-pms-0.2.59.apk",
+    "sha256":  "234b02798a7b94ffba09244d49e30cda800c1f0cb3a12094602e24714f9ef4f9",
+    "notes":  "- รายงานสถิติ: แตะชื่อบ้านใน \"บ้านไหนขายดี\" หรือ \"เทียบระหว่างปี\" เพื่อดูค่าห้องที่บ้านหลังนั้นขายได้แต่ละเดือน พร้อมจำนวนคืนที่มีคนพัก และกด ‹ › เลื่อนดูปีอื่นได้\n",
     "minVersionCode":  0
 }
