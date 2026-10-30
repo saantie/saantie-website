@@ -1,8 +1,8 @@
 {
-    "versionCode":  61,
-    "versionName":  "0.2.59",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.59/saantie-pms-0.2.59.apk",
-    "sha256":  "234b02798a7b94ffba09244d49e30cda800c1f0cb3a12094602e24714f9ef4f9",
-    "notes":  "- รายงานสถิติ: แตะชื่อบ้านใน \"บ้านไหนขายดี\" หรือ \"เทียบระหว่างปี\" เพื่อดูค่าห้องที่บ้านหลังนั้นขายได้แต่ละเดือน พร้อมจำนวนคืนที่มีคนพัก และกด ‹ › เลื่อนดูปีอื่นได้\n",
+    "versionCode":  62,
+    "versionName":  "0.2.60",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.60/saantie-pms-0.2.60.apk",
+    "sha256":  "1fc9184b84726ed7f981f82e2de10dd18a5ec446ba2ec0e73df5e4b5606c7408",
+    "notes":  "- บันทึกเช็คอิน: กด \"บันทึกข้อมูลเช็คอิน\" แล้วขึ้นข้อความ \"บันทึกข้อมูลการเช็คอินเรียบร้อยแล้ว\" และกลับไปหน้ารายละเอียดการจองให้อัตโนมัติ\n",
     "minVersionCode":  0
 }
