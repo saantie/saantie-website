@@ -1,8 +1,8 @@
 {
-    "versionCode":  66,
-    "versionName":  "0.2.64",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.64/saantie-pms-0.2.64.apk",
-    "sha256":  "fb6c16bd2d330dbb9df6d12eb3947b81794b5fa882679d9fce93436d9a81973a",
-    "notes":  "- จัดเรียงบ้านพัก: ย้ายไปที่ ตั้งค่า → รายการบ้านพักและราคา จับ ⋮⋮ แล้วลากขึ้นลง เห็นแถวที่จับและเส้นบอกจุดที่จะแทรก (ใช้ลำดับเดียวกันทั้งที่พัก)\n- หน้าบ้านว่าง: เลิกลากการ์ดแล้ว บ้านที่มีจองขึ้นก่อนเสมอ ตามด้วยบ้านว่างเรียงตามที่จัดในตั้งค่า",
+    "versionCode":  67,
+    "versionName":  "0.2.65",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.65/saantie-pms-0.2.65.apk",
+    "sha256":  "094a25517259b10265e71e4abc1f43064a65db5ec4b475bbc5f2177fa3edf0ab",
+    "notes":  "- แอป Android: จัดเรียงบ้านในตั้งค่า ลากแล้วปล่อย บ้านย้ายไปตามเส้นที่แทรกแล้ว (เดิมเด้งกลับที่เดิม) และลากถึงขอบจอหน้าจะเลื่อนให้เอง",
     "minVersionCode":  0
 }
