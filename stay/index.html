@@ -49,7 +49,7 @@
   .dates { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: end; }
   label.field { display: block; }
   label.field > span { display: block; font-size: .9em; color: var(--muted); margin-bottom: 4px; }
-  input[type=date], input[type=text], input[type=tel], input[type=number], textarea {
+  input[type=date], input[type=text], input[type=tel], input[type=email], input[type=number], textarea {
     width: 100%; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2);
     color: var(--text); font: inherit; }
   textarea { min-height: 88px; resize: vertical; }
@@ -65,6 +65,9 @@
   .state.free { color: var(--accent); }
   .state.busy { color: var(--busy); }
   .house.is-busy { opacity: .7; }
+  /* มีคำขอค้างช่วงเดียวกัน (เจ้าของขอ 2026-11-01) — ข้อความบอกสถานะ ไม่ใช่ปุ่ม จึงไม่มีกรอบ/พื้นแคปซูล */
+  .interest { color: var(--busy); font-size: .92em; font-weight: 600; }
+  .interest::before { content: "● "; }
   .house.is-picked { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
   .pick { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-weight: 600; cursor: pointer; }
   .pick input { width: 22px; height: 22px; accent-color: var(--accent); }
@@ -121,6 +124,7 @@
         <div class="form-grid">
           <label class="field"><span>ชื่อ-นามสกุล *</span><input type="text" id="f-name" maxlength="80" autocomplete="name"></label>
           <label class="field"><span>เบอร์โทรศัพท์ (10 หลัก) *</span><input type="tel" id="f-phone" maxlength="12" inputmode="tel" autocomplete="tel"></label>
+          <label class="field"><span>อีเมล *</span><input type="email" id="f-email" maxlength="100" inputmode="email" autocomplete="email"></label>
           <label class="field"><span>LINE ID (ถ้ามี)</span><input type="text" id="f-line" maxlength="60"></label>
           <label class="field"><span>จำนวนผู้เข้าพัก *</span><input type="number" id="f-count" min="1" max="200" inputmode="numeric"></label>
         </div>
@@ -129,7 +133,7 @@
         <label class="trap" aria-hidden="true">เว็บไซต์<input type="text" id="f-website" tabindex="-1" autocomplete="off"></label>
         <label class="consent">
           <input type="checkbox" id="f-consent">
-          <span class="small">ยินยอมให้ที่พักเก็บชื่อ เบอร์โทรศัพท์ และ LINE ID เพื่อติดต่อกลับเรื่องการจองนี้เท่านั้น
+          <span class="small">ยินยอมให้ที่พักเก็บชื่อ เบอร์โทรศัพท์ อีเมล และ LINE ID เพื่อติดต่อกลับเรื่องการจองนี้เท่านั้น
             (คำขอที่ไม่ได้เป็นการจองจริงจะถูกลบภายใน 90 วัน)</span>
         </label>
         <p class="err small" id="f-err" hidden></p>
@@ -175,7 +179,7 @@
   var m = location.pathname.match(/^\/stay\/([a-z0-9-]+)\/?$/)
   var slug = (m && m[1]) || new URLSearchParams(location.search).get('p') || ''
   var $ = function (id) { return document.getElementById(id) }
-  var site = null, available = null, picked = new Set(), range = null, shownAt = Date.now()
+  var site = null, available = null, interested = [], picked = new Set(), range = null, shownAt = Date.now()
 
   function call(name, data) {
     return fetch(API + name, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: data }) })
@@ -202,7 +206,12 @@
   function setText(id, t) { var e = $(id); e.textContent = t || ''; return e }
   function showIf(id, cond) { $(id).hidden = !cond }
 
-  var words = function () { return site && site.unitType === 'ROOM' ? { noun: 'ห้อง', full: 'ห้องพัก' } : { noun: 'บ้าน', full: 'บ้านพัก' } }
+  // interest = ป้ายเมื่อมีคำขอค้างช่วงเดียวกัน (ข้อความตามที่เจ้าของกำหนด 2026-11-01)
+  var words = function () {
+    return site && site.unitType === 'ROOM'
+      ? { noun: 'ห้อง', full: 'ห้องพัก', interest: 'มีคนกำลังสนใจห้องนี้' }
+      : { noun: 'บ้าน', full: 'บ้านพัก', interest: 'กำลังมีคนสนใจบ้านหลังนี้' }
+  }
 
   function linkFor(v, kind) {
     v = (v || '').trim()
@@ -273,6 +282,9 @@
       top.appendChild(g)
       if (free !== null) top.appendChild(el('span', 'state ' + (free ? 'free' : 'busy'), free ? 'ว่าง' : 'ไม่ว่าง'))
       card.appendChild(top)
+      if (free && interested.indexOf(h.id) >= 0) {
+        card.appendChild(el('div', 'interest', w.interest + ' (มีผู้ส่งคำขอจองในช่วงวันที่เลือกแล้ว รอที่พักยืนยัน — ยังส่งคำขอได้)'))
+      }
       if (h.summary) card.appendChild(el('div', '', h.summary))
       if (site.showPrices && (h.priceLow > 0 || h.priceHigh > 0)) {
         var lo = h.priceLow || h.priceHigh, hi = h.priceHigh || h.priceLow
@@ -315,7 +327,7 @@
     note.textContent = 'กำลังตรวจสอบ…'
     $('check').disabled = true
     call('bookingSite', { slug: slug, checkIn: a, checkOut: b }).then(function (r) {
-      site = r; available = r.available || []; range = { checkIn: a, checkOut: b }
+      site = r; available = r.available || []; interested = r.interested || []; range = { checkIn: a, checkOut: b }
       // บ้านที่เคยเลือกแต่ไม่ว่างในช่วงใหม่: เอาออก
       picked.forEach(function (id) { if (available.indexOf(id) < 0) picked.delete(id) })
       note.className = 'range-note small'
@@ -342,19 +354,22 @@
     var name = $('f-name').value.trim(), phone = $('f-phone').value.replace(/[\s-]/g, ''), count = parseInt($('f-count').value, 10)
     if (name.length < 2) return formError('กรุณากรอกชื่อผู้จอง')
     if (!/^0\d{9}$/.test(phone)) return formError('กรุณากรอกเบอร์โทรเป็นตัวเลข 10 หลัก')
+    // รูปแบบเดียวกับ EMAIL_RE ใน bookingRequest.ts (เซิร์ฟเวอร์ตรวจซ้ำ)
+    var email = $('f-email').value.trim().toLowerCase()
+    if (email.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return formError('กรุณากรอกอีเมลให้ถูกต้อง')
     if (!(count >= 1)) return formError('กรุณากรอกจำนวนผู้เข้าพัก')
     if (!$('f-consent').checked) return formError('กรุณายินยอมให้ที่พักเก็บข้อมูลเพื่อติดต่อกลับ')
     formError('')
     var btn = $('f-send'); btn.disabled = true; btn.textContent = 'กำลังส่ง…'
     var ids = Array.from(picked)
     call('submitBookingRequest', {
-      slug: slug, houseIds: ids, checkIn: range.checkIn, checkOut: range.checkOut, guestName: name, guestPhone: phone,
+      slug: slug, houseIds: ids, checkIn: range.checkIn, checkOut: range.checkOut, guestName: name, guestPhone: phone, guestEmail: email,
       lineId: $('f-line').value.trim(), guestCount: count, note: $('f-note').value.trim(), consent: true,
       website: $('f-website').value, elapsedMs: Date.now() - shownAt,
     }).then(function () {
       var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
       $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)\n\n' +
-        'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
+        'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
       $('req-sec').hidden = true
       $('done').hidden = false
       $('done').scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -364,7 +379,7 @@
   })
 
   $('again').addEventListener('click', function () {
-    $('done').hidden = true; picked.clear(); range = null; available = null
+    $('done').hidden = true; picked.clear(); range = null; available = null; interested = []
     $('f-note').value = ''
     $('range-note').textContent = ''
     renderHouses(); updateForm()
