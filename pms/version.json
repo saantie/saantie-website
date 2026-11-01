@@ -1,8 +1,8 @@
 {
-    "versionCode":  70,
-    "versionName":  "0.2.68",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.68/saantie-pms-0.2.68.apk",
-    "sha256":  "19ad8c2ef4cb169d21bea9227f4466148a77959996ce1efb17b612a561dd1ff4",
-    "notes":  "- ตั้งค่า → สิทธิ์การใช้งานของพนักงาน: ปุ่มคัดลอกลิงก์มีโลโก้ Android และรูปลูกโลก (เว็บ) บอกว่าเป็นลิงก์ของแอปไหน",
+    "versionCode":  71,
+    "versionName":  "0.2.69",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.69/saantie-pms-0.2.69.apk",
+    "sha256":  "7b9cc31fedf591daf0c24ccadf8446efb4a5946cbbc0e5f486ba77ddbd09bcb6",
+    "notes":  "- เว็บไซต์รับคำขอจอง: ตั้งค่า → เว็บไซต์รับคำขอจอง ตั้งชื่อลิงก์ saantie.com/stay/ชื่อที่พัก แล้วเปิดรับคำขอ\n- คำขอใหม่แจ้งเตือนเข้าแอปและขึ้นแถบบนหน้าการจอง กดรับจอง = เปิดฟอร์มที่กรอกให้แล้ว",
     "minVersionCode":  0
 }
