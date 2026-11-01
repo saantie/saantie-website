@@ -1,8 +1,8 @@
 {
-    "versionCode":  69,
-    "versionName":  "0.2.67",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.67/saantie-pms-0.2.67.apk",
-    "sha256":  "bdc75ae1a81cc675b955e68b60774eb13efa95b9666ce138aba36c53e65035d3",
-    "notes":  "- รายการจองรายวัน: มีเส้นคั่นระหว่าง \"เข้าพักคืนนี้\" กับ \"เช็คเอาท์วันนี้\"\r\n- ตั้งค่า → รายการบ้านพัก: ต้องแตะ ⋮⋮ ค้างไว้ก่อนถึงจะลากเรียงลำดับได้ กันลากโดยไม่ตั้งใจ",
+    "versionCode":  70,
+    "versionName":  "0.2.68",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.68/saantie-pms-0.2.68.apk",
+    "sha256":  "19ad8c2ef4cb169d21bea9227f4466148a77959996ce1efb17b612a561dd1ff4",
+    "notes":  "- ตั้งค่า → สิทธิ์การใช้งานของพนักงาน: ปุ่มคัดลอกลิงก์มีโลโก้ Android และรูปลูกโลก (เว็บ) บอกว่าเป็นลิงก์ของแอปไหน",
     "minVersionCode":  0
 }
