@@ -179,7 +179,7 @@
   var m = location.pathname.match(/^\/stay\/([a-z0-9-]+)\/?$/)
   var slug = (m && m[1]) || new URLSearchParams(location.search).get('p') || ''
   var $ = function (id) { return document.getElementById(id) }
-  var site = null, available = null, interested = [], picked = new Set(), range = null, shownAt = Date.now()
+  var site = null, available = null, interested = [], prices = {}, picked = new Set(), range = null, shownAt = Date.now()
 
   function call(name, data) {
     return fetch(API + name, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: data }) })
@@ -287,8 +287,15 @@
       }
       if (h.summary) card.appendChild(el('div', '', h.summary))
       if (site.showPrices && (h.priceLow > 0 || h.priceHigh > 0)) {
+        // ราคาตามที่ตั้งในแอป: เลือกวันแล้ว = ยอดจริงที่เซิร์ฟเวอร์คิด (Season/ศุกร์-เสาร์ สูตรเดียวกับตอนแอปบันทึกการจอง)
         var lo = h.priceLow || h.priceHigh, hi = h.priceHigh || h.priceLow
-        card.appendChild(el('div', 'price', (lo === hi ? baht(lo) : baht(Math.min(lo, hi)) + '–' + baht(Math.max(lo, hi))) + ' บาท/คืน (ราคาโดยประมาณ ที่พักจะยืนยันอีกครั้ง)'))
+        var rate = lo === hi ? 'คืนละ ' + baht(lo) + ' บาท' : 'คืนปกติ ' + baht(lo) + ' บาท · ช่วงเทศกาล/วันหยุด ' + baht(hi) + ' บาท'
+        if (free && prices[h.id] > 0) {
+          card.appendChild(el('div', 'price', 'ค่าห้อง ' + nights(range.checkIn, range.checkOut) + ' คืน ' + baht(prices[h.id]) + ' บาท'))
+          card.appendChild(el('div', 'small muted', rate))
+        } else {
+          card.appendChild(el('div', 'price', rate))
+        }
       }
       if (h.amenities && h.amenities.length) card.appendChild(el('div', 'amen muted', h.amenities.join(' · ')))
       if (h.description) {
@@ -327,7 +334,7 @@
     note.textContent = 'กำลังตรวจสอบ…'
     $('check').disabled = true
     call('bookingSite', { slug: slug, checkIn: a, checkOut: b }).then(function (r) {
-      site = r; available = r.available || []; interested = r.interested || []; range = { checkIn: a, checkOut: b }
+      site = r; available = r.available || []; interested = r.interested || []; prices = r.prices || {}; range = { checkIn: a, checkOut: b }
       // บ้านที่เคยเลือกแต่ไม่ว่างในช่วงใหม่: เอาออก
       picked.forEach(function (id) { if (available.indexOf(id) < 0) picked.delete(id) })
       note.className = 'range-note small'
@@ -344,7 +351,16 @@
     $('req-sec').hidden = !on
     if (!on) return
     var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
-    $('req-summary').textContent = 'ขอจอง ' + names.join(', ') + ' · ' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)'
+    $('req-summary').textContent = 'ขอจอง ' + names.join(', ') + ' · ' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)' + totalText()
+    $('req-summary').className = 'small muted pre'
+  }
+
+  /** ค่าห้องรวมของที่เลือก (ไม่เปิดแสดงราคา/บางหลังไม่มีราคา = ไม่แสดง) */
+  function totalText() {
+    if (!site.showPrices) return ''
+    var ids = Array.from(picked), sum = 0
+    for (var i = 0; i < ids.length; i++) { if (!(prices[ids[i]] > 0)) return ''; sum += prices[ids[i]] }
+    return sum > 0 ? '\nค่าห้องรวม ' + baht(sum) + ' บาท (ไม่รวมค่าบริการเสริม)' : ''
   }
 
   function formError(t) { var e = $('f-err'); e.textContent = t || ''; e.hidden = !t }
@@ -368,7 +384,7 @@
       website: $('f-website').value, elapsedMs: Date.now() - shownAt,
     }).then(function () {
       var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
-      $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)\n\n' +
+      $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)' + totalText() + '\n\n' +
         'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
       $('req-sec').hidden = true
       $('done').hidden = false
@@ -379,7 +395,7 @@
   })
 
   $('again').addEventListener('click', function () {
-    $('done').hidden = true; picked.clear(); range = null; available = null; interested = []
+    $('done').hidden = true; picked.clear(); range = null; available = null; interested = []; prices = {}
     $('f-note').value = ''
     $('range-note').textContent = ''
     renderHouses(); updateForm()
