@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ที่พัก — จองผ่านเว็บไซต์</title>
+<meta name="description" content="ดูข้อมูลที่พัก ตรวจสอบวันว่าง และส่งคำขอจอง">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232F6B4F'/%3E%3Cpath d='M14 34 32 18l18 16v14H14z' fill='%23F7F3EA'/%3E%3C/svg%3E">
+<!--
+  หน้าเว็บไซต์ของที่พักแต่ละแห่ง: saantie.com/stay/{slug} (หรือ /stay/?p={slug}) — ไฟล์เดียวใช้ทุกที่พัก
+  ข้อมูลมาจาก Cloud Function ของ Saantie PMS (โปรเจกต์ saantie-hotel-pms, โค้ดที่ F:\SaantiePMS\SaantiePMS App\functions\src\site.ts)
+    bookingSite          → ข้อมูลที่พัก + บ้าน (+ บ้านที่ว่างเมื่อส่งช่วงวัน) ไม่มีข้อมูลลูกค้า
+    submitBookingRequest → ส่งคำขอจอง (ยังไม่ใช่การจอง ไม่กันห้อง ไม่ชำระเงิน) เจ้าของที่พักได้รับแจ้งเตือนในแอปแล้วติดต่อกลับ
+  กฎตรวจข้อมูลจริงอยู่ฝั่งเซิร์ฟเวอร์ (web/src/data/bookingRequest.ts) — ฝั่งนี้ตรวจเบื้องต้นให้ลูกค้ารู้ทันทีเท่านั้น
+  หน้านี้เป็นของที่พัก ไม่ใช่ของ Saantie: จึงไม่มีแถบ breadcrumb / ปุ่มสลับภาษาของเว็บหลัก
+  ข้อความจากเจ้าของที่พักแสดงด้วย textContent เสมอ (ห้ามใช้ innerHTML กับข้อมูลจากเซิร์ฟเวอร์)
+-->
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #F7F3EA; --surface: #FFFFFF; --surface-2: #FBF8F1; --border: #E4DCCB; --text: #23261F; --muted: #6B6F63;
+    --accent: #2F6B4F; --accent-ink: #FFFFFF; --accent-soft: #E3EFE7; --busy: #9A4A2F; --busy-soft: #F6E3DA; --err: #B3261E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --bg: #151714; --surface: #1E211C; --surface-2: #242822; --border: #343A31; --text: #ECEDE6; --muted: #A4A99B;
+      --accent: #8FD1AE; --accent-ink: #0E2418; --accent-soft: #23362B; --busy: #F0A98E; --busy-soft: #3A2620; --err: #F2B8B5;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", "Sarabun", -apple-system, sans-serif; line-height: 1.7; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+  header.hero { padding: 40px 0 20px; }
+  h1 { font-size: 2em; margin: 0 0 4px; line-height: 1.7; }
+  h2 { font-size: 1.3em; margin: 32px 0 12px; line-height: 1.7; }
+  h3 { font-size: 1.1em; margin: 0; line-height: 1.7; }
+  .tagline { color: var(--muted); font-size: 1.1em; margin: 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: .9em; }
+  .pre { white-space: pre-line; }
+  a { color: var(--accent); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+  .contact { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 18px; border-radius: 10px;
+    border: 1px solid var(--accent); background: transparent; color: var(--accent); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .dates { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: end; }
+  label.field { display: block; }
+  label.field > span { display: block; font-size: .9em; color: var(--muted); margin-bottom: 4px; }
+  input[type=date], input[type=text], input[type=tel], input[type=number], textarea {
+    width: 100%; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2);
+    color: var(--text); font: inherit; }
+  textarea { min-height: 88px; resize: vertical; }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .range-note { margin: 10px 0 0; }
+  .house { display: grid; gap: 4px; }
+  .house-top { display: flex; align-items: flex-start; gap: 12px; }
+  .house-top .grow { flex: 1; min-width: 0; }
+  .facts { color: var(--muted); font-size: .92em; }
+  .amen { font-size: .92em; }
+  .price { font-weight: 600; }
+  .state { font-size: .92em; font-weight: 600; white-space: nowrap; }
+  .state.free { color: var(--accent); }
+  .state.busy { color: var(--busy); }
+  .house.is-busy { opacity: .7; }
+  .house.is-picked { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .pick { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-weight: 600; cursor: pointer; }
+  .pick input { width: 22px; height: 22px; accent-color: var(--accent); }
+  details summary { cursor: pointer; color: var(--accent); font-size: .92em; }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0; }
+  .consent input { width: 22px; height: 22px; flex-shrink: 0; margin-top: 3px; accent-color: var(--accent); }
+  .err { color: var(--err); }
+  .ok-box { border-color: var(--accent); background: var(--accent-soft); }
+  .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .sticky-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 16px;
+    margin: 0 -16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  footer { margin-top: 40px; color: var(--muted); font-size: .85em; text-align: center; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="loading" class="card" style="margin-top:40px">กำลังโหลดข้อมูลที่พัก…</div>
+  <div id="notfound" class="card" style="margin-top:40px" hidden>
+    <h3>ไม่พบเว็บไซต์ที่พักนี้</h3>
+    <p class="muted" id="notfound-msg">ลิงก์อาจไม่ถูกต้อง หรือที่พักปิดรับคำขอจองทางเว็บไซต์ชั่วคราว กรุณาติดต่อที่พักโดยตรง</p>
+  </div>
+
+  <main id="site" hidden>
+    <header class="hero">
+      <h1 id="p-name"></h1>
+      <p class="tagline" id="p-tagline"></p>
+      <div class="contact" id="p-contact"></div>
+    </header>
+
+    <section id="about-sec" class="card" hidden>
+      <div class="pre" id="p-about"></div>
+      <p class="muted small pre" id="p-address" style="margin-bottom:0"></p>
+    </section>
+
+    <h2>ตรวจสอบวันว่างและขอจอง</h2>
+    <div class="card">
+      <div class="dates">
+        <label class="field"><span>วันเช็คอิน</span><input type="date" id="in"></label>
+        <label class="field"><span>วันเช็คเอาท์</span><input type="date" id="out"></label>
+        <button type="button" class="btn primary" id="check">ตรวจสอบวันว่าง</button>
+      </div>
+      <p class="range-note small" id="range-note"></p>
+    </div>
+
+    <h2 id="houses-title"></h2>
+    <div id="houses"></div>
+
+    <section id="req-sec" hidden>
+      <h2>ข้อมูลผู้ขอจอง</h2>
+      <form id="req" class="card" novalidate>
+        <p class="small muted" id="req-summary" style="margin-top:0"></p>
+        <div class="form-grid">
+          <label class="field"><span>ชื่อ-นามสกุล *</span><input type="text" id="f-name" maxlength="80" autocomplete="name"></label>
+          <label class="field"><span>เบอร์โทรศัพท์ (10 หลัก) *</span><input type="tel" id="f-phone" maxlength="12" inputmode="tel" autocomplete="tel"></label>
+          <label class="field"><span>LINE ID (ถ้ามี)</span><input type="text" id="f-line" maxlength="60"></label>
+          <label class="field"><span>จำนวนผู้เข้าพัก *</span><input type="number" id="f-count" min="1" max="200" inputmode="numeric"></label>
+        </div>
+        <label class="field" style="margin-top:12px"><span>ข้อความถึงที่พัก (ถ้ามี) เช่น เวลาที่จะมาถึง ความต้องการพิเศษ</span>
+          <textarea id="f-note" maxlength="500"></textarea></label>
+        <label class="trap" aria-hidden="true">เว็บไซต์<input type="text" id="f-website" tabindex="-1" autocomplete="off"></label>
+        <label class="consent">
+          <input type="checkbox" id="f-consent">
+          <span class="small">ยินยอมให้ที่พักเก็บชื่อ เบอร์โทรศัพท์ และ LINE ID เพื่อติดต่อกลับเรื่องการจองนี้เท่านั้น
+            (คำขอที่ไม่ได้เป็นการจองจริงจะถูกลบภายใน 90 วัน)</span>
+        </label>
+        <p class="err small" id="f-err" hidden></p>
+        <div class="sticky-bar">
+          <span class="small muted">ส่งคำขอแล้ว ที่พักจะติดต่อกลับเพื่อยืนยัน ยังไม่ต้องชำระเงิน</span>
+          <button type="submit" class="btn primary" id="f-send">ส่งคำขอจอง</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="done" class="card ok-box" hidden>
+      <h3>ส่งคำขอจองแล้ว</h3>
+      <p class="pre" id="done-msg"></p>
+      <button type="button" class="btn" id="again">ส่งคำขออื่น</button>
+    </section>
+
+    <section id="info-sec" hidden>
+      <h2>ข้อมูลการเข้าพัก</h2>
+      <div class="card">
+        <p id="p-times" hidden style="margin-top:0"></p>
+        <div id="p-policies-wrap" hidden><h3>นโยบายของที่พัก</h3><p class="pre" id="p-policies"></p></div>
+        <div id="p-nearby-wrap" hidden><h3>สถานที่ใกล้เคียง</h3><p class="pre" id="p-nearby" style="margin-bottom:0"></p></div>
+      </div>
+    </section>
+
+    <section class="card small muted">
+      <strong>ความเป็นส่วนตัว</strong> ข้อมูลที่กรอกในคำขอจองส่งถึงที่พักแห่งนี้เท่านั้น เพื่อใช้ติดต่อกลับเรื่องการจอง
+      ไม่มีการชำระเงินผ่านเว็บไซต์นี้ หากต้องการให้ลบข้อมูลก่อนกำหนด กรุณาแจ้งที่พักโดยตรง
+    </section>
+  </main>
+
+  <footer>ระบบรับคำขอจองโดย <a href="/pms">Saantie PMS</a></footer>
+</div>
+
+<script>
+(function () {
+  'use strict'
+  var PROD = 'https://asia-southeast1-saantie-hotel-pms.cloudfunctions.net/'
+  // เปิดจากเครื่องตัวเอง = ใช้ Functions emulator (ข้อมูลทดสอบ ไม่แตะระบบจริง)
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+  var API = LOCAL ? 'http://127.0.0.1:5001/demo-saantie/asia-southeast1/' : PROD
+
+  var m = location.pathname.match(/^\/stay\/([a-z0-9-]+)\/?$/)
+  var slug = (m && m[1]) || new URLSearchParams(location.search).get('p') || ''
+  var $ = function (id) { return document.getElementById(id) }
+  var site = null, available = null, picked = new Set(), range = null, shownAt = Date.now()
+
+  function call(name, data) {
+    return fetch(API + name, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: data }) })
+      .then(function (r) { return r.json().catch(function () { return {} }) })
+      .then(function (j) {
+        if (j && 'result' in j) return j.result
+        var e = new Error((j && j.error && j.error.message) || 'ระบบขัดข้อง กรุณาลองใหม่หรือติดต่อที่พักโดยตรง')
+        e.status = j && j.error && j.error.status
+        throw e
+      }, function () { throw new Error('เชื่อมต่อไม่ได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่') })
+  }
+
+  // ---------- วันที่ (เก็บ ค.ศ. yyyy-MM-dd แสดง พ.ศ.) ----------
+  var MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+  var DOW = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.']
+  function parse(k) { var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(k || ''); return p ? new Date(Date.UTC(+p[1], +p[2] - 1, +p[3])) : null }
+  function key(d) { return d.toISOString().slice(0, 10) }
+  function plusDays(k, n) { return key(new Date(parse(k).getTime() + n * 86400000)) }
+  function nights(a, b) { var x = parse(a), y = parse(b); return x && y ? Math.round((y - x) / 86400000) : 0 }
+  function thai(k) { var d = parse(k); return DOW[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + (d.getUTCFullYear() + 543) }
+  function baht(n) { return n.toLocaleString('th-TH') }
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e }
+  function setText(id, t) { var e = $(id); e.textContent = t || ''; return e }
+  function showIf(id, cond) { $(id).hidden = !cond }
+
+  var words = function () { return site && site.unitType === 'ROOM' ? { noun: 'ห้อง', full: 'ห้องพัก' } : { noun: 'บ้าน', full: 'บ้านพัก' } }
+
+  function linkFor(v, kind) {
+    v = (v || '').trim()
+    if (!v) return null
+    if (/^https?:\/\//i.test(v)) return v
+    if (kind === 'line') return 'https://line.me/R/ti/p/' + encodeURIComponent(v.charAt(0) === '@' ? v : '~' + v)
+    if (kind === 'fb') return 'https://www.facebook.com/' + encodeURIComponent(v)
+    return null
+  }
+
+  function renderSite() {
+    document.title = site.name + ' — ขอจองที่พัก'
+    setText('p-name', site.name)
+    setText('p-tagline', site.tagline); showIf('p-tagline', !!site.tagline)
+    var c = $('p-contact')
+    c.textContent = ''
+    function addLink(text, href) { if (!href) return; var a = el('a', 'btn', text); a.href = href; a.target = '_blank'; a.rel = 'noopener'; c.appendChild(a) }
+    if (site.phone) { var t = el('a', 'btn', 'โทร ' + site.phone); t.href = 'tel:' + site.phone; c.appendChild(t) }
+    addLink('LINE', linkFor(site.lineId, 'line'))
+    addLink('Facebook', linkFor(site.facebook, 'fb'))
+    addLink('แผนที่', /^https?:\/\//i.test(site.mapUrl) ? site.mapUrl : null)
+    if (site.email) { var e = el('a', 'btn', 'อีเมล'); e.href = 'mailto:' + site.email; c.appendChild(e) }
+    c.hidden = !c.firstChild
+
+    setText('p-about', site.about)
+    setText('p-address', site.address)
+    showIf('about-sec', !!(site.about || site.address))
+
+    var times = []
+    if (site.checkInTime) times.push('เช็คอินตั้งแต่ ' + site.checkInTime + ' น.')
+    if (site.checkOutTime) times.push('เช็คเอาท์ภายใน ' + site.checkOutTime + ' น.')
+    setText('p-times', times.join(' · ')); showIf('p-times', times.length > 0)
+    setText('p-policies', site.policies); showIf('p-policies-wrap', !!site.policies)
+    setText('p-nearby', site.nearby); showIf('p-nearby-wrap', !!site.nearby)
+    showIf('info-sec', !!(times.length || site.policies || site.nearby))
+
+    $('in').min = site.today
+    $('out').min = plusDays(site.today, 1)
+    renderHouses()
+    $('loading').hidden = true
+    $('site').hidden = false
+  }
+
+  function facts(h) {
+    var f = []
+    if (h.capacity > 0 && h.maxGuests > h.capacity) f.push('พักได้ ' + h.capacity + '–' + h.maxGuests + ' คน')
+    else if (h.capacity > 0 || h.maxGuests > 0) f.push('พักได้ ' + (h.capacity || h.maxGuests) + ' คน')
+    if (h.bedrooms > 0) f.push(h.bedrooms + ' ห้องนอน')
+    if (h.bathrooms > 0) f.push(h.bathrooms + ' ห้องน้ำ')
+    if (h.beds) f.push(h.beds)
+    if (h.sizeSqm > 0) f.push(h.sizeSqm + ' ตร.ม.')
+    return f.join(' · ')
+  }
+
+  function renderHouses() {
+    var w = words()
+    setText('houses-title', w.full + 'ทั้งหมด ' + site.houses.length + ' ' + (w.noun === 'ห้อง' ? 'ห้อง' : 'หลัง'))
+    var box = $('houses')
+    box.textContent = ''
+    site.houses.forEach(function (h) {
+      var free = available ? available.indexOf(h.id) >= 0 : null
+      var card = el('div', 'card house' + (free === false ? ' is-busy' : '') + (picked.has(h.id) ? ' is-picked' : ''))
+      var top = el('div', 'house-top')
+      var g = el('div', 'grow')
+      g.appendChild(el('h3', '', h.name))
+      var fx = facts(h)
+      if (fx) g.appendChild(el('div', 'facts', fx))
+      top.appendChild(g)
+      if (free !== null) top.appendChild(el('span', 'state ' + (free ? 'free' : 'busy'), free ? 'ว่าง' : 'ไม่ว่าง'))
+      card.appendChild(top)
+      if (h.summary) card.appendChild(el('div', '', h.summary))
+      if (site.showPrices && (h.priceLow > 0 || h.priceHigh > 0)) {
+        var lo = h.priceLow || h.priceHigh, hi = h.priceHigh || h.priceLow
+        card.appendChild(el('div', 'price', (lo === hi ? baht(lo) : baht(Math.min(lo, hi)) + '–' + baht(Math.max(lo, hi))) + ' บาท/คืน (ราคาโดยประมาณ ที่พักจะยืนยันอีกครั้ง)'))
+      }
+      if (h.amenities && h.amenities.length) card.appendChild(el('div', 'amen muted', h.amenities.join(' · ')))
+      if (h.description) {
+        var d = el('details'); d.appendChild(el('summary', '', 'รายละเอียดเพิ่มเติม')); d.appendChild(el('p', 'pre', h.description)); card.appendChild(d)
+      }
+      if (free) {
+        var lab = el('label', 'pick')
+        var cb = el('input'); cb.type = 'checkbox'; cb.checked = picked.has(h.id)
+        cb.addEventListener('change', function () {
+          if (cb.checked) picked.add(h.id); else picked.delete(h.id)
+          card.classList.toggle('is-picked', cb.checked)
+          updateForm()
+        })
+        lab.appendChild(cb); lab.appendChild(el('span', '', 'เลือก' + w.noun + 'นี้'))
+        card.appendChild(lab)
+      }
+      box.appendChild(card)
+    })
+  }
+
+  function rangeProblem(a, b) {
+    if (!parse(a) || !parse(b)) return 'กรุณาเลือกวันเช็คอินและวันเช็คเอาท์'
+    if (b <= a) return 'วันเช็คเอาท์ต้องอยู่หลังวันเช็คอิน'
+    if (a < site.today) return 'วันเช็คอินผ่านไปแล้ว'
+    if (nights(a, b) > 30) return 'ขอจองได้ครั้งละไม่เกิน 30 คืน'
+    return null
+  }
+
+  function checkAvailability() {
+    var a = $('in').value, b = $('out').value
+    var p = rangeProblem(a, b)
+    var note = $('range-note')
+    note.className = 'range-note small' + (p ? ' err' : '')
+    if (p) { note.textContent = p; return }
+    note.className = 'range-note small muted'
+    note.textContent = 'กำลังตรวจสอบ…'
+    $('check').disabled = true
+    call('bookingSite', { slug: slug, checkIn: a, checkOut: b }).then(function (r) {
+      site = r; available = r.available || []; range = { checkIn: a, checkOut: b }
+      // บ้านที่เคยเลือกแต่ไม่ว่างในช่วงใหม่: เอาออก
+      picked.forEach(function (id) { if (available.indexOf(id) < 0) picked.delete(id) })
+      note.className = 'range-note small'
+      note.textContent = thai(a) + ' – ' + thai(b) + ' (' + nights(a, b) + ' คืน) · ว่าง ' + available.length + ' จาก ' + site.houses.length +
+        (available.length ? ' — เลือก' + words().noun + 'ด้านล่างแล้วกรอกข้อมูลเพื่อส่งคำขอ' : ' — ลองเลือกวันอื่น หรือติดต่อที่พักโดยตรง')
+      renderHouses(); updateForm()
+    }, function (e) {
+      note.className = 'range-note small err'; note.textContent = e.message
+    }).then(function () { $('check').disabled = false })
+  }
+
+  function updateForm() {
+    var on = !!range && picked.size > 0
+    $('req-sec').hidden = !on
+    if (!on) return
+    var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
+    $('req-summary').textContent = 'ขอจอง ' + names.join(', ') + ' · ' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)'
+  }
+
+  function formError(t) { var e = $('f-err'); e.textContent = t || ''; e.hidden = !t }
+
+  $('req').addEventListener('submit', function (ev) {
+    ev.preventDefault()
+    var name = $('f-name').value.trim(), phone = $('f-phone').value.replace(/[\s-]/g, ''), count = parseInt($('f-count').value, 10)
+    if (name.length < 2) return formError('กรุณากรอกชื่อผู้จอง')
+    if (!/^0\d{9}$/.test(phone)) return formError('กรุณากรอกเบอร์โทรเป็นตัวเลข 10 หลัก')
+    if (!(count >= 1)) return formError('กรุณากรอกจำนวนผู้เข้าพัก')
+    if (!$('f-consent').checked) return formError('กรุณายินยอมให้ที่พักเก็บข้อมูลเพื่อติดต่อกลับ')
+    formError('')
+    var btn = $('f-send'); btn.disabled = true; btn.textContent = 'กำลังส่ง…'
+    var ids = Array.from(picked)
+    call('submitBookingRequest', {
+      slug: slug, houseIds: ids, checkIn: range.checkIn, checkOut: range.checkOut, guestName: name, guestPhone: phone,
+      lineId: $('f-line').value.trim(), guestCount: count, note: $('f-note').value.trim(), consent: true,
+      website: $('f-website').value, elapsedMs: Date.now() - shownAt,
+    }).then(function () {
+      var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
+      $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)\n\n' +
+        'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
+      $('req-sec').hidden = true
+      $('done').hidden = false
+      $('done').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, function (e) {
+      formError(e.message)
+    }).then(function () { btn.disabled = false; btn.textContent = 'ส่งคำขอจอง' })
+  })
+
+  $('again').addEventListener('click', function () {
+    $('done').hidden = true; picked.clear(); range = null; available = null
+    $('f-note').value = ''
+    $('range-note').textContent = ''
+    renderHouses(); updateForm()
+    $('in').focus()
+  })
+  $('check').addEventListener('click', checkAvailability)
+  $('in').addEventListener('change', function () {
+    var a = $('in').value
+    if (parse(a)) { $('out').min = plusDays(a, 1); if (!$('out').value || $('out').value <= a) $('out').value = plusDays(a, 1) }
+  })
+
+  function notFound(msg) {
+    $('loading').hidden = true; $('notfound').hidden = false
+    if (msg) $('notfound-msg').textContent = msg
+  }
+  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return notFound()
+  call('bookingSite', { slug: slug }).then(function (r) { site = r; renderSite() }, function (e) {
+    notFound(e.status === 'NOT_FOUND' ? null : e.message)
+  })
+})()
+</script>
+</body>
+</html>

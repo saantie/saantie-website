@@ -37,6 +37,8 @@ assets/pms-icon.svg      → ไอคอน Saantie PMS บนการ์ด�
 assets/pms-web-icon.svg  → ไอคอน PWA สีส้มพาสเทล หน้าลิงก์ "เปิดเวอร์ชันเว็บ" (สำเนา web/public/icon.svg ของแอป — เปลี่ยนไอคอน PWA ต้องแก้ที่นี่ด้วย)
 assets/lang-toggle.js    → สคริปต์สลับภาษา ใช้ร่วมกันทุกหน้า (ดูหัวข้อถัดไป)
 assets/crumbs.js + .css  → แถบบอกตำแหน่งหน้า (breadcrumb) ทุกหน้า — แผนผังเว็บ SITE อยู่ในไฟล์นี้ที่เดียว
+stay/index.html          → saantie.com/stay/{slug}       เว็บไซต์ของที่พักที่ใช้ Saantie PMS (ไฟล์เดียวทุกที่พัก อ่าน slug จาก path หรือ ?p=) ดูข้อมูลที่พัก/วันว่าง + ส่งคำขอจอง ผ่าน Cloud Function bookingSite / submitBookingRequest ของโปรเจกต์ saantie-hotel-pms (โค้ดที่ F:\SaantiePMS\SaantiePMS App\functions\src\site.ts) — เป็นหน้าของที่พัก จึง**ไม่มี** breadcrumb/ปุ่มสลับภาษา (ยกเว้นจากกฎข้อ 4) และไม่อยู่ใน SITE ของ crumbs.js; ข้อมูลจากเจ้าของที่พักแสดงด้วย textContent เท่านั้น; เปิดจาก localhost = เรียก Functions emulator
+_redirects               → Cloudflare Pages: /stay/{slug} → stay/index.html (rewrite 200)
 ```
 
 **ที่มาของเนื้อหา 3 หน้าใน `8hrs/`** — landing + guide สร้างจากดราฟ artifact ที่เจ้าของเว็บทำไว้

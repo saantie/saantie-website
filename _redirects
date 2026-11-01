@@ -1,0 +1,2 @@
+# หน้าเว็บไซต์ที่พัก: saantie.com/stay/{slug} ใช้ไฟล์ stay/index.html ไฟล์เดียว (อ่าน slug จาก path) — ดู CLAUDE.md
+/stay/:slug  /stay/  200
