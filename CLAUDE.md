@@ -14,9 +14,9 @@
 
 | ส่วน | บริการ | หมายเหตุ |
 |---|---|---|
-| Hosting + auto-deploy | **Cloudflare Pages** | ต่อกับ repo นี้โดยตรง push เข้า `main` แล้ว deploy ให้อัตโนมัติ ไม่ต้องสั่งอะไรเพิ่ม |
+| Hosting + auto-deploy | **GitHub Pages** (ตรวจจริง 2026-11-01: `gh api repos/saantie/saantie-website/pages` = build_type legacy, หน้า 404 เป็นของ GitHub Pages) | push เข้า `main` แล้ว build ให้อัตโนมัติ ~1 นาที — **ไม่ใช่ Cloudflare Pages ตามที่เคยจดไว้** จึงไม่อ่าน `_redirects` / `_headers` |
 | Repo | `github.com/saantie/saantie-website` | `git remote -v` ยืนยันแล้ว |
-| โดเมน + DNS | **Cloudflare** (ซื้อโดเมนที่นี่ด้วย) | `saantie.com` เป็นโดเมนหลัก, `www.saantie.com` redirect มาหา (มีไฟล์ `CNAME` เดิมจาก GitHub Pages หลงเหลืออยู่ — ไม่มีผลอะไรตราบใดที่ยังใช้ Cloudflare Pages เป็นตัว serve จริง) |
+| โดเมน + DNS | **Cloudflare** (ซื้อโดเมนที่นี่ด้วย) | `saantie.com` เป็นโดเมนหลัก, จริงๆ `saantie.com` 301 → `www.saantie.com` ซึ่งเสิร์ฟจาก GitHub Pages ตามไฟล์ `CNAME` (ห้ามลบ CNAME) |
 | รับอีเมล | **Cloudflare Email Routing** | `contact@saantie.com` ยืนยันแล้วว่า MX ชี้มาที่ Cloudflare จริง (`route1/2/3.mx.cloudflare.net`) |
 | ส่งอีเมลจากฟอร์มติดต่อ | **Firebase Cloud Functions** (`contactForm`) + **Gmail SMTP** (nodemailer) | ✅ deploy แล้ว ทดสอบส่งจริงสำเร็จ (ส.ค. 2569) — โค้ดอยู่ที่ `F:\posture_monitor\posture_monitor\functions\index.js` โปรเจกต์ `posture-monitor-program` เดียวกับ 8Hrs ดูหัวข้อ "ระบบอีเมลของฟอร์มติดต่อ" ด้านล่าง |
 | Saantie PMS เวอร์ชันเว็บ (PWA) | **Firebase Hosting** `saantie-hotel-pms.web.app` | การ์ด Saantie PMS ในหน้าหลักลิงก์ไปตรงๆ — โค้ดอยู่ที่ `F:\SaantiePMS\SaantiePMS App\web` (คนละ repo/โฮสต์กับเว็บนี้) |
@@ -38,7 +38,8 @@ assets/pms-web-icon.svg  → ไอคอน PWA สีส้มพาสเท�
 assets/lang-toggle.js    → สคริปต์สลับภาษา ใช้ร่วมกันทุกหน้า (ดูหัวข้อถัดไป)
 assets/crumbs.js + .css  → แถบบอกตำแหน่งหน้า (breadcrumb) ทุกหน้า — แผนผังเว็บ SITE อยู่ในไฟล์นี้ที่เดียว
 stay/index.html          → saantie.com/stay/{slug}       เว็บไซต์ของที่พักที่ใช้ Saantie PMS (ไฟล์เดียวทุกที่พัก อ่าน slug จาก path หรือ ?p=) ดูข้อมูลที่พัก/วันว่าง + ส่งคำขอจอง ผ่าน Cloud Function bookingSite / submitBookingRequest ของโปรเจกต์ saantie-hotel-pms (โค้ดที่ F:\SaantiePMS\SaantiePMS App\functions\src\site.ts) — เป็นหน้าของที่พัก จึง**ไม่มี** breadcrumb/ปุ่มสลับภาษา (ยกเว้นจากกฎข้อ 4) และไม่อยู่ใน SITE ของ crumbs.js; ข้อมูลจากเจ้าของที่พักแสดงด้วย textContent เท่านั้น; เปิดจาก localhost = เรียก Functions emulator
-_redirects               → Cloudflare Pages: /stay/{slug} → stay/index.html (rewrite 200)
+404.html                 → หน้าไม่พบของทั้งเว็บ (GitHub Pages ใช้ไฟล์นี้) + พา /stay/{slug} → /stay/?p={slug} เพราะ GitHub Pages ไม่มี rewrite
+_redirects               → เผื่อย้ายไป Cloudflare Pages (/stay/{slug} rewrite 200) — GitHub Pages ไม่อ่านไฟล์นี้
 ```
 
 **ที่มาของเนื้อหา 3 หน้าใน `8hrs/`** — landing + guide สร้างจากดราฟ artifact ที่เจ้าของเว็บทำไว้
@@ -97,7 +98,7 @@ Partner Center) — ฟอร์มยิงไปที่ Cloud Function `cont
 `posture_monitor.py` และกรอกไว้ใน Microsoft Partner Center ตอนส่งแอปแล้ว ถ้าเปลี่ยนต้องส่งอัปเดตแอปใหม่
 และรอ certification รอบใหม่ทั้งกระบวนการ **ห้ามเปลี่ยนชื่อ/ย้าย/ลบ `8hrs/privacy.html`**
 
-Cloudflare Pages ตัดนามสกุล `.html` ให้อัตโนมัติ — `8hrs/privacy.html` จึงเสิร์ฟที่ `/8hrs/privacy`
+GitHub Pages เสิร์ฟหน้าโดยไม่ต้องพิมพ์ `.html` ให้อัตโนมัติ — `8hrs/privacy.html` จึงเสิร์ฟที่ `/8hrs/privacy`
 โดยไม่ต้องตั้งค่าอะไรเพิ่ม กฎนี้ใช้กับทุกหน้าในเว็บ ไม่ใช่แค่ 8hrs
 
 ## Convention สำหรับเพิ่มแอปใหม่ในอนาคต

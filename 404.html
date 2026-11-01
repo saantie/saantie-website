@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ไม่พบหน้านี้ — Saantie</title>
+<meta name="robots" content="noindex">
+<script>
+// เว็บนี้เสิร์ฟด้วย GitHub Pages ซึ่งไม่อ่าน _redirects — ลิงก์ /stay/{slug} จึงมาตกที่หน้านี้
+// พาไปหน้าเดียวของทุกที่พัก (/stay/?p={slug}) ก่อนแสดงอะไร
+(function () {
+  var m = location.pathname.match(/^\/stay\/([a-z0-9-]+)\/?$/i)
+  if (m) location.replace('/stay/?p=' + encodeURIComponent(m[1].toLowerCase()) + location.hash)
+})()
+</script>
+<style>
+  :root { color-scheme: light dark; --bg: #faf7f2; --fg: #2b2b2b; --muted: #6b6b6b; --accent: #c8642b; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1c1b1a; --fg: #eee; --muted: #aaa; --accent: #f5ae7e; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--fg);
+         font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", sans-serif; text-align: center; padding: 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 8px; }
+  p { color: var(--muted); margin: 0 0 20px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>ไม่พบหน้านี้</h1>
+  <p>ลิงก์อาจพิมพ์ผิดหรือถูกย้ายแล้ว</p>
+  <a href="/">กลับหน้าแรก</a>
+</main>
+</body>
+</html>
