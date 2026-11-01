@@ -10,6 +10,7 @@
   หน้าเว็บไซต์ของที่พักแต่ละแห่ง: saantie.com/stay/{slug} (หรือ /stay/?p={slug}) — ไฟล์เดียวใช้ทุกที่พัก
   ข้อมูลมาจาก Cloud Function ของ Saantie PMS (โปรเจกต์ saantie-hotel-pms, โค้ดที่ F:\SaantiePMS\SaantiePMS App\functions\src\site.ts)
     bookingSite          → ข้อมูลที่พัก + บ้าน (+ บ้านที่ว่างเมื่อส่งช่วงวัน) ไม่มีข้อมูลลูกค้า
+    sitePhoto            → รูปบ้าน saantie-hotel-pms.web.app/site-photo/{slug}/{id}-s|l.jpg (s = รูปย่อบนการ์ด, l = รูปเต็ม) CDN จำไว้ 1 วัน
     submitBookingRequest → ส่งคำขอจอง (ยังไม่ใช่การจอง ไม่กันห้อง ไม่ชำระเงิน) เจ้าของที่พักได้รับแจ้งเตือนในแอปแล้วติดต่อกลับ
   กฎตรวจข้อมูลจริงอยู่ฝั่งเซิร์ฟเวอร์ (web/src/data/bookingRequest.ts) — ฝั่งนี้ตรวจเบื้องต้นให้ลูกค้ารู้ทันทีเท่านั้น
   หน้านี้เป็นของที่พัก ไม่ใช่ของ Saantie: จึงไม่มีแถบ breadcrumb / ปุ่มสลับภาษาของเว็บหลัก
@@ -80,6 +81,23 @@
   .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   .sticky-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 16px;
     margin: 0 -16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  /* รูปบ้าน: รูปปก (รูปย่อ 640px) บนการ์ด แตะแล้วเปิดดูทุกรูปขนาดเต็ม — รูปมาจาก function sitePhoto ผ่าน CDN ของ Firebase Hosting */
+  .cover { position: relative; display: block; width: calc(100% + 36px); margin: -18px -18px 10px; padding: 0; border: 0; background: var(--surface-2);
+    border-radius: 14px 14px 0 0; overflow: hidden; cursor: zoom-in; aspect-ratio: 4 / 3; max-height: 360px; }
+  .cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .cover .count { position: absolute; right: 10px; bottom: 10px; background: rgba(0,0,0,.6); color: #fff; font-size: .85em; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px; }
+  .gallery { position: fixed; inset: 0; z-index: 50; background: rgba(10,12,9,.94); color: #fff; display: flex; flex-direction: column; }
+  .gallery-top { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+  .gallery-top .grow { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gallery .gbtn { min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font: inherit;
+    font-size: 1.2em; cursor: pointer; }
+  .strip { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .strip::-webkit-scrollbar { display: none; }
+  .strip figure { flex: 0 0 100%; margin: 0; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; padding: 0 8px 16px; }
+  .strip img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .gallery-nav { display: flex; justify-content: center; gap: 16px; padding: 0 16px 16px; }
+  body.no-scroll { overflow: hidden; }
   footer { margin-top: 40px; color: var(--muted); font-size: .85em; text-align: center; }
   [hidden] { display: none !important; }
 </style>
@@ -168,6 +186,19 @@
   <footer>ระบบรับคำขอจองโดย <a href="/pms">Saantie PMS</a></footer>
 </div>
 
+<div class="gallery" id="gallery" role="dialog" aria-modal="true" aria-labelledby="g-title" hidden>
+  <div class="gallery-top">
+    <span class="grow" id="g-title"></span>
+    <span class="small" id="g-count"></span>
+    <button type="button" class="gbtn" id="g-close" aria-label="ปิด">✕</button>
+  </div>
+  <div class="strip" id="g-strip"></div>
+  <div class="gallery-nav">
+    <button type="button" class="gbtn" id="g-prev" aria-label="รูปก่อนหน้า">‹</button>
+    <button type="button" class="gbtn" id="g-next" aria-label="รูปถัดไป">›</button>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict'
@@ -175,6 +206,8 @@
   // เปิดจากเครื่องตัวเอง = ใช้ Functions emulator (ข้อมูลทดสอบ ไม่แตะระบบจริง)
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
   var API = LOCAL ? 'http://127.0.0.1:5001/demo-saantie/asia-southeast1/' : PROD
+  // รูปบ้าน: ผ่าน Firebase Hosting (rewrite /site-photo/** → function sitePhoto) เพื่อให้ CDN จำรูปไว้ — emulator เรียก function ตรง
+  var PHOTOS = LOCAL ? API + 'sitePhoto/site-photo/' : 'https://saantie-hotel-pms.web.app/site-photo/'
 
   var m = location.pathname.match(/^\/stay\/([a-z0-9-]+)\/?$/)
   var slug = (m && m[1]) || new URLSearchParams(location.search).get('p') || ''
@@ -274,6 +307,7 @@
     site.houses.forEach(function (h) {
       var free = available ? available.indexOf(h.id) >= 0 : null
       var card = el('div', 'card house' + (free === false ? ' is-busy' : '') + (picked.has(h.id) ? ' is-picked' : ''))
+      if (h.photos && h.photos.length) card.appendChild(coverOf(h))
       var top = el('div', 'house-top')
       var g = el('div', 'grow')
       g.appendChild(el('h3', '', h.name))
@@ -315,6 +349,66 @@
       box.appendChild(card)
     })
   }
+
+  // ---------- รูปบ้าน ----------
+  function photoUrl(id, size) { return PHOTOS + encodeURIComponent(slug) + '/' + encodeURIComponent(id) + '-' + size + '.jpg' }
+
+  function coverOf(h) {
+    var b = el('button', 'cover'); b.type = 'button'
+    b.setAttribute('aria-label', 'ดูรูป' + h.name + ' ' + h.photos.length + ' รูป')
+    var img = el('img'); img.src = photoUrl(h.photos[0], 's'); img.alt = h.name; img.loading = 'lazy'; img.decoding = 'async'
+    img.width = 640; img.height = 480
+    // รูปโหลดไม่ได้ (ลบไปแล้ว/เน็ตหลุด) = เอากรอบรูปออก การ์ดยังใช้ได้
+    img.addEventListener('error', function () { b.remove() })
+    b.appendChild(img)
+    if (h.photos.length > 1) b.appendChild(el('span', 'count', h.photos.length + ' รูป'))
+    b.addEventListener('click', function () { openGallery(h) })
+    return b
+  }
+
+  var gStrip = $('g-strip'), gLastFocus = null
+  function gIndex() { return Math.round(gStrip.scrollLeft / Math.max(1, gStrip.clientWidth)) }
+  function gUpdate() {
+    var n = gStrip.children.length, i = gIndex()
+    $('g-count').textContent = n > 1 ? (i + 1) + ' / ' + n : ''
+    $('g-prev').disabled = i <= 0; $('g-next').disabled = i >= n - 1
+  }
+  function gGo(d) { gStrip.scrollTo({ left: (gIndex() + d) * gStrip.clientWidth, behavior: 'smooth' }) }
+  function openGallery(h) {
+    gLastFocus = document.activeElement
+    $('g-title').textContent = h.name
+    gStrip.textContent = ''
+    h.photos.forEach(function (id, i) {
+      var f = el('figure'), img = el('img')
+      // รูปเต็มโหลดเมื่อเลื่อนมาถึง (ยกเว้นรูปแรก) — ไม่ดาวน์โหลดทุกรูปทีเดียว
+      img.src = photoUrl(id, 'l'); img.alt = h.name + ' รูปที่ ' + (i + 1); img.decoding = 'async'
+      if (i > 0) img.loading = 'lazy'
+      f.appendChild(img); gStrip.appendChild(f)
+    })
+    $('gallery').hidden = false
+    document.body.classList.add('no-scroll')
+    gStrip.scrollLeft = 0
+    $('g-prev').hidden = $('g-next').hidden = h.photos.length < 2
+    gUpdate()
+    $('g-close').focus()
+  }
+  function closeGallery() {
+    $('gallery').hidden = true
+    document.body.classList.remove('no-scroll')
+    gStrip.textContent = ''
+    if (gLastFocus && gLastFocus !== document.body && gLastFocus.focus) gLastFocus.focus()
+    else if (document.activeElement && document.activeElement.blur) document.activeElement.blur()
+  }
+  gStrip.addEventListener('scroll', gUpdate, { passive: true })
+  $('g-close').addEventListener('click', closeGallery)
+  $('g-prev').addEventListener('click', function () { gGo(-1) })
+  $('g-next').addEventListener('click', function () { gGo(1) })
+  document.addEventListener('keydown', function (e) {
+    if ($('gallery').hidden) return
+    if (e.key === 'Escape') closeGallery()
+    else if (e.key === 'ArrowLeft') gGo(-1)
+    else if (e.key === 'ArrowRight') gGo(1)
+  })
 
   function rangeProblem(a, b) {
     if (!parse(a) || !parse(b)) return 'กรุณาเลือกวันเช็คอินและวันเช็คเอาท์'
