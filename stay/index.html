@@ -316,13 +316,13 @@
   function normalOf(h) { return h.capacity > 0 ? h.capacity : h.maxGuests }
   function limitOf(h) { return Math.max(normalOf(h), h.maxGuests) }
 
-  /** "เสริมได้อีก 2 คน (รวมสูงสุด 6 คน) · พักเพิ่ม 200 บาท/คน/คืน · เตียงเสริม 150 บาท/เตียง/คืน" — เสริมไม่ได้ = '' */
+  /** "เสริมได้อีก 2 คน (รวมสูงสุด 6 คน) · พักเพิ่ม 200 บาท/คน/คืน · ที่นอนเสริม 150 บาท/ชุด/คืน" — เสริมไม่ได้ = '' */
   function extraInfo(h) {
     var more = limitOf(h) - normalOf(h)
     if (!(normalOf(h) > 0) || more <= 0) return ''
     var t = 'เสริมได้อีก ' + more + ' คน (รวมสูงสุด ' + limitOf(h) + ' คน)'
     if (site.showPrices && h.extraGuestPrice > 0) t += ' · พักเพิ่ม ' + baht(h.extraGuestPrice) + ' บาท/คน/คืน'
-    if (site.showPrices && h.extraBedPrice > 0) t += ' · เตียงเสริม ' + baht(h.extraBedPrice) + ' บาท/เตียง/คืน'
+    if (site.showPrices && h.extraBedPrice > 0) t += ' · ที่นอนเสริม ' + baht(h.extraBedPrice) + ' บาท/ชุด/คืน'
     return t
   }
 
@@ -341,10 +341,10 @@
       var more = limitOf(h) - normalOf(h)
       if (!(normalOf(h) > 0) || more <= 0) return fail(h.name + ' เสริมไม่ได้')
       if (pk.guests > more) return fail(h.name + ' พักเพิ่มได้ไม่เกิน ' + more + ' คน')
-      if (pk.beds > pk.guests) return fail(h.name + ' เสริมเตียงได้ไม่เกิน ' + pk.guests + ' เตียง (เท่าจำนวนคนที่พักเพิ่ม)')
+      if (pk.beds > pk.guests) return fail(h.name + ' เสริมที่นอนได้ไม่เกิน ' + pk.guests + ' ชุด (เท่าจำนวนคนที่พักเพิ่ม)')
       eg += pk.guests; eb += pk.beds
       if (h.extraGuestPrice > 0) gLines.push({ description: h.name + ' พักเพิ่ม ' + pk.guests + ' คน × ' + baht(h.extraGuestPrice) + ' บาท × ' + nn + ' คืน', amount: pk.guests * h.extraGuestPrice * nn })
-      if (pk.beds > 0 && h.extraBedPrice > 0) bLines.push({ description: h.name + ' เสริมเตียง ' + pk.beds + ' เตียง × ' + baht(h.extraBedPrice) + ' บาท × ' + nn + ' คืน', amount: pk.beds * h.extraBedPrice * nn })
+      if (pk.beds > 0 && h.extraBedPrice > 0) bLines.push({ description: h.name + ' เสริมที่นอน ' + pk.beds + ' ชุด × ' + baht(h.extraBedPrice) + ' บาท × ' + nn + ' คืน', amount: pk.beds * h.extraBedPrice * nn })
     }
     if (known) {
       if (guests > limit) {
@@ -363,7 +363,7 @@
     return p
   }
 
-  // ---------- เข้าพักเพิ่ม / เสริมเตียง รายหลัง (เจ้าของขอ 2026-11-01: จองหลายหลัง ลูกค้าเลือกเองว่าเพิ่มที่หลังไหน) ----------
+  // ---------- เข้าพักเพิ่ม / เสริมที่นอน รายหลัง (เจ้าของขอ 2026-11-01: จองหลายหลัง ลูกค้าเลือกเองว่าเพิ่มที่หลังไหน) ----------
   var extraPick = {}  // houseId → { guests, beds } (0 = ไม่ติ๊ก)
 
   function numBox(id, min, max) {
@@ -385,10 +385,10 @@
     var bRow = el('label', 'opt'), bCb = el('input'), bNum = numBox('xb-' + h.id, 1, more)
     bCb.type = 'checkbox'
     bRow.appendChild(bCb)
-    bRow.appendChild(el('span', '', 'เสริมเตียง' + (site.showPrices && h.extraBedPrice > 0 ? ' (' + baht(h.extraBedPrice) + ' บาท/เตียง/คืน)' : '')))
-    bRow.appendChild(bNum); bRow.appendChild(el('span', 'muted', 'เตียง'))
+    bRow.appendChild(el('span', '', 'เสริมที่นอน' + (site.showPrices && h.extraBedPrice > 0 ? ' (' + baht(h.extraBedPrice) + ' บาท/ชุด/คืน)' : '')))
+    bRow.appendChild(bNum); bRow.appendChild(el('span', 'muted', 'ชุด'))
     box.appendChild(gRow); box.appendChild(bRow)
-    box.appendChild(el('div', 'small muted', 'เสริมเตียงได้เฉพาะคนที่พักเพิ่ม ไม่เกินจำนวนคนที่พักเพิ่มใน' + words().noun + 'นี้'))
+    box.appendChild(el('div', 'small muted', 'เสริมที่นอนได้เฉพาะคนที่พักเพิ่ม ไม่เกินจำนวนคนที่พักเพิ่มใน' + words().noun + 'นี้'))
     box._els = { gCb: gCb, gNum: gNum, bCb: bCb, bNum: bNum }
     function read() {
       var g = gCb.checked ? Math.max(0, parseInt(gNum.value, 10) || 0) : 0
@@ -402,7 +402,7 @@
     return box
   }
 
-  /** ช่องตัวเลขเปิดเมื่อติ๊ก, เสริมเตียงเปิดเมื่อติ๊กพักเพิ่ม, เตียงสูงสุด = คนที่พักเพิ่ม — สถานะจาก extraPick (วาดการ์ดใหม่แล้วไม่หาย) */
+  /** ช่องตัวเลขเปิดเมื่อติ๊ก, เสริมที่นอนเปิดเมื่อติ๊กพักเพิ่ม, ที่นอนสูงสุด = คนที่พักเพิ่ม — สถานะจาก extraPick (วาดการ์ดใหม่แล้วไม่หาย) */
   function syncExtraOptions(h, box) {
     var e = box._els, p = extraPick[h.id]
     if (p && !e.gCb.checked) { e.gCb.checked = true; e.gNum.value = String(p.guests); if (p.beds > 0) { e.bCb.checked = true; e.bNum.value = String(p.beds) } }
@@ -422,7 +422,7 @@
 
   function extraGuestText(g, b) {
     if (g <= 0) return ''
-    return b > 0 ? 'พักเพิ่ม ' + g + ' คน และเสริมเตียง ' + b + ' เตียง' : 'พักเพิ่ม ' + g + ' คน (ไม่เสริมเตียง)'
+    return b > 0 ? 'พักเพิ่ม ' + g + ' คน และเสริมที่นอน ' + b + ' ชุด' : 'พักเพิ่ม ' + g + ' คน (ไม่เสริมที่นอน)'
   }
 
   function renderHouses() {
@@ -604,7 +604,7 @@
     box.appendChild(r)
   }
 
-  /** กล่องใต้จำนวนผู้เข้าพัก: พักปกติ/สูงสุดของที่เลือก + พักเพิ่ม/เสริมเตียง + รายการคำนวณราคา */
+  /** กล่องใต้จำนวนผู้เข้าพัก: พักปกติ/สูงสุดของที่เลือก + พักเพิ่ม/เสริมที่นอน + รายการคำนวณราคา */
   function updateQuote() {
     var box = $('quote'), p = currentPlan(), hs = pickedHouses(), n = range ? nights(range.checkIn, range.checkOut) : 0
     var plan0 = guestPlan(hs, 0, [], n)
@@ -620,7 +620,7 @@
     var extraText = p ? extraGuestText(p.extraGuests, p.extraBeds) : ''
     if (extraText) box.appendChild(el('div', 'q-head', extraText))
     if (room == null) {
-      if (extraText) box.appendChild(el('div', 'small muted', 'ที่พักจะแจ้งค่าใช้จ่ายส่วนที่พักเพิ่ม/เสริมเตียงเมื่อติดต่อกลับ'))
+      if (extraText) box.appendChild(el('div', 'small muted', 'ที่พักจะแจ้งค่าใช้จ่ายส่วนที่พักเพิ่ม/เสริมที่นอนเมื่อติดต่อกลับ'))
       return
     }
     qRow(box, 'ค่าห้องพัก ' + n + ' คืน', room)
