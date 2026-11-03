@@ -1,8 +1,8 @@
 {
-    "versionCode":  74,
-    "versionName":  "0.2.72",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.72/saantie-pms-0.2.72.apk",
-    "sha256":  "566fae9645d4fbf93f869fd41d41ffb17cc85c17bd4fe835a17ed3a48f85605f",
-    "notes":  "- เปลี่ยนคำว่า \"เตียงเสริม/เสริมเตียง\" เป็น \"ที่นอนเสริม/เสริมที่นอน\" (นับเป็นชุด) ทั้งในแอป หน้าแก้ไขบ้าน ค่าบริการ คำขอจอง และเว็บไซต์ที่พัก — การจองเก่าที่บันทึกว่า \"เตียงเสริม\" ยังนับเป็นรายได้บ้านเหมือนเดิม",
+    "versionCode":  75,
+    "versionName":  "0.2.73",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.73/saantie-pms-0.2.73.apk",
+    "sha256":  "d1badeb7535841365ee908f12d9d58df29be2f51e79167edf6ad8909613fadb8",
+    "notes":  "- หน้าบ้านว่าง: การ์ดแต่ละหลังแสดงรูปบ้าน (รูปแรกของบ้าน) ยังเรียง 2 คอลัมน์บนโทรศัพท์ — บ้านที่ยังไม่มีรูปแสดงไอคอนบ้าน\n- สมัครเปิดที่พักใหม่: กรอกอีเมลติดต่อ ที่อยู่ที่พัก และ LINE ID (ถ้ามี) เพิ่มจากชื่อและเบอร์ — ที่อยู่/LINE ID ถูกกรอกให้ในข้อมูลเว็บไซต์ที่พักหลังอนุมัติ",
     "minVersionCode":  0
 }
