@@ -1,8 +1,8 @@
 {
-    "versionCode":  77,
-    "versionName":  "0.2.75",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.75/saantie-pms-0.2.75.apk",
-    "sha256":  "32ed7ff455c3fd2f1256e69a4d09a28e9ecd4a6b8974aaf3d1484c68381541dc",
-    "notes":  "- สรุปเช็คอิน (ส่ง LINE/ป๊อปอัป/แจ้งเตือน): รายการค้างชำระขึ้นต้นด้วย 🔴 รายการชำระครบขึ้นต้นด้วย ✅ และมีบรรทัดรวมยอดค้างใต้หัวข้อ แยกได้ง่ายในกลุ่ม LINE",
+    "versionCode":  78,
+    "versionName":  "0.2.76",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.76/saantie-pms-0.2.76.apk",
+    "sha256":  "53e130d6ea5e63567303f012f88a6988f0996404686f28c61c8b3e5796a07165",
+    "notes":  "- หน้าบ้านว่าง: เจ้าของ/ผู้จัดการแตะค้างที่ไอคอนบ้านบนการ์ด (บ้านที่ยังไม่มีรูป) เพื่อเพิ่มรูปได้ 1 รูป — รูปไปอยู่ในตั้งค่า → รายการบ้านพักและราคา ด้วย บ้านที่มีรูปแล้วเปลี่ยนรูปได้ที่ตั้งค่าเท่านั้น\n- เว็บ: หน้าบ้านว่างตรึงแถบวันที่และจำนวนบ้านว่างไว้ด้านบน เลื่อนเฉพาะการ์ด",
     "minVersionCode":  0
 }
