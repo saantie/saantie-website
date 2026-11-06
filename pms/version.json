@@ -1,8 +1,8 @@
 {
-    "versionCode":  76,
-    "versionName":  "0.2.74",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.74/saantie-pms-0.2.74.apk",
-    "sha256":  "88564d234267867ac5c8882726e3b6903164067df1edc740f6d168ad5672d6f8",
-    "notes":  "- บันทึกตอนไม่มีเน็ต (รับเงิน ค่าบริการ ข้อมูลผู้เข้าพัก ฯลฯ) จะขึ้นป้าย \"มีรายการรอส่ง\" จนกว่าจะส่งขึ้นระบบครบ — ระหว่างนี้ห้ามลบแอปหรือออกจากระบบ\n- ออกจากระบบตอนยังมีรายการรอส่ง จะมีคำเตือนก่อน",
+    "versionCode":  77,
+    "versionName":  "0.2.75",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.75/saantie-pms-0.2.75.apk",
+    "sha256":  "32ed7ff455c3fd2f1256e69a4d09a28e9ecd4a6b8974aaf3d1484c68381541dc",
+    "notes":  "- สรุปเช็คอิน (ส่ง LINE/ป๊อปอัป/แจ้งเตือน): รายการค้างชำระขึ้นต้นด้วย 🔴 รายการชำระครบขึ้นต้นด้วย ✅ และมีบรรทัดรวมยอดค้างใต้หัวข้อ แยกได้ง่ายในกลุ่ม LINE",
     "minVersionCode":  0
 }
