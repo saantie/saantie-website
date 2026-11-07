@@ -1,8 +1,8 @@
 {
-    "versionCode":  78,
-    "versionName":  "0.2.76",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.76/saantie-pms-0.2.76.apk",
-    "sha256":  "53e130d6ea5e63567303f012f88a6988f0996404686f28c61c8b3e5796a07165",
-    "notes":  "- หน้าบ้านว่าง: เจ้าของ/ผู้จัดการแตะค้างที่ไอคอนบ้านบนการ์ด (บ้านที่ยังไม่มีรูป) เพื่อเพิ่มรูปได้ 1 รูป — รูปไปอยู่ในตั้งค่า → รายการบ้านพักและราคา ด้วย บ้านที่มีรูปแล้วเปลี่ยนรูปได้ที่ตั้งค่าเท่านั้น\n- เว็บ: หน้าบ้านว่างตรึงแถบวันที่และจำนวนบ้านว่างไว้ด้านบน เลื่อนเฉพาะการ์ด",
+    "versionCode":  79,
+    "versionName":  "0.2.77",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.77/saantie-pms-0.2.77.apk",
+    "sha256":  "46dd225c91742308d66d21b55907b7641a852dbd37d692dad95169ca3f53db1d",
+    "notes":  "- หน้าบ้านว่าง: รูปบ้านที่ยังว่างคืนนั้นแสดงซีดลง บ้านที่มีจองจึงเด่นขึ้น",
     "minVersionCode":  0
 }
