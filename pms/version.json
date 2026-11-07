@@ -1,8 +1,8 @@
 {
-    "versionCode":  79,
-    "versionName":  "0.2.77",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.77/saantie-pms-0.2.77.apk",
-    "sha256":  "46dd225c91742308d66d21b55907b7641a852dbd37d692dad95169ca3f53db1d",
-    "notes":  "- หน้าบ้านว่าง: รูปบ้านที่ยังว่างคืนนั้นแสดงซีดลง บ้านที่มีจองจึงเด่นขึ้น",
+    "versionCode":  80,
+    "versionName":  "0.2.78",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.78/saantie-pms-0.2.78.apk",
+    "sha256":  "01079f04698a01961f474e9735e3d9209c0f85db25bd76b53c716511a4cf1697",
+    "notes":  "- ตั้งค่า → รายงาน ร.ร.4: เลือกเดือนแล้วส่งออกตารางผู้เข้าพักเป็นไฟล์ Word (.docx) จากรายชื่อที่บันทึกตอนเช็คอิน (เฉพาะเจ้าของ/ผู้จัดการ)",
     "minVersionCode":  0
 }
