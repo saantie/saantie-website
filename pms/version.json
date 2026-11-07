@@ -1,8 +1,8 @@
 {
-    "versionCode":  80,
-    "versionName":  "0.2.78",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.78/saantie-pms-0.2.78.apk",
-    "sha256":  "01079f04698a01961f474e9735e3d9209c0f85db25bd76b53c716511a4cf1697",
-    "notes":  "- ตั้งค่า → รายงาน ร.ร.4: เลือกเดือนแล้วส่งออกตารางผู้เข้าพักเป็นไฟล์ Word (.docx) จากรายชื่อที่บันทึกตอนเช็คอิน (เฉพาะเจ้าของ/ผู้จัดการ)",
+    "versionCode":  81,
+    "versionName":  "0.2.79",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.79/saantie-pms-0.2.79.apk",
+    "sha256":  "d06492dab1f4b394cd13a6a3f958c0ad24e01d0bebf5822e29ab0205ed972156",
+    "notes":  "- รายงาน ร.ร.4 ส่งออกเป็นไฟล์ Excel ตามแบบฟอร์มทะเบียนผู้พักทางการ 12 ช่อง (ไทย/อังกฤษ) พร้อมช่องรับรองและลงชื่อผู้จัดการ ตั้งหน้ากระดาษ A4 แนวนอนไว้แล้ว",
     "minVersionCode":  0
 }
