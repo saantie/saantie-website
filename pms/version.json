@@ -1,8 +1,8 @@
 {
-    "versionCode":  83,
-    "versionName":  "0.2.81",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.81/saantie-pms-0.2.81.apk",
-    "sha256":  "bf36e6f1a5ee21263a63ed3717de28c5db1b81071d25968ab2c897760781fc76",
-    "notes":  "- หน้าบ้านว่าง: รูปบ้านที่มีจองแสดงซีดลง บ้านที่ยังว่างแสดงสีสดปกติ ดูบ้านว่างได้ง่ายขึ้น",
+    "versionCode":  84,
+    "versionName":  "0.2.82",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.82/saantie-pms-0.2.82.apk",
+    "sha256":  "8dd6cd2973589ca744db935662ce17b94ce77cd68639d59d9403ef52224e6558",
+    "notes":  "- หน้าบ้านว่าง: ชื่อผู้จองแสดงกลางรูปบ้านบนการ์ด\n- คำขอจองจากเว็บไซต์ที่ยังไม่ได้รับ/ปฏิเสธ ขึ้นเป็นป๊อปอัปด้านบนจอทุกหน้า ย่อได้ (แทนแถบในแท็บการจอง)",
     "minVersionCode":  0
 }
