@@ -1,8 +1,8 @@
 {
-    "versionCode":  82,
-    "versionName":  "0.2.80",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.80/saantie-pms-0.2.80.apk",
-    "sha256":  "a99aaad8fabc3356541ad8ac6f6582d2ba4053b287a7372c98c681bb61927ed9",
-    "notes":  "- อ่านบัตรประชาชน: อ่านที่อยู่กรุงเทพฯ (ถนน/แขวง/เขต) ได้แล้ว\n- อ่านบัตรประชาชน: ถ้าบัตรเล็กในรูปจนอ่านชื่อหรือที่อยู่ไม่ได้ จะอ่านซ้ำจากรูปเต็มให้เอง (ใบนั้นใช้เวลานานขึ้นเล็กน้อย)",
+    "versionCode":  83,
+    "versionName":  "0.2.81",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.81/saantie-pms-0.2.81.apk",
+    "sha256":  "bf36e6f1a5ee21263a63ed3717de28c5db1b81071d25968ab2c897760781fc76",
+    "notes":  "- หน้าบ้านว่าง: รูปบ้านที่มีจองแสดงซีดลง บ้านที่ยังว่างแสดงสีสดปกติ ดูบ้านว่างได้ง่ายขึ้น",
     "minVersionCode":  0
 }
