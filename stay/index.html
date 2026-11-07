@@ -109,6 +109,19 @@
   .quote .q-row { display: flex; justify-content: space-between; gap: 12px; }
   .quote .q-row > span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .quote .q-total { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 6px; font-weight: 700; }
+  .pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 16px rgba(0,0,0,.08); }
+  .pick-bar .grow { flex: 1; min-width: 160px; font-weight: 600; }
+  body.has-pick-bar { padding-bottom: 110px; }
+  /* หน้า 2: การ์ดบ้านที่เลือก (รูปเล็กซ้าย) */
+  .sel { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
+  .sel .thumb { width: 96px; height: 72px; border-radius: 8px; object-fit: cover; background: var(--surface-2); }
+  .sel .noimg { width: 96px; height: 72px; border-radius: 8px; background: var(--surface-2); }
+  .sel .head { display: flex; gap: 8px; align-items: flex-start; }
+  .sel .head h3 { flex: 1; min-width: 0; }
+  .sel .remove { min-height: 36px; padding: 4px 12px; font-size: .9em; }
+  .sel .extra-opts { grid-column: 1 / -1; margin-left: 0; }
   footer { margin-top: 40px; color: var(--muted); font-size: .85em; text-align: center; }
   [hidden] { display: none !important; }
 </style>
@@ -122,6 +135,8 @@
   </div>
 
   <main id="site" hidden>
+   <!-- หน้า 1: เลือกวัน + เลือกบ้าน (เจ้าของขอ 2026-11-07: แยกฟอร์มไปอีกหน้า) -->
+   <div id="step-pick">
     <header class="hero">
       <h1 id="p-name"></h1>
       <p class="tagline" id="p-tagline"></p>
@@ -145,19 +160,25 @@
 
     <h2 id="houses-title"></h2>
     <div id="houses"></div>
+   </div>
 
-    <section id="req-sec" hidden>
-      <h2>ข้อมูลผู้ขอจอง</h2>
+   <!-- หน้า 2: รายละเอียดคำขอจอง — เฉพาะบ้านที่ติ๊กมา + ฟอร์ม (ไฟล์เดียวกัน สลับการแสดงผล ปุ่ม Back กลับหน้า 1 ได้) -->
+   <div id="step-detail" hidden>
+    <p style="margin:24px 0 0" id="back-wrap"><a href="#" id="back-pick">← กลับไปเลือก<span class="noun"></span> / เปลี่ยนวัน</a></p>
+    <h2 style="margin-top:8px">รายละเอียดคำขอจอง</h2>
+    <p class="muted" id="req-summary" style="margin-top:-6px"></p>
+    <section id="req-sec">
+      <div id="sel-houses"></div>
       <form id="req" class="card" novalidate>
-        <p class="small muted" id="req-summary" style="margin-top:0"></p>
+        <label class="field"><span>จำนวนผู้เข้าพักทั้งหมด *</span><input type="number" id="f-count" min="1" max="200" inputmode="numeric"></label>
+        <div class="quote" id="quote" hidden></div>
+        <h3 style="margin-top:18px">ข้อมูลผู้ขอจอง</h3>
         <div class="form-grid">
           <label class="field"><span>ชื่อ-นามสกุล *</span><input type="text" id="f-name" maxlength="80" autocomplete="name"></label>
           <label class="field"><span>เบอร์โทรศัพท์ (10 หลัก) *</span><input type="tel" id="f-phone" maxlength="12" inputmode="tel" autocomplete="tel"></label>
           <label class="field"><span>อีเมล *</span><input type="email" id="f-email" maxlength="100" inputmode="email" autocomplete="email"></label>
           <label class="field"><span>LINE ID (ถ้ามี)</span><input type="text" id="f-line" maxlength="60"></label>
-          <label class="field"><span>จำนวนผู้เข้าพัก *</span><input type="number" id="f-count" min="1" max="200" inputmode="numeric"></label>
         </div>
-        <div class="quote" id="quote" hidden></div>
         <label class="field" style="margin-top:12px"><span>ข้อความถึงที่พัก (ถ้ามี) เช่น เวลาที่จะมาถึง ความต้องการพิเศษ</span>
           <textarea id="f-note" maxlength="500"></textarea></label>
         <label class="trap" aria-hidden="true">เว็บไซต์<input type="text" id="f-website" tabindex="-1" autocomplete="off"></label>
@@ -180,6 +201,13 @@
       <button type="button" class="btn" id="again">ส่งคำขออื่น</button>
     </section>
 
+    <section class="card small muted">
+      <strong>ความเป็นส่วนตัว</strong> ข้อมูลที่กรอกในคำขอจองส่งถึงที่พักแห่งนี้เท่านั้น เพื่อใช้ติดต่อกลับเรื่องการจอง
+      ไม่มีการชำระเงินผ่านเว็บไซต์นี้ หากต้องการให้ลบข้อมูลก่อนกำหนด กรุณาแจ้งที่พักโดยตรง
+    </section>
+   </div>
+
+   <div id="step-pick-2">
     <section id="info-sec" hidden>
       <h2>ข้อมูลการเข้าพัก</h2>
       <div class="card">
@@ -189,13 +217,16 @@
       </div>
     </section>
 
-    <section class="card small muted">
-      <strong>ความเป็นส่วนตัว</strong> ข้อมูลที่กรอกในคำขอจองส่งถึงที่พักแห่งนี้เท่านั้น เพื่อใช้ติดต่อกลับเรื่องการจอง
-      ไม่มีการชำระเงินผ่านเว็บไซต์นี้ หากต้องการให้ลบข้อมูลก่อนกำหนด กรุณาแจ้งที่พักโดยตรง
-    </section>
+   </div>
   </main>
 
   <footer>ระบบรับคำขอจองโดย <a href="/pms">Saantie PMS</a></footer>
+</div>
+
+<!-- หน้า 1: ติ๊กเลือกหลังแรกแล้วแถบนี้ลอยขึ้นด้านล่าง → ไปหน้า 2 -->
+<div class="pick-bar" id="pick-bar" hidden>
+  <span class="grow" id="pick-bar-text"></span>
+  <button type="button" class="btn primary" id="to-detail">กรอกรายละเอียดขอจอง →</button>
 </div>
 
 <div class="gallery" id="gallery" role="dialog" aria-modal="true" aria-labelledby="g-title" hidden>
@@ -372,7 +403,7 @@
     return i
   }
 
-  /** ช่องติ๊กใต้ "เลือกบ้านนี้" — เฉพาะหลังที่เสริมได้ (null = เสริมไม่ได้/ไม่ได้กรอกจำนวนคน) */
+  /** ช่องติ๊กในการ์ดหน้า 2 — เฉพาะหลังที่เสริมได้ (null = เสริมไม่ได้/ไม่ได้กรอกจำนวนคน) */
   function extraOptions(h) {
     var more = limitOf(h) - normalOf(h)
     if (!(normalOf(h) > 0) || more <= 0) return null
@@ -466,16 +497,13 @@
       if (free) {
         var lab = el('label', 'pick')
         var cb = el('input'); cb.type = 'checkbox'; cb.checked = picked.has(h.id)
-        var opts = extraOptions(h)
         cb.addEventListener('change', function () {
           if (cb.checked) picked.add(h.id); else { picked.delete(h.id); delete extraPick[h.id] }
           card.classList.toggle('is-picked', cb.checked)
-          if (opts) { opts.hidden = !cb.checked; syncExtraOptions(h, opts) }
           updateForm()
         })
         lab.appendChild(cb); lab.appendChild(el('span', '', 'เลือก' + w.noun + 'นี้'))
         card.appendChild(lab)
-        if (opts) { opts.hidden = !picked.has(h.id); card.appendChild(opts) }
       }
       box.appendChild(card)
     })
@@ -571,12 +599,72 @@
     }).then(function () { $('check').disabled = false })
   }
 
+  /** แถบล่างหน้า 1: จำนวนที่เลือก + ค่าห้อง (เลือก 0 หลัง / อยู่หน้า 2 = ซ่อน) */
   function updateForm() {
-    var on = !!range && picked.size > 0
-    $('req-sec').hidden = !on
+    var on = !!range && picked.size > 0 && !$('step-pick').hidden
+    $('pick-bar').hidden = !on
+    document.body.classList.toggle('has-pick-bar', on)
     if (!on) return
-    var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
-    $('req-summary').textContent = 'ขอจอง ' + names.join(', ') + ' · ' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน)'
+    var w = words(), room = roomTotal()
+    $('pick-bar-text').textContent = 'เลือกแล้ว ' + picked.size + ' ' + (w.noun === 'ห้อง' ? 'ห้อง' : 'หลัง') + (room != null ? ' · ค่าห้อง ' + baht(room) + ' บาท' : '')
+  }
+
+  // ---------- สลับหน้า 1 ↔ 2 (history: ปุ่ม Back ของมือถือกลับหน้า 1 โดยที่ติ๊กไว้ยังอยู่) ----------
+  function showStep(detail) {
+    $('step-pick').hidden = detail; $('step-pick-2').hidden = detail
+    $('step-detail').hidden = !detail
+    if (detail) renderDetail()
+    else renderHouses()
+    updateForm()
+    window.scrollTo(0, 0)
+  }
+  function goDetail() {
+    if (!range || picked.size === 0) return
+    history.pushState({ step: 'detail' }, '', location.pathname + location.search + '#request')
+    showStep(true)
+  }
+  function goPick() {
+    if (history.state && history.state.step === 'detail') history.back()   // → popstate → showStep(false)
+    else { history.replaceState(null, '', location.pathname + location.search); showStep(false) }
+  }
+  window.addEventListener('popstate', function () {
+    if (site) showStep(!!(history.state && history.state.step === 'detail') && picked.size > 0 && !!range)
+  })
+  $('to-detail').addEventListener('click', goDetail)
+  $('back-pick').addEventListener('click', function (e) { e.preventDefault(); goPick() })
+
+  /** หน้า 2: การ์ดเฉพาะบ้านที่ติ๊ก (รูปเล็ก ชื่อ จำนวนคน ค่าห้อง ช่องพักเพิ่ม/เสริมที่นอน ปุ่มเอาออก) */
+  function renderDetail() {
+    var w = words(), box = $('sel-houses')
+    document.querySelectorAll('.noun').forEach(function (x) { x.textContent = w.noun })
+    $('req-summary').textContent = thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน) · เลือก ' +
+      picked.size + ' ' + (w.noun === 'ห้อง' ? 'ห้อง' : 'หลัง')
+    box.textContent = ''
+    pickedHouses().forEach(function (h) {
+      var card = el('div', 'card sel')
+      if (h.photos && h.photos.length) {
+        var img = el('img', 'thumb'); img.src = photoUrl(h.photos[0], 's'); img.alt = h.name; img.decoding = 'async'
+        img.addEventListener('error', function () { img.replaceWith(el('div', 'noimg')) })
+        card.appendChild(img)
+      } else card.appendChild(el('div', 'noimg'))
+      var g = el('div')
+      var head = el('div', 'head')
+      head.appendChild(el('h3', '', h.name))
+      var rm = el('button', 'btn remove', 'เอาออก'); rm.type = 'button'
+      rm.addEventListener('click', function () {
+        picked.delete(h.id); delete extraPick[h.id]
+        if (picked.size === 0) goPick(); else renderDetail()
+      })
+      head.appendChild(rm)
+      g.appendChild(head)
+      var fx = facts(h); if (fx) g.appendChild(el('div', 'facts', fx))
+      var ex = extraInfo(h); if (ex) g.appendChild(el('div', 'facts', ex))
+      if (prices[h.id] > 0) g.appendChild(el('div', 'price', 'ค่าห้อง ' + nights(range.checkIn, range.checkOut) + ' คืน ' + baht(prices[h.id]) + ' บาท'))
+      card.appendChild(g)
+      var opts = extraOptions(h)
+      if (opts) card.appendChild(opts)
+      box.appendChild(card)
+    })
     updateQuote()
   }
 
@@ -669,6 +757,7 @@
       $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน) · ' + count + ' คน' + doneQuoteText(plan) + '\n\n' +
         'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
       $('req-sec').hidden = true
+      $('back-wrap').hidden = true
       $('done').hidden = false
       $('done').scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, function (e) {
@@ -677,10 +766,12 @@
   })
 
   $('again').addEventListener('click', function () {
-    $('done').hidden = true; picked.clear(); extraPick = {}; range = null; available = null; interested = []; prices = {}
-    $('f-note').value = ''
+    $('done').hidden = true; $('req-sec').hidden = false; $('back-wrap').hidden = false
+    picked.clear(); extraPick = {}; range = null; available = null; interested = []; prices = {}
+    $('f-note').value = ''; $('f-count').value = ''
     $('range-note').textContent = ''
-    renderHouses(); updateForm()
+    history.replaceState(null, '', location.pathname + location.search)
+    showStep(false)
     $('in').focus()
   })
   $('check').addEventListener('click', checkAvailability)
@@ -694,6 +785,8 @@
     if (msg) $('notfound-msg').textContent = msg
   }
   if (!/^[a-z0-9-]{3,40}$/.test(slug)) return notFound()
+  // เปิดลิงก์ #request ตรงๆ / รีเฟรชบนหน้า 2 = ยังไม่มีบ้านที่เลือก → เริ่มหน้า 1
+  if (location.hash === '#request') history.replaceState(null, '', location.pathname + location.search)
   call('bookingSite', { slug: slug }).then(function (r) { site = r; renderSite() }, function (e) {
     notFound(e.status === 'NOT_FOUND' ? null : e.message)
   })
