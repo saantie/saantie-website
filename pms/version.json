@@ -1,8 +1,8 @@
 {
-    "versionCode":  85,
-    "versionName":  "0.2.83",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.83/saantie-pms-0.2.83.apk",
-    "sha256":  "2b52c4575740a12e0e1f749e5fee4cbde9eddac220a7be05a2061be762b2d204",
-    "notes":  "- ธีมสีและเวลาเตือนสรุปเช็คอินผูกกับบัญชี: เปลี่ยนเครื่องหรือลบข้อมูลเบราว์เซอร์แล้วไม่ต้องตั้งใหม่\n- เว็บ: ตั้งค่า → ข้อมูลในเครื่องนี้ บอกจำนวนรูปบัตรที่อยู่เฉพาะในเครื่องและรายการที่ยังไม่ได้ส่ง เตือนก่อนลบข้อมูลเบราว์เซอร์",
+    "versionCode":  86,
+    "versionName":  "0.2.84",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.84/saantie-pms-0.2.84.apk",
+    "sha256":  "8b39e4ce3a68db1d019aff8cb00a571c81a19da1a2a2af59de6d638eeb5b1d8b",
+    "notes":  "- ตั้งค่า → แพ็กเกจของฉัน: ดูแพ็กเกจ วันหมดอายุ และจำนวนบ้าน/ห้องที่ใช้อยู่\n- ผู้ดูแลระบบ: อนุมัติที่พักพร้อมทดลองใช้ 30 วัน ต่ออายุแพ็กเกจ และดูประวัติการชำระ\n- ยังไม่มีการล็อกฟีเจอร์ ใช้งานได้ตามเดิมทุกอย่าง",
     "minVersionCode":  0
 }
