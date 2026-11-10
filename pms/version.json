@@ -1,8 +1,8 @@
 {
-    "versionCode":  87,
-    "versionName":  "0.2.85",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.85/saantie-pms-0.2.85.apk",
-    "sha256":  "ec28fa89bed7dbddd45efda6f261b5f300578c59ad97c1ced8d3fe34e1800b56",
-    "notes":  "- เปลี่ยนชื่อแพ็กเกจที่ชำระเงินเป็น \"พรีเมียม\" ที่พักใหม่ทดลองใช้ 60 วัน\n- ตั้งค่า → แพ็กเกจของฉัน: รายการสิ่งที่พรีเมียมมีเพิ่ม QR พร้อมเพย์ และปุ่มบันทึกรูป QR ลงเครื่อง\n- เตือนเจ้าของก่อนแพ็กเกจหมดอายุ วันละครั้ง\n- แพ็กเกจฟรี: บัญชีพนักงาน เว็บไซต์ที่พัก รายงานแบบเต็ม และพูดแทนพิมพ์ ใช้ได้ในแพ็กเกจพรีเมียม (การจอง ผู้เข้าพัก รับเงิน ใช้ได้ครบเหมือนเดิม)",
+    "versionCode":  88,
+    "versionName":  "0.2.86",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.86/saantie-pms-0.2.86.apk",
+    "sha256":  "a0dbe6057685c0f7ecaae81f51c8a9820210425e169d7f44639bc0b36b9878ac",
+    "notes":  "- ตั้งค่า → แพ็กเกจของฉัน: ช่องทางส่งสลิปค่าบริการ LINE OA @319txzie และโทร 081-975-3130 พร้อมปุ่มแชท LINE / โทร",
     "minVersionCode":  0
 }
