@@ -109,6 +109,17 @@
   .quote .q-row { display: flex; justify-content: space-between; gap: 12px; }
   .quote .q-row > span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .quote .q-total { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 6px; font-weight: 700; }
+  /* ลิงก์ติดตามบนหน้ายืนยัน + หน้าคุยกับที่พัก */
+  .link-row { display: flex; gap: 8px; }
+  .link-row input { flex: 1; min-width: 0; font-size: .85em; }
+  .row-end { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 10px; }
+  .tstatus { display: inline-block; font-weight: 700; padding: 2px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); }
+  .tstatus.ok { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .tstatus.no { color: var(--busy); border-color: var(--busy); background: var(--busy-soft); }
+  .tmsgs { display: grid; gap: 8px; max-height: 60vh; overflow-y: auto; margin-bottom: 12px; }
+  .tmsg { max-width: 85%; padding: 8px 12px; border-radius: 12px; }
+  .tmsg.me { justify-self: end; background: var(--accent-soft); }
+  .tmsg.them { justify-self: start; background: var(--surface-2); border: 1px solid var(--border); }
   .pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border);
     box-shadow: 0 -4px 16px rgba(0,0,0,.08); }
@@ -133,6 +144,33 @@
     <h3>ไม่พบเว็บไซต์ที่พักนี้</h3>
     <p class="muted" id="notfound-msg">ลิงก์อาจไม่ถูกต้อง หรือที่พักปิดรับคำขอจองทางเว็บไซต์ชั่วคราว กรุณาติดต่อที่พักโดยตรง</p>
   </div>
+
+  <!-- หน้าคุยกับที่พัก: เปิดด้วยลิงก์ส่วนตัว ?r= (จากหน้ายืนยัน/อีเมล) — ไม่ใช่แชทสด รีเฟรชทุก 1 นาที -->
+  <section id="thread" hidden>
+    <header class="hero" style="padding-bottom:8px">
+      <h1 id="t-name"></h1>
+      <p class="tagline">คำขอจองของคุณ</p>
+    </header>
+    <div class="card">
+      <span class="tstatus" id="t-status"></span>
+      <p class="pre" id="t-summary" style="margin-bottom:0"></p>
+      <div class="contact" id="t-contact"></div>
+    </div>
+    <h2 style="margin-top:20px">ข้อความกับที่พัก</h2>
+    <div class="card">
+      <div class="tmsgs" id="t-msgs"></div>
+      <form id="t-form" novalidate>
+        <label class="field"><span>ข้อความถึงที่พัก</span><textarea id="t-text" maxlength="1000"></textarea></label>
+        <p class="err small" id="t-err" hidden></p>
+        <div class="row-end">
+          <button type="button" class="btn" id="t-refresh">รีเฟรช</button>
+          <button type="submit" class="btn primary" id="t-send">ส่งข้อความ</button>
+        </div>
+        <p class="small muted" id="t-note"></p>
+      </form>
+    </div>
+    <p class="small muted">ที่พักตอบแล้วจะแจ้งทางอีเมลด้วย · หน้านี้ดึงข้อความใหม่ทุก 1 นาที · <a id="t-new" href="#">ส่งคำขอจองใหม่</a></p>
+  </section>
 
   <main id="site" hidden>
    <!-- หน้า 1: เลือกวัน + เลือกบ้าน (เจ้าของขอ 2026-11-07: แยกฟอร์มไปอีกหน้า) -->
@@ -198,6 +236,15 @@
     <section id="done" class="card ok-box" hidden>
       <h3>ส่งคำขอจองแล้ว</h3>
       <p class="pre" id="done-msg"></p>
+      <!-- ลิงก์ส่วนตัวสำหรับติดตามคำขอ/คุยกับที่พัก (ส่งทางอีเมลด้วย) -->
+      <div id="done-link" hidden>
+        <p style="margin-bottom:6px"><strong>ติดตามสถานะและคุยกับที่พักได้ที่ลิงก์นี้</strong> <span class="small muted" id="done-link-note"></span></p>
+        <div class="link-row">
+          <input type="text" id="done-link-url" readonly aria-label="ลิงก์ติดตามคำขอ">
+          <button type="button" class="btn" id="done-link-copy">คัดลอก</button>
+        </div>
+        <p><a class="btn primary" id="done-link-open" href="#">เปิดหน้าคุยกับที่พัก</a></p>
+      </div>
       <button type="button" class="btn" id="again">ส่งคำขออื่น</button>
     </section>
 
@@ -752,7 +799,8 @@
       slug: slug, houseIds: ids, checkIn: range.checkIn, checkOut: range.checkOut, guestName: name, guestPhone: phone, guestEmail: email,
       lineId: $('f-line').value.trim(), guestCount: count, extras: extraPicks(), note: $('f-note').value.trim(), consent: true,
       website: $('f-website').value, elapsedMs: Date.now() - shownAt,
-    }).then(function () {
+    }).then(function (res) {
+      showDoneLink(res && res.ref, res && res.emailed, email)
       var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
       $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน) · ' + count + ' คน' + doneQuoteText(plan) + '\n\n' +
         'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
@@ -780,11 +828,109 @@
     if (parse(a)) { $('out').min = plusDays(a, 1); if (!$('out').value || $('out').value <= a) $('out').value = plusDays(a, 1) }
   })
 
+  /** หน้ายืนยัน: ลิงก์ส่วนตัว (ref = requestId.token จาก submitBookingRequest — honeypot/เซิร์ฟเวอร์เก่าไม่มี = ไม่แสดง) */
+  function showDoneLink(ref, emailed, email) {
+    $('done-link').hidden = !ref
+    if (!ref) return
+    var url = threadUrl(ref)
+    $('done-link-url').value = url
+    $('done-link-open').href = url
+    $('done-link-note').textContent = emailed ? '(ส่งลิงก์นี้ไปที่ ' + email + ' แล้ว)' : '(กรุณาบันทึกลิงก์นี้ไว้)'
+  }
+  function threadUrl(ref) { return location.origin + '/stay/?p=' + encodeURIComponent(slug) + '&r=' + encodeURIComponent(ref) }
+  $('done-link-copy').addEventListener('click', function () {
+    var i = $('done-link-url'); i.select()
+    var ok = function () { $('done-link-copy').textContent = 'คัดลอกแล้ว' }
+    if (navigator.clipboard) navigator.clipboard.writeText(i.value).then(ok, function () { document.execCommand('copy'); ok() })
+    else { document.execCommand('copy'); ok() }
+  })
+
+  // ---------- หน้าคุยกับที่พัก (?r=requestId.token — ลิงก์ส่วนตัวจากหน้ายืนยัน/อีเมล) ----------
+  // ไม่ใช่แชทสด (เจ้าของเลือก 2026-11-11): ถามเซิร์ฟเวอร์ใหม่ทุก 1 นาทีตอนหน้าเปิดอยู่ หยุดเมื่อเปิดค้างเกิน 30 นาที (กดรีเฟรชเองได้)
+  var threadRef = new URLSearchParams(location.search).get('r') || ''
+  var STATUS_TEXT = { PENDING: 'รอที่พักยืนยัน', ACCEPTED: 'ที่พักรับจองแล้ว', REJECTED: 'ที่พักไม่สามารถรับคำขอนี้' }
+  var threadTimer = null, threadSince = 0, threadSending = false
+
+  function loadThread(quiet) {
+    if (!quiet) $('t-refresh').disabled = true
+    return call('requestThread', { slug: slug, r: threadRef }).then(renderThread, function (e) {
+      if (e.status === 'NOT_FOUND') { stopThreadTimer(); return notFound(e.message) }
+      $('t-err').textContent = e.message; $('t-err').hidden = false
+    }).then(function () { $('t-refresh').disabled = false })
+  }
+
+  function renderThread(t) {
+    $('t-err').hidden = true
+    document.title = t.property.name + ' — คำขอจองของคุณ'
+    setText('t-name', t.property.name)
+    var st = $('t-status'); st.textContent = STATUS_TEXT[t.request.status] || t.request.status
+    st.className = 'tstatus ' + (t.request.status === 'ACCEPTED' ? 'ok' : t.request.status === 'REJECTED' ? 'no' : 'wait')
+    var r = t.request
+    setText('t-summary', r.houseNames.join(', ') + '\n' + thai(r.checkIn) + ' – ' + thai(r.checkOut) + ' (' + nights(r.checkIn, r.checkOut) + ' คืน) · ' + r.guestCount + ' คน' +
+      (r.extraGuests > 0 ? '\n' + extraGuestText(r.extraGuests, r.extraBeds) : ''))
+    var c = $('t-contact'); c.textContent = ''
+    if (t.property.phone) { var a = el('a', 'btn', 'โทร ' + t.property.phone); a.href = 'tel:' + t.property.phone; c.appendChild(a) }
+    var line = linkFor(t.property.lineId, 'line')
+    if (line) { var l = el('a', 'btn', 'LINE'); l.href = line; l.target = '_blank'; l.rel = 'noopener'; c.appendChild(l) }
+    var box = $('t-msgs'), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40
+    box.textContent = ''
+    if (!t.messages.length) box.appendChild(el('p', 'small muted', 'ยังไม่มีข้อความ — พิมพ์ถามที่พักได้ด้านล่าง ที่พักจะตอบกลับที่นี่และทางอีเมล'))
+    t.messages.forEach(function (m) {
+      var b = el('div', 'tmsg ' + (m.from === 'GUEST' ? 'me' : 'them'))
+      if (m.kind === 'ACCEPTED') b.appendChild(el('div', 'small', '✅ ที่พักรับคำขอจองแล้ว'))
+      if (m.kind === 'REJECTED') b.appendChild(el('div', 'small', 'ที่พักไม่สามารถรับคำขอนี้'))
+      if (m.text) b.appendChild(el('div', 'pre', m.text))
+      b.appendChild(el('div', 'small muted', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at)))
+      box.appendChild(b)
+    })
+    if (atBottom || !threadSince) box.scrollTop = box.scrollHeight
+    $('loading').hidden = true
+    $('thread').hidden = false
+  }
+
+  function timeText(ms) {
+    if (!ms) return ''
+    var d = new Date(ms), k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+    return thai(k) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ' น.'
+  }
+
+  function stopThreadTimer() { if (threadTimer) clearInterval(threadTimer); threadTimer = null }
+  function startThreadTimer() {
+    stopThreadTimer()
+    threadSince = Date.now()
+    threadTimer = setInterval(function () {
+      if (document.visibilityState !== 'visible') return
+      if (Date.now() - threadSince > 30 * 60000) { stopThreadTimer(); $('t-note').textContent = 'หยุดรีเฟรชอัตโนมัติแล้ว กด "รีเฟรช" เพื่อดูข้อความใหม่'; return }
+      loadThread(true)
+    }, 60000)
+  }
+
+  $('t-form').addEventListener('submit', function (ev) {
+    ev.preventDefault()
+    var text = $('t-text').value.trim()
+    if (!text || threadSending) return
+    threadSending = true
+    var btn = $('t-send'); btn.disabled = true; btn.textContent = 'กำลังส่ง…'
+    call('postRequestMessage', { slug: slug, r: threadRef, text: text }).then(function () {
+      $('t-text').value = ''
+      $('t-err').hidden = true
+      return loadThread(true)
+    }, function (e) {
+      $('t-err').textContent = e.message; $('t-err').hidden = false
+    }).then(function () { threadSending = false; btn.disabled = false; btn.textContent = 'ส่งข้อความ'; startThreadTimer(); $('t-note').textContent = '' })
+  })
+  $('t-refresh').addEventListener('click', function () { $('t-note').textContent = ''; startThreadTimer(); loadThread() })
+
   function notFound(msg) {
-    $('loading').hidden = true; $('notfound').hidden = false
+    $('loading').hidden = true; $('thread').hidden = true; $('notfound').hidden = false
     if (msg) $('notfound-msg').textContent = msg
   }
   if (!/^[a-z0-9-]{3,40}$/.test(slug)) return notFound()
+  if (threadRef) {
+    $('t-new').href = location.pathname + '?p=' + encodeURIComponent(slug)
+    loadThread().then(startThreadTimer)
+    return
+  }
   // เปิดลิงก์ #request ตรงๆ / รีเฟรชบนหน้า 2 = ยังไม่มีบ้านที่เลือก → เริ่มหน้า 1
   if (location.hash === '#request') history.replaceState(null, '', location.pathname + location.search)
   call('bookingSite', { slug: slug }).then(function (r) { site = r; renderSite() }, function (e) {
