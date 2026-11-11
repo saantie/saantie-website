@@ -120,6 +120,10 @@
   .tmsg { max-width: 85%; padding: 8px 12px; border-radius: 12px; }
   .tmsg.me { justify-self: end; background: var(--accent-soft); }
   .tmsg.them { justify-self: start; background: var(--surface-2); border: 1px solid var(--border); }
+  .tphotos { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .tphoto { position: relative; width: 84px; height: 84px; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
+  .tphoto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tphoto-x { position: absolute; top: 2px; right: 2px; width: 24px; height: 24px; border: 0; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
   .pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border);
     box-shadow: 0 -4px 16px rgba(0,0,0,.08); }
@@ -161,8 +165,13 @@
       <div class="tmsgs" id="t-msgs"></div>
       <form id="t-form" novalidate>
         <label class="field"><span>ข้อความถึงที่พัก</span><textarea id="t-text" maxlength="1000"></textarea></label>
+        <div class="tphotos" id="t-pending" hidden></div>
+        <input type="file" id="t-file" accept="image/*" multiple hidden>
+        <p class="small muted" style="margin:6px 0 0">แนบรูปได้ครั้งละ 3 รูป เช่น สลิปโอนเงิน · ไม่ต้องส่งรูปบัตรประชาชน</p>
+        <div id="ts-thread" hidden></div>
         <p class="err small" id="t-err" hidden></p>
         <div class="row-end">
+          <button type="button" class="btn" id="t-attach">📷 แนบรูป</button>
           <button type="button" class="btn" id="t-refresh">รีเฟรช</button>
           <button type="submit" class="btn primary" id="t-send">ส่งข้อความ</button>
         </div>
@@ -225,6 +234,7 @@
           <span class="small">ยินยอมให้ที่พักเก็บชื่อ เบอร์โทรศัพท์ อีเมล และ LINE ID เพื่อติดต่อกลับเรื่องการจองนี้เท่านั้น
             (คำขอที่ไม่ได้เป็นการจองจริงจะถูกลบภายใน 90 วัน)</span>
         </label>
+        <div id="ts-req" hidden></div>
         <p class="err small" id="f-err" hidden></p>
         <div class="sticky-bar">
           <span class="small muted">ส่งคำขอแล้ว ที่พักจะติดต่อกลับเพื่อยืนยัน ยังไม่ต้องชำระเงิน</span>
@@ -581,20 +591,24 @@
   }
   function gGo(d) { gStrip.scrollTo({ left: (gIndex() + d) * gStrip.clientWidth, behavior: 'smooth' }) }
   function openGallery(h) {
+    // รูปเต็มโหลดเมื่อเลื่อนมาถึง (ยกเว้นรูปแรก) — ไม่ดาวน์โหลดทุกรูปทีเดียว
+    openImages(h.name, h.photos.map(function (id) { return photoUrl(id, 'l') }), 0)
+  }
+  /** ดูรูปเต็มจอ — ใช้ทั้งรูปบ้านและรูปในหน้าคุย (src = URL หรือ data URL) */
+  function openImages(title, srcs, start) {
     gLastFocus = document.activeElement
-    $('g-title').textContent = h.name
+    $('g-title').textContent = title
     gStrip.textContent = ''
-    h.photos.forEach(function (id, i) {
+    srcs.forEach(function (src, i) {
       var f = el('figure'), img = el('img')
-      // รูปเต็มโหลดเมื่อเลื่อนมาถึง (ยกเว้นรูปแรก) — ไม่ดาวน์โหลดทุกรูปทีเดียว
-      img.src = photoUrl(id, 'l'); img.alt = h.name + ' รูปที่ ' + (i + 1); img.decoding = 'async'
+      img.src = src; img.alt = title + ' รูปที่ ' + (i + 1); img.decoding = 'async'
       if (i > 0) img.loading = 'lazy'
       f.appendChild(img); gStrip.appendChild(f)
     })
     $('gallery').hidden = false
     document.body.classList.add('no-scroll')
-    gStrip.scrollLeft = 0
-    $('g-prev').hidden = $('g-next').hidden = h.photos.length < 2
+    gStrip.scrollLeft = (start || 0) * gStrip.clientWidth
+    $('g-prev').hidden = $('g-next').hidden = srcs.length < 2
     gUpdate()
     $('g-close').focus()
   }
@@ -677,7 +691,7 @@
   window.addEventListener('popstate', function () {
     if (site) showStep(!!(history.state && history.state.step === 'detail') && picked.size > 0 && !!range)
   })
-  $('to-detail').addEventListener('click', goDetail)
+  $('to-detail').addEventListener('click', function () { goDetail(); botMount('req', 'ts-req') })
   $('back-pick').addEventListener('click', function (e) { e.preventDefault(); goPick() })
 
   /** หน้า 2: การ์ดเฉพาะบ้านที่ติ๊ก (รูปเล็ก ชื่อ จำนวนคน ค่าห้อง ช่องพักเพิ่ม/เสริมที่นอน ปุ่มเอาออก) */
@@ -792,13 +806,15 @@
     var plan = currentPlan()
     if (plan && plan.problem) return formError(plan.problem)
     if (!$('f-consent').checked) return formError('กรุณายินยอมให้ที่พักเก็บข้อมูลเพื่อติดต่อกลับ')
+    var token = botToken('req')
+    if (token === false) return formError('กรุณารอให้ระบบยืนยันว่าไม่ใช่บอทสักครู่ แล้วกดส่งอีกครั้ง')
     formError('')
     var btn = $('f-send'); btn.disabled = true; btn.textContent = 'กำลังส่ง…'
     var ids = Array.from(picked)
     call('submitBookingRequest', {
       slug: slug, houseIds: ids, checkIn: range.checkIn, checkOut: range.checkOut, guestName: name, guestPhone: phone, guestEmail: email,
       lineId: $('f-line').value.trim(), guestCount: count, extras: extraPicks(), note: $('f-note').value.trim(), consent: true,
-      website: $('f-website').value, elapsedMs: Date.now() - shownAt,
+      website: $('f-website').value, elapsedMs: Date.now() - shownAt, turnstile: token || undefined,
     }).then(function (res) {
       showDoneLink(res && res.ref, res && res.emailed, email)
       var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
@@ -810,7 +826,7 @@
       $('done').scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, function (e) {
       formError(e.message)
-    }).then(function () { btn.disabled = false; btn.textContent = 'ส่งคำขอจอง' })
+    }).then(function () { botReset('req'); btn.disabled = false; btn.textContent = 'ส่งคำขอจอง' })
   })
 
   $('again').addEventListener('click', function () {
@@ -880,6 +896,7 @@
       if (m.kind === 'ACCEPTED') b.appendChild(el('div', 'small', '✅ ที่พักรับคำขอจองแล้ว'))
       if (m.kind === 'REJECTED') b.appendChild(el('div', 'small', 'ที่พักไม่สามารถรับคำขอนี้'))
       if (m.text) b.appendChild(el('div', 'pre', m.text))
+      if (m.photos && m.photos.length) b.appendChild(threadPhotos(m.photos))
       b.appendChild(el('div', 'small muted', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at)))
       box.appendChild(b)
     })
@@ -905,20 +922,123 @@
     }, 60000)
   }
 
+  // ---------- รูปในหน้าคุย: โหลดทีละรูปผ่าน requestThread {photo} แล้วจำไว้ (รีเฟรชทุกนาทีไม่โหลดรูปเก่าซ้ำ) ----------
+  var photoCache = {}  // photoId → Promise<data URL | null>
+  function loadPhoto(id) {
+    if (!photoCache[id]) {
+      photoCache[id] = call('requestThread', { slug: slug, r: threadRef, photo: id })
+        .then(function (r) { return 'data:image/jpeg;base64,' + r.photo }, function () { delete photoCache[id]; return null })
+    }
+    return photoCache[id]
+  }
+  function threadPhotos(ids) {
+    var row = el('div', 'tphotos')
+    var srcs = []
+    ids.forEach(function (id, i) {
+      var b = el('button', 'tphoto'); b.type = 'button'; b.setAttribute('aria-label', 'ดูรูป ' + (i + 1))
+      row.appendChild(b)
+      loadPhoto(id).then(function (src) {
+        if (!src) { b.remove(); return }
+        srcs[i] = src
+        var img = el('img'); img.src = src; img.alt = ''; b.appendChild(img)
+        b.addEventListener('click', function () { openImages('รูปจากข้อความ', srcs.filter(Boolean), srcs.filter(Boolean).indexOf(src)) })
+      })
+    })
+    return row
+  }
+
+  // แนบรูปส่งถึงที่พัก: ย่อในเครื่อง (ด้านยาว ≤ 1600, ≤ ~300 KB) — เซิร์ฟเวอร์แปลงซ้ำและตัดข้อมูลตำแหน่ง (GPS) ในรูปทิ้ง
+  var MAX_PHOTOS = 3, pendingPhotos = []  // data URL
+  function shrinkFile(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image()
+      img.onload = function () {
+        URL.revokeObjectURL(url)
+        var scale = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas')
+        c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale)
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
+        var q = 0.8, out = c.toDataURL('image/jpeg', q)
+        while (out.length > 400000 && q > 0.45) { q -= 0.1; out = c.toDataURL('image/jpeg', q) }
+        resolve(out)
+      }
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('เปิดรูปนี้ไม่ได้ กรุณาเลือกรูปอื่น')) }
+      img.src = url
+    })
+  }
+  function renderPending() {
+    var box = $('t-pending'); box.textContent = ''
+    pendingPhotos.forEach(function (src, i) {
+      var w = el('div', 'tphoto'), img = el('img'); img.src = src; img.alt = ''
+      var x = el('button', 'tphoto-x', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'เอารูปที่ ' + (i + 1) + ' ออก')
+      x.addEventListener('click', function () { pendingPhotos.splice(i, 1); renderPending() })
+      w.appendChild(img); w.appendChild(x); box.appendChild(w)
+    })
+    box.hidden = !pendingPhotos.length
+    $('t-attach').textContent = '📷 แนบรูป' + (pendingPhotos.length ? ' (' + pendingPhotos.length + '/' + MAX_PHOTOS + ')' : '')
+    $('t-attach').disabled = pendingPhotos.length >= MAX_PHOTOS
+  }
+  $('t-attach').addEventListener('click', function () { $('t-file').click() })
+  $('t-file').addEventListener('change', function () {
+    var files = Array.prototype.slice.call($('t-file').files || []).slice(0, MAX_PHOTOS - pendingPhotos.length)
+    $('t-file').value = ''
+    Promise.all(files.map(shrinkFile)).then(function (list) { pendingPhotos = pendingPhotos.concat(list); renderPending() },
+      function (e) { $('t-err').textContent = e.message; $('t-err').hidden = false })
+  })
+
   $('t-form').addEventListener('submit', function (ev) {
     ev.preventDefault()
     var text = $('t-text').value.trim()
-    if (!text || threadSending) return
+    if ((!text && !pendingPhotos.length) || threadSending) return
+    var token = botToken('thread')
+    if (token === false) { $('t-err').textContent = 'กรุณารอให้ระบบยืนยันว่าไม่ใช่บอทสักครู่ แล้วกดส่งอีกครั้ง'; $('t-err').hidden = false; return }
     threadSending = true
     var btn = $('t-send'); btn.disabled = true; btn.textContent = 'กำลังส่ง…'
-    call('postRequestMessage', { slug: slug, r: threadRef, text: text }).then(function () {
+    var photos = pendingPhotos.map(function (d) { return d.split(',')[1] })
+    call('postRequestMessage', { slug: slug, r: threadRef, text: text, photos: photos, turnstile: token || undefined }).then(function () {
       $('t-text').value = ''
+      pendingPhotos = []; renderPending()
       $('t-err').hidden = true
       return loadThread(true)
     }, function (e) {
       $('t-err').textContent = e.message; $('t-err').hidden = false
-    }).then(function () { threadSending = false; btn.disabled = false; btn.textContent = 'ส่งข้อความ'; startThreadTimer(); $('t-note').textContent = '' })
+    }).then(function () {
+      botReset('thread')
+      threadSending = false; btn.disabled = false; btn.textContent = 'ส่งข้อความ'; startThreadTimer(); $('t-note').textContent = ''
+    })
   })
+
+  // ---------- Cloudflare Turnstile (กันบอท) — ว่าง = ยังไม่เปิดใช้ (ไม่โหลดสคริปต์ ไม่ส่ง token) ----------
+  // ⚠️ ใส่ site key แล้ว push หน้านี้ก่อน → ค่อยตั้ง TURNSTILE_SECRET จริงแล้ว deploy functions (functions/src/turnstile.ts)
+  var TURNSTILE_SITE_KEY = ''
+  var botWidgets = {}, botTokens = {}
+  function botMount(name, boxId) {
+    if (!TURNSTILE_SITE_KEY || LOCAL) return
+    function render() {
+      if (botWidgets[name] !== undefined || !window.turnstile) return
+      $(boxId).hidden = false
+      botWidgets[name] = window.turnstile.render('#' + boxId, {
+        sitekey: TURNSTILE_SITE_KEY, language: 'th', appearance: 'interaction-only',
+        callback: function (t) { botTokens[name] = t },
+        'expired-callback': function () { botTokens[name] = '' },
+      })
+    }
+    if (window.turnstile) return render()
+    if (!document.getElementById('cf-turnstile')) {
+      var s = document.createElement('script'); s.id = 'cf-turnstile'; s.async = true
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+      document.head.appendChild(s)
+    }
+    document.getElementById('cf-turnstile').addEventListener('load', render)
+  }
+  /** token ที่ได้ / '' = ไม่ได้เปิดใช้ / false = เปิดใช้แต่ยังไม่ได้ token */
+  function botToken(name) {
+    if (!TURNSTILE_SITE_KEY || LOCAL) return ''
+    return botTokens[name] || false
+  }
+  function botReset(name) {
+    // token ใช้ได้ครั้งเดียว — ส่งแล้วขอใหม่
+    if (window.turnstile && botWidgets[name] !== undefined) { botTokens[name] = ''; window.turnstile.reset(botWidgets[name]) }
+  }
   $('t-refresh').addEventListener('click', function () { $('t-note').textContent = ''; startThreadTimer(); loadThread() })
 
   function notFound(msg) {
@@ -929,6 +1049,7 @@
   if (threadRef) {
     $('t-new').href = location.pathname + '?p=' + encodeURIComponent(slug)
     loadThread().then(startThreadTimer)
+    botMount('thread', 'ts-thread')
     return
   }
   // เปิดลิงก์ #request ตรงๆ / รีเฟรชบนหน้า 2 = ยังไม่มีบ้านที่เลือก → เริ่มหน้า 1
