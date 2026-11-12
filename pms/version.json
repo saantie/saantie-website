@@ -1,8 +1,8 @@
 {
-    "versionCode":  88,
-    "versionName":  "0.2.86",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.86/saantie-pms-0.2.86.apk",
-    "sha256":  "a0dbe6057685c0f7ecaae81f51c8a9820210425e169d7f44639bc0b36b9878ac",
-    "notes":  "- ตั้งค่า → แพ็กเกจของฉัน: ช่องทางส่งสลิปค่าบริการ LINE OA @319txzie และโทร 081-975-3130 พร้อมปุ่มแชท LINE / โทร",
+    "versionCode":  89,
+    "versionName":  "0.2.87",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.87/saantie-pms-0.2.87.apk",
+    "sha256":  "ff47a581d0b2c340ef21dbc80894000c984004e0d174844606b62887585a7c94",
+    "notes":  "- คำขอจองจากเว็บไซต์: คุยกับลูกค้าได้ในการ์ดคำขอ ตอบแล้วระบบส่งอีเมลแจ้งลูกค้า\n- แนบรูปตอบลูกค้าได้ครั้งละ 3 รูป และเห็นรูปที่ลูกค้าส่งมา เช่น สลิปโอนมัดจำ\n- ลูกค้าส่งข้อความมา = ป๊อปอัป \"ข้อความใหม่จากลูกค้า\" ด้านบนจอทุกหน้า\n- ปฏิเสธคำขอใส่ข้อความถึงลูกค้าได้ · รับจองแล้วระบบอีเมลแจ้งลูกค้าเอง",
     "minVersionCode":  0
 }
