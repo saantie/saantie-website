@@ -1,8 +1,8 @@
 {
-    "versionCode":  90,
-    "versionName":  "0.2.88",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.88/saantie-pms-0.2.88.apk",
-    "sha256":  "81c76dc58ed8472cb3c6d1eb2b59d079085b94499eb3cabb72c7a462247e5983",
-    "notes":  "- เว็บแอป: แจ้งเตือนมีเสียงและสั่นทุกครั้ง แม้แจ้งเตือนรอบก่อนยังค้างอยู่ (เดิมเด้งเงียบ)",
+    "versionCode":  91,
+    "versionName":  "0.2.89",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.89/saantie-pms-0.2.89.apk",
+    "sha256":  "7675abaa4527c41651d53abfa95869e3310e3cbfa986a4503915e9d727de2f11",
+    "notes":  "- ไอคอนเล็กของแจ้งเตือนบนขอบจอเป็นรูปบ้านของแอป (เว็บแอปเดิมเป็นสี่เหลี่ยมขาว แอป Android เดิมเป็นรูป i)",
     "minVersionCode":  0
 }
