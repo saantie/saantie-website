@@ -1,8 +1,8 @@
 {
-    "versionCode":  91,
-    "versionName":  "0.2.89",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.89/saantie-pms-0.2.89.apk",
-    "sha256":  "7675abaa4527c41651d53abfa95869e3310e3cbfa986a4503915e9d727de2f11",
-    "notes":  "- ไอคอนเล็กของแจ้งเตือนบนขอบจอเป็นรูปบ้านของแอป (เว็บแอปเดิมเป็นสี่เหลี่ยมขาว แอป Android เดิมเป็นรูป i)",
+    "versionCode":  92,
+    "versionName":  "0.2.90",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.90/saantie-pms-0.2.90.apk",
+    "sha256":  "dd8b21b1e6f1bf0680339569e3c7bed06dbbfbe84bda092c84e5bae74414d267",
+    "notes":  "- ตอบลูกค้าตอนลูกค้ากำลังเปิดหน้าคุยอยู่ ระบบไม่ส่งอีเมลซ้ำ (ลูกค้าเห็นข้อความบนหน้าเว็บแล้ว) ถ้าลูกค้าปิดหน้าไปก่อนเห็น ระบบส่งอีเมลรวมข้อความให้ภายในไม่กี่นาที\n- รับจอง/ปฏิเสธ ยังส่งอีเมลทันทีเสมอ",
     "minVersionCode":  0
 }
