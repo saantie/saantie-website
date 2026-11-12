@@ -921,6 +921,10 @@
       loadThread(true)
     }, 60000)
   }
+  // กลับมาที่หน้านี้ (สลับแอป/เปิดจอ) = ถามทันที: เห็นข้อความใหม่เลย และเซิร์ฟเวอร์รู้ว่าลูกค้าเห็นแล้ว (ไม่ต้องส่งอีเมลที่เลื่อนไว้ — requestThread.ts)
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && threadTimer) loadThread(true)
+  })
 
   // ---------- รูปในหน้าคุย: โหลดทีละรูปผ่าน requestThread {photo} แล้วจำไว้ (รีเฟรชทุกนาทีไม่โหลดรูปเก่าซ้ำ) ----------
   var photoCache = {}  // photoId → Promise<data URL | null>
