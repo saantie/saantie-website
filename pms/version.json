@@ -1,8 +1,8 @@
 {
-    "versionCode":  89,
-    "versionName":  "0.2.87",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.87/saantie-pms-0.2.87.apk",
-    "sha256":  "ff47a581d0b2c340ef21dbc80894000c984004e0d174844606b62887585a7c94",
-    "notes":  "- คำขอจองจากเว็บไซต์: คุยกับลูกค้าได้ในการ์ดคำขอ ตอบแล้วระบบส่งอีเมลแจ้งลูกค้า\n- แนบรูปตอบลูกค้าได้ครั้งละ 3 รูป และเห็นรูปที่ลูกค้าส่งมา เช่น สลิปโอนมัดจำ\n- ลูกค้าส่งข้อความมา = ป๊อปอัป \"ข้อความใหม่จากลูกค้า\" ด้านบนจอทุกหน้า\n- ปฏิเสธคำขอใส่ข้อความถึงลูกค้าได้ · รับจองแล้วระบบอีเมลแจ้งลูกค้าเอง",
+    "versionCode":  90,
+    "versionName":  "0.2.88",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.88/saantie-pms-0.2.88.apk",
+    "sha256":  "81c76dc58ed8472cb3c6d1eb2b59d079085b94499eb3cabb72c7a462247e5983",
+    "notes":  "- เว็บแอป: แจ้งเตือนมีเสียงและสั่นทุกครั้ง แม้แจ้งเตือนรอบก่อนยังค้างอยู่ (เดิมเด้งเงียบ)",
     "minVersionCode":  0
 }
