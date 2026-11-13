@@ -120,6 +120,7 @@
   .tmsg { max-width: 85%; padding: 8px 12px; border-radius: 12px; }
   .tmsg.me { justify-self: end; background: var(--accent-soft); }
   .tmsg.them { justify-self: start; background: var(--surface-2); border: 1px solid var(--border); }
+  .presence { justify-self: center; margin: 0; color: var(--muted); }
   .tphotos { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
   .tphoto { position: relative; width: 84px; height: 84px; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
   .tphoto img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -244,7 +245,7 @@
     </section>
 
     <section id="done" class="card ok-box" hidden>
-      <h3>ส่งคำขอจองแล้ว</h3>
+      <h3>ส่งคำขอจองแล้ว — รอที่พักยืนยัน</h3>
       <p class="pre" id="done-msg"></p>
       <!-- ลิงก์ส่วนตัวสำหรับติดตามคำขอ/คุยกับที่พัก (ส่งทางอีเมลด้วย) -->
       <div id="done-link" hidden>
@@ -891,15 +892,19 @@
     var box = $('t-msgs'), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40
     box.textContent = ''
     if (!t.messages.length) box.appendChild(el('p', 'small muted', 'ยังไม่มีข้อความ — พิมพ์ถามที่พักได้ด้านล่าง ที่พักจะตอบกลับที่นี่และทางอีเมล'))
+    // ที่พักอ่านแล้ว/กำลังเปิดดู (2026-11-13) — function เก่าไม่ส่ง staff มา = ไม่แสดง
+    var staff = t.staff || { readAt: 0, active: false }
     t.messages.forEach(function (m) {
       var b = el('div', 'tmsg ' + (m.from === 'GUEST' ? 'me' : 'them'))
       if (m.kind === 'ACCEPTED') b.appendChild(el('div', 'small', '✅ ที่พักรับคำขอจองแล้ว'))
       if (m.kind === 'REJECTED') b.appendChild(el('div', 'small', 'ที่พักไม่สามารถรับคำขอนี้'))
       if (m.text) b.appendChild(el('div', 'pre', m.text))
       if (m.photos && m.photos.length) b.appendChild(threadPhotos(m.photos))
-      b.appendChild(el('div', 'small muted', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at)))
+      var read = m.from === 'GUEST' && m.at && staff.readAt >= m.at ? ' · อ่านแล้ว ✓' : ''
+      b.appendChild(el('div', 'small muted', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at) + read))
       box.appendChild(b)
     })
+    if (staff.active) box.appendChild(el('p', 'small presence', '🟢 ที่พักกำลังเปิดดูข้อความอยู่'))
     if (atBottom || !threadSince) box.scrollTop = box.scrollHeight
     $('loading').hidden = true
     $('thread').hidden = false
