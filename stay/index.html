@@ -335,6 +335,11 @@
   function nights(a, b) { var x = parse(a), y = parse(b); return x && y ? Math.round((y - x) / 86400000) : 0 }
   function thai(k) { var d = parse(k); return DOW[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()] + ' ' + (d.getUTCFullYear() + 543) }
   function baht(n) { return n.toLocaleString('th-TH') }
+  // เวลาหมดอายุของคำขอ "10:00 น. ศ. 14 พ.ย. 2569" (เวลาไทยเสมอ ไม่ขึ้นกับเขตเวลาเครื่องลูกค้า) — ตรงกับ requestDeadlineText ใน bookingRequest.ts
+  function deadlineText(ms) {
+    var d = new Date(ms + 7 * 3600000), p = function (n) { return String(n).padStart(2, '0') }
+    return p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ' น. ' + thai(d.getUTCFullYear() + '-' + p(d.getUTCMonth() + 1) + '-' + p(d.getUTCDate()))
+  }
 
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e }
   function setText(id, t) { var e = $(id); e.textContent = t || ''; return e }
@@ -820,7 +825,9 @@
       showDoneLink(res && res.ref, res && res.emailed, email)
       var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
       $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน) · ' + count + ' คน' + doneQuoteText(plan) + '\n\n' +
-        'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน'
+        'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน' +
+        // หมดอายุ (2026-11-13): บอกเวลาแน่นอน ลูกค้ารู้ว่ารอถึงเมื่อไร — function เก่าไม่ส่ง expiresAt = ไม่แสดง
+        (res && res.expiresAt ? '\n\nที่พักจะตอบภายใน ' + deadlineText(res.expiresAt) + ' หากไม่มีคำตอบ คำขอนี้จะถูกยกเลิกอัตโนมัติ และคุณจองที่พักอื่นได้ทันที' : '')
       $('req-sec').hidden = true
       $('back-wrap').hidden = true
       $('done').hidden = false
@@ -865,7 +872,10 @@
   // ---------- หน้าคุยกับที่พัก (?r=requestId.token — ลิงก์ส่วนตัวจากหน้ายืนยัน/อีเมล) ----------
   // ไม่ใช่แชทสด (เจ้าของเลือก 2026-11-11): ถามเซิร์ฟเวอร์ใหม่ทุก 1 นาทีตอนหน้าเปิดอยู่ หยุดเมื่อเปิดค้างเกิน 30 นาที (กดรีเฟรชเองได้)
   var threadRef = new URLSearchParams(location.search).get('r') || ''
-  var STATUS_TEXT = { PENDING: 'รอที่พักยืนยัน', ACCEPTED: 'ที่พักรับจองแล้ว', REJECTED: 'ที่พักไม่สามารถรับคำขอนี้' }
+  var STATUS_TEXT = {
+    PENDING: 'รอที่พักยืนยัน', ACCEPTED: 'ที่พักรับจองแล้ว', REJECTED: 'ที่พักไม่สามารถรับคำขอนี้',
+    EXPIRED: 'คำขอหมดอายุแล้ว (ที่พักไม่ได้ตอบภายในเวลา) — จองที่พักอื่นได้ทันที',
+  }
   var threadTimer = null, threadSince = 0, threadSending = false
 
   function loadThread(quiet) {
@@ -880,8 +890,9 @@
     $('t-err').hidden = true
     document.title = t.property.name + ' — คำขอจองของคุณ'
     setText('t-name', t.property.name)
-    var st = $('t-status'); st.textContent = STATUS_TEXT[t.request.status] || t.request.status
-    st.className = 'tstatus ' + (t.request.status === 'ACCEPTED' ? 'ok' : t.request.status === 'REJECTED' ? 'no' : 'wait')
+    var st = $('t-status'); st.textContent = (STATUS_TEXT[t.request.status] || t.request.status) +
+      (t.request.status === 'PENDING' && t.request.expiresAtMs ? ' ภายใน ' + deadlineText(t.request.expiresAtMs) : '')
+    st.className = 'tstatus ' + (t.request.status === 'ACCEPTED' ? 'ok' : t.request.status === 'REJECTED' || t.request.status === 'EXPIRED' ? 'no' : 'wait')
     var r = t.request
     setText('t-summary', r.houseNames.join(', ') + '\n' + thai(r.checkIn) + ' – ' + thai(r.checkOut) + ' (' + nights(r.checkIn, r.checkOut) + ' คืน) · ' + r.guestCount + ' คน' +
       (r.extraGuests > 0 ? '\n' + extraGuestText(r.extraGuests, r.extraBeds) : ''))
