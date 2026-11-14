@@ -158,6 +158,7 @@
     </header>
     <div class="card">
       <span class="tstatus" id="t-status"></span>
+      <p class="small" id="t-presence" style="margin:6px 0 0;font-weight:700" hidden>🟢 ที่พักกำลังเปิดดูข้อความอยู่</p>
       <p class="pre" id="t-summary" style="margin-bottom:0"></p>
       <div class="contact" id="t-contact"></div>
     </div>
@@ -915,7 +916,14 @@
       b.appendChild(el('div', 'small muted', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at) + read))
       box.appendChild(b)
     })
-    if (staff.active) box.appendChild(el('p', 'small presence', '🟢 ที่พักกำลังเปิดดูข้อความอยู่'))
+    // ข้อความล่าสุดของลูกค้าที่ที่พักยังไม่ได้ตอบ: บอกชัดว่า "ยังไม่ได้อ่าน" หรือ "อ่านแล้ว รอตอบ" (เจ้าของขอ 2026-11-14)
+    var last = t.messages.length ? t.messages[t.messages.length - 1] : null
+    if (last && last.from === 'GUEST') {
+      var seen = last.at && staff.readAt >= last.at
+      box.appendChild(el('p', 'small presence', staff.active ? '🟢 ที่พักกำลังเปิดดูข้อความอยู่'
+        : seen ? '✓ ที่พักอ่านแล้ว · รอที่พักตอบกลับ' : 'ส่งแล้ว · ที่พักยังไม่ได้เปิดอ่าน'))
+    } else if (staff.active) box.appendChild(el('p', 'small presence', '🟢 ที่พักกำลังเปิดดูข้อความอยู่'))
+    $('t-presence').hidden = !staff.active
     if (atBottom || !threadSince) box.scrollTop = box.scrollHeight
     $('loading').hidden = true
     $('thread').hidden = false
