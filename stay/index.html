@@ -255,7 +255,7 @@
           <input type="text" id="done-link-url" readonly aria-label="ลิงก์ติดตามคำขอ">
           <button type="button" class="btn" id="done-link-copy">คัดลอก</button>
         </div>
-        <p><a class="btn primary" id="done-link-open" href="#">เปิดหน้าคุยกับที่พัก</a></p>
+        <p><a class="btn primary" id="done-link-open" href="#">เปิดแชทคุยกับที่พัก</a></p>
       </div>
       <button type="button" class="btn" id="again">ส่งคำขออื่น</button>
     </section>
@@ -373,7 +373,8 @@
     addLink('LINE', linkFor(site.lineId, 'line'))
     addLink('Facebook', linkFor(site.facebook, 'fb'))
     addLink('แผนที่', /^https?:\/\//i.test(site.mapUrl) ? site.mapUrl : null)
-    if (site.email) { var e = el('a', 'btn', 'อีเมล'); e.href = 'mailto:' + site.email; c.appendChild(e) }
+    // ไม่มีปุ่มอีเมล (เจ้าของขอ 2026-11-15): ลูกค้าเข้าใจผิดว่าติดต่อได้ทางอีเมลอย่างเดียว — คุยผ่านแชทหลังส่งคำขอ
+    // ตอบกลับทางอีเมลได้เฉพาะกด "ตอบกลับ" ในอีเมลที่ระบบส่งถึงลูกค้า (reply-to = อีเมลติดต่อของที่พัก)
     c.hidden = !c.firstChild
 
     setText('p-about', site.about)
