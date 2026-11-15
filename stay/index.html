@@ -117,9 +117,14 @@
   .tstatus.ok { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
   .tstatus.no { color: var(--busy); border-color: var(--busy); background: var(--busy-soft); }
   .tmsgs { display: grid; gap: 8px; max-height: 60vh; overflow-y: auto; margin-bottom: 12px; }
-  .tmsg { max-width: 85%; padding: 8px 12px; border-radius: 12px; }
-  .tmsg.me { justify-self: end; background: var(--accent-soft); }
-  .tmsg.them { justify-self: start; background: var(--surface-2); border: 1px solid var(--border); }
+  /* บอลลูนแชท (เจ้าของขอ 2026-11-16): มุมล่างฝั่งผู้ส่งแหลม = หาง · ชื่อ/เวลาอยู่ใต้บอลลูน — แบบเดียวกับหน้าคำขอในแอป (.thread .bubble) */
+  .tmsg { max-width: 85%; display: grid; gap: 2px; }
+  .tmsg.me { justify-self: end; justify-items: end; }
+  .tmsg.them { justify-self: start; justify-items: start; }
+  .tbub { padding: 8px 12px; border-radius: 18px; overflow-wrap: anywhere; display: grid; gap: 4px; }
+  .tmsg.me .tbub { background: var(--accent); color: var(--accent-ink); border-bottom-right-radius: 4px; }
+  .tmsg.them .tbub { background: var(--surface-2); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .tmeta { padding: 0 6px; font-size: 12px; }
   .presence { justify-self: center; margin: 0; color: var(--muted); }
   .tphotos { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
   .tphoto { position: relative; width: 84px; height: 84px; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
@@ -162,7 +167,7 @@
       <p class="pre" id="t-summary" style="margin-bottom:0"></p>
       <div class="contact" id="t-contact"></div>
     </div>
-    <h2 style="margin-top:20px">ข้อความกับที่พัก</h2>
+    <h2 style="margin-top:20px">ข้อความคุยกับที่พัก</h2>
     <div class="card">
       <div class="tmsgs" id="t-msgs"></div>
       <form id="t-form" novalidate>
@@ -910,14 +915,15 @@
     // ที่พักอ่านแล้ว/กำลังเปิดดู (2026-11-13) — function เก่าไม่ส่ง staff มา = ไม่แสดง
     var staff = t.staff || { readAt: 0, active: false }
     t.messages.forEach(function (m) {
-      var b = el('div', 'tmsg ' + (m.from === 'GUEST' ? 'me' : 'them'))
+      var row = el('div', 'tmsg ' + (m.from === 'GUEST' ? 'me' : 'them')), b = el('div', 'tbub')
+      row.appendChild(b)
       if (m.kind === 'ACCEPTED') b.appendChild(el('div', 'small', '✅ ที่พักรับคำขอจองแล้ว'))
       if (m.kind === 'REJECTED') b.appendChild(el('div', 'small', 'ที่พักไม่สามารถรับคำขอนี้'))
       if (m.text) b.appendChild(el('div', 'pre', m.text))
       if (m.photos && m.photos.length) b.appendChild(threadPhotos(m.photos))
       var read = m.from === 'GUEST' && m.at && staff.readAt >= m.at ? ' · อ่านแล้ว ✓' : ''
-      b.appendChild(el('div', 'small muted', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at) + read))
-      box.appendChild(b)
+      row.appendChild(el('div', 'small muted tmeta', (m.from === 'GUEST' ? 'คุณ' : t.property.name) + ' · ' + timeText(m.at) + read))
+      box.appendChild(row)
     })
     // ข้อความล่าสุดของลูกค้าที่ที่พักยังไม่ได้ตอบ: บอกชัดว่า "ยังไม่ได้อ่าน" หรือ "อ่านแล้ว รอตอบ" (เจ้าของขอ 2026-11-14)
     var last = t.messages.length ? t.messages[t.messages.length - 1] : null
