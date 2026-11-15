@@ -1,8 +1,8 @@
 {
-    "versionCode":  97,
-    "versionName":  "0.2.95",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.95/saantie-pms-0.2.95.apk",
-    "sha256":  "18cfa0eac8a3ff8755ae093a55c8162097de7f57c624409b301fc4169c1cd171",
-    "notes":  "- ตอบข้อความลูกค้าแล้ว คำขอจองนับเวลาหมดอายุใหม่ (ไม่หมดอายุระหว่างคุยเรื่องมัดจำ)\n- อีเมลถึงลูกค้าบอกให้ตอบในแชท ชื่อผู้ส่งมีคำว่า (แจ้งเตือน)\n- แจ้งเตือนคำขอใกล้หมดอายุมีเบอร์โทรลูกค้า\n- หน้าตั้งค่าเว็บไซต์เตือนถ้ายังไม่มีเบอร์โทรและ LINE ของที่พัก",
+    "versionCode":  98,
+    "versionName":  "0.2.96",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.96/saantie-pms-0.2.96.apk",
+    "sha256":  "fc4a40f1fb7a331629116625bfdf370b23afffa893477dbb238eb709b18bf396",
+    "notes":  "- บ้านที่ปิดจอง (ปิดซ่อมชั่วคราว) ยังเห็นการจองที่รับไว้ก่อนปิด ในหน้าบ้านว่างและปฏิทิน และแก้ไขการจองนั้นได้\n- ลูกค้าตอบกลับทางอีเมล ข้อความเข้าแชทคำขอจองให้เอง",
     "minVersionCode":  0
 }
