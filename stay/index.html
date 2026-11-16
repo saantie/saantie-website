@@ -33,6 +33,8 @@
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", "Sarabun", -apple-system, sans-serif; line-height: 1.7; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
   header.hero { padding: 40px 0 20px; }
+  /* โลโก้ที่พัก (2026-11-16): JPEG พื้นขาว จึงใส่กรอบขาวมุมมนเสมอ (รวมโหมดมืด) */
+  .logo { display: block; width: 84px; height: 84px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 18px; margin: 0 0 12px; }
   h1 { font-size: 2em; margin: 0 0 4px; line-height: 1.7; }
   h2 { font-size: 1.3em; margin: 32px 0 12px; line-height: 1.7; }
   h3 { font-size: 1.1em; margin: 0; line-height: 1.7; }
@@ -158,6 +160,7 @@
   <!-- หน้าคุยกับที่พัก: เปิดด้วยลิงก์ส่วนตัว ?r= (จากหน้ายืนยัน/อีเมล) — ไม่ใช่แชทสด รีเฟรชทุก 1 นาที -->
   <section id="thread" hidden>
     <header class="hero" style="padding-bottom:8px">
+      <img class="logo" id="t-logo" alt="" hidden>
       <h1 id="t-name"></h1>
       <p class="tagline">คำขอจองของคุณ</p>
     </header>
@@ -192,6 +195,7 @@
    <!-- หน้า 1: เลือกวัน + เลือกบ้าน (เจ้าของขอ 2026-11-07: แยกฟอร์มไปอีกหน้า) -->
    <div id="step-pick">
     <header class="hero">
+      <img class="logo" id="p-logo" alt="" hidden>
       <h1 id="p-name"></h1>
       <p class="tagline" id="p-tagline"></p>
       <div class="contact" id="p-contact"></div>
@@ -370,6 +374,7 @@
   function renderSite() {
     document.title = site.name + ' — ขอจองที่พัก'
     setText('p-name', site.name)
+    showLogo('p-logo', site.logo, site.name)
     setText('p-tagline', site.tagline); showIf('p-tagline', !!site.tagline)
     var c = $('p-contact')
     c.textContent = ''
@@ -580,6 +585,17 @@
   }
 
   // ---------- รูปบ้าน ----------
+  // โลโก้ที่พัก: รูปเดิม (l) ≤ 512 px — โหลดไม่ได้ (ที่พักปิดเว็บไซต์อยู่/ถูกลบ) = ซ่อน · ตั้ง src เฉพาะเมื่อรหัสเปลี่ยน (หน้าแชทเรียกทุกนาที)
+  function showLogo(elId, id, name) {
+    var img = $(elId)
+    if (!id) { img.hidden = true; img.removeAttribute('data-logo'); return }
+    if (img.getAttribute('data-logo') === id) return
+    img.setAttribute('data-logo', id)
+    img.alt = 'โลโก้ ' + (name || '')
+    img.onload = function () { img.hidden = false }
+    img.onerror = function () { img.hidden = true }
+    img.src = photoUrl(id, 'l')
+  }
   function photoUrl(id, size) { return PHOTOS + encodeURIComponent(slug) + '/' + encodeURIComponent(id) + '-' + size + '.jpg' }
 
   function coverOf(h) {
@@ -897,6 +913,7 @@
     $('t-err').hidden = true
     document.title = t.property.name + ' — คำขอจองของคุณ'
     setText('t-name', t.property.name)
+    showLogo('t-logo', t.property.logo, t.property.name)
     // ที่พักตอบข้อความแล้วแต่ยังไม่ได้รับ/ปฏิเสธ = กำลังคุยรายละเอียด (เวลาหมดอายุถูกเลื่อนตามการตอบ — requestThread.ts)
     var pendingText = t.staff && t.staff.replied ? 'ที่พักตอบแล้ว · รอยืนยันการจอง' : STATUS_TEXT.PENDING
     var st = $('t-status'); st.textContent = (t.request.status === 'PENDING' ? pendingText : STATUS_TEXT[t.request.status] || t.request.status) +
