@@ -33,8 +33,11 @@
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", "Sarabun", -apple-system, sans-serif; line-height: 1.7; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
   header.hero { padding: 40px 0 20px; }
-  /* โลโก้ที่พัก (2026-11-16): JPEG พื้นขาว จึงใส่กรอบขาวมุมมนเสมอ (รวมโหมดมืด) */
-  .logo { display: block; width: 84px; height: 84px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: 18px; margin: 0 0 12px; }
+  /* โลโก้ที่พัก (2026-11-16): PNG พื้นใส วางบนพื้นหน้าเว็บตรงๆ ไม่มีกรอบ — โหมดมืดใส่แผ่นพื้นสว่างรอง (โลโก้สีเข้มจะมองไม่เห็นบนพื้นดำ) */
+  .logo { display: block; width: 96px; height: 96px; object-fit: contain; margin: 0 0 12px; }
+  .logo.sm { width: 48px; height: 48px; margin: 0; flex: none; }
+  .brand { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; font-weight: 700; font-size: 1.15em; }
+  @media (prefers-color-scheme: dark) { .logo { background: #F7F3EA; border-radius: 16px; padding: 6px; } }
   h1 { font-size: 2em; margin: 0 0 4px; line-height: 1.7; }
   h2 { font-size: 1.3em; margin: 32px 0 12px; line-height: 1.7; }
   h3 { font-size: 1.1em; margin: 0; line-height: 1.7; }
@@ -223,6 +226,8 @@
    <!-- หน้า 2: รายละเอียดคำขอจอง — เฉพาะบ้านที่ติ๊กมา + ฟอร์ม (ไฟล์เดียวกัน สลับการแสดงผล ปุ่ม Back กลับหน้า 1 ได้) -->
    <div id="step-detail" hidden>
     <p style="margin:24px 0 0" id="back-wrap"><a href="#" id="back-pick">← กลับไปเลือก<span class="noun"></span> / เปลี่ยนวัน</a></p>
+    <!-- หน้าส่งคำขอจอง: โลโก้ + ชื่อที่พัก (เจ้าของขอ 2026-11-16) — หน้านี้ไม่มีส่วนหัวของหน้าแรก -->
+    <div class="brand"><img class="logo sm" id="d-logo" alt="" hidden><span id="d-name"></span></div>
     <h2 style="margin-top:8px">รายละเอียดคำขอจอง</h2>
     <p class="muted" id="req-summary" style="margin-top:-6px"></p>
     <section id="req-sec">
@@ -375,6 +380,8 @@
     document.title = site.name + ' — ขอจองที่พัก'
     setText('p-name', site.name)
     showLogo('p-logo', site.logo, site.name)
+    setText('d-name', site.name)
+    showLogo('d-logo', site.logo, site.name)
     setText('p-tagline', site.tagline); showIf('p-tagline', !!site.tagline)
     var c = $('p-contact')
     c.textContent = ''
