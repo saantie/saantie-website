@@ -84,8 +84,11 @@
   .err { color: var(--err); }
   .ok-box { border-color: var(--accent); background: var(--accent-soft); }
   .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
-  .sticky-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 16px;
+  /* ปุ่มส่งคำขอ: ลอยติดล่างจอเฉพาะเมื่อเลื่อนถึงช่อง "ข้อความถึงที่พัก" แล้ว (.pinned — เจ้าของขอ 2026-11-21: เดิมลอยตลอด บังช่องที่กำลังกรอก)
+     ก่อนถึงช่องนั้นอยู่ท้ายฟอร์มตามปกติ (มองไม่เห็นจนเลื่อนลงไป) */
+  .sticky-bar { position: static; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 16px;
     margin: 0 -16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .sticky-bar.pinned { position: sticky; }
   /* รูปบ้าน: รูปปก (รูปย่อ 640px) บนการ์ด แตะแล้วเปิดดูทุกรูปขนาดเต็ม — รูปมาจาก function sitePhoto ผ่าน CDN ของ Firebase Hosting */
   .cover { position: relative; display: block; width: calc(100% + 36px); margin: -18px -18px 10px; padding: 0; border: 0; background: var(--surface-2);
     border-radius: 14px 14px 0 0; overflow: hidden; cursor: zoom-in; aspect-ratio: 4 / 3; max-height: 360px; }
@@ -716,6 +719,7 @@
     else renderHouses()
     updateForm()
     window.scrollTo(0, 0)
+    updateSendBar()
   }
   function goDetail() {
     if (!range || picked.size === 0) return
@@ -730,6 +734,15 @@
     if (site) showStep(!!(history.state && history.state.step === 'detail') && picked.size > 0 && !!range)
   })
   $('to-detail').addEventListener('click', function () { goDetail(); botMount('req', 'ts-req') })
+  // ปุ่มส่งคำขอลอยเมื่อเลื่อนจนช่อง "ข้อความถึงที่พัก" ขึ้นมาเหนือแถบปุ่มทั้งช่องแล้ว = แถบไม่บังช่องนี้และช่องที่อยู่บนกว่า
+  // เลื่อนกลับขึ้นไปกรอกช่องบน = เลิกลอย (แถบกลับไปอยู่ท้ายฟอร์ม) — ความสูงแถบวัดจริง (มือถือข้อความขึ้น 2 บรรทัด)
+  var sendBar = document.querySelector('#req .sticky-bar'), noteField = $('f-note').parentNode
+  function updateSendBar() {
+    if (!sendBar || $('step-detail').hidden) return
+    sendBar.classList.toggle('pinned', noteField.getBoundingClientRect().bottom <= window.innerHeight - sendBar.offsetHeight)
+  }
+  window.addEventListener('scroll', updateSendBar, { passive: true })
+  window.addEventListener('resize', updateSendBar)
   $('back-pick').addEventListener('click', function (e) { e.preventDefault(); goPick() })
 
   /** หน้า 2: การ์ดเฉพาะบ้านที่ติ๊ก (รูปเล็ก ชื่อ จำนวนคน ค่าห้อง ช่องพักเพิ่ม/เสริมที่นอน ปุ่มเอาออก) */
