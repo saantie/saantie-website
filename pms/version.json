@@ -1,8 +1,8 @@
 {
-    "versionCode":  98,
-    "versionName":  "0.2.96",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.96/saantie-pms-0.2.96.apk",
-    "sha256":  "fc4a40f1fb7a331629116625bfdf370b23afffa893477dbb238eb709b18bf396",
-    "notes":  "- บ้านที่ปิดจอง (ปิดซ่อมชั่วคราว) ยังเห็นการจองที่รับไว้ก่อนปิด ในหน้าบ้านว่างและปฏิทิน และแก้ไขการจองนั้นได้\n- ลูกค้าตอบกลับทางอีเมล ข้อความเข้าแชทคำขอจองให้เอง",
+    "versionCode":  99,
+    "versionName":  "0.2.97",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.97/saantie-pms-0.2.97.apk",
+    "sha256":  "bc8a2a2666033f17a86503c59b686cb1296e156ba431665d9abdd52c53f7adc6",
+    "notes":  "- ตั้งค่าจัดใหม่: \"เว็บไซต์ที่พัก\" (ลิงก์ + ข้อมูลที่แสดง), \"การแจ้งเตือน\" (ยอดค้าง + รายการเข้าพัก), \"จัดการข้อมูลที่พักและราคา\" (ชื่อที่พัก, High Season, รายการบ้าน)\n- รายงานสถิติและรายงาน ร.ร.4 ย้ายไปท้ายหน้าตั้งค่า\n- เมนูคำขอจองจากเว็บไซต์ใช้ไอคอนบอลลูนข้อความ\n- โลโก้ที่พักบนเว็บไซต์รับคำขอจอง",
     "minVersionCode":  0
 }
