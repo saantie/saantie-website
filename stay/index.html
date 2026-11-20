@@ -135,11 +135,13 @@
   .tphoto { position: relative; width: 84px; height: 84px; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
   .tphoto img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .tphoto-x { position: absolute; top: 2px; right: 2px; width: 24px; height: 24px; border: 0; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
-  .pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border);
-    box-shadow: 0 -4px 16px rgba(0,0,0,.08); }
-  .pick-bar .grow { flex: 1; min-width: 160px; font-weight: 600; }
-  body.has-pick-bar { padding-bottom: 110px; }
+  /* แถบล่างเมื่อเลือกบ้านแล้ว: ข้อความ + ปุ่มอยู่กลางจอ ปุ่มกว้าง กดง่าย (เจ้าของขอ 2026-11-20 — เดิมปุ่มชิดขวา) */
+  .pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--surface); border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 16px rgba(0,0,0,.08); text-align: center; }
+  .pick-bar .grow { font-weight: 600; }
+  .pick-bar .btn { width: 100%; max-width: 360px; justify-content: center; }
+  body.has-pick-bar { padding-bottom: 130px; }
   /* หน้า 2: การ์ดบ้านที่เลือก (รูปเล็กซ้าย) */
   .sel { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
   .sel .thumb { width: 96px; height: 72px; border-radius: 8px; object-fit: cover; background: var(--surface-2); }
