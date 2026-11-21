@@ -587,13 +587,17 @@
       if (h.summary) card.appendChild(el('div', '', h.summary))
       if (site.showPrices && (h.priceLow > 0 || h.priceHigh > 0)) {
         // ราคาตามที่ตั้งในแอป: เลือกวันแล้ว = ยอดจริงที่เซิร์ฟเวอร์คิด (Season/ศุกร์-เสาร์ สูตรเดียวกับตอนแอปบันทึกการจอง)
+        // เจ้าของขอ 2026-11-21: ห้ามแสดงช่วงราคา (ปกติ/เทศกาล คู่กัน) — แสดงเฉพาะราคาของคืนที่เลือกจริง
         var lo = h.priceLow || h.priceHigh, hi = h.priceHigh || h.priceLow
-        var rate = lo === hi ? 'คืนละ ' + baht(lo) + ' บาท' : 'คืนปกติ ' + baht(lo) + ' บาท · ช่วงเทศกาล/วันหยุด ' + baht(hi) + ' บาท'
         if (free && prices[h.id] > 0) {
           card.appendChild(el('div', 'price', 'ค่าห้อง ' + nights(range.checkIn, range.checkOut) + ' คืน ' + baht(prices[h.id]) + ' บาท'))
-          card.appendChild(el('div', 'small muted', rate))
-        } else {
-          card.appendChild(el('div', 'price', rate))
+          var rt = rateText(nightly[h.id])
+          if (rt) card.appendChild(el('div', 'small muted', rt))
+        } else if (lo === hi) {
+          card.appendChild(el('div', 'price', 'คืนละ ' + baht(lo) + ' บาท'))
+        } else if (free === null) {
+          // ยังไม่เลือกวัน: ราคาขึ้นกับ Season/วันหยุด จึงยังบอกยอดที่แน่นอนไม่ได้
+          card.appendChild(el('div', 'small muted', 'เลือกวันเข้าพักเพื่อดูราคา'))
         }
       }
       if (h.amenities && h.amenities.length) card.appendChild(el('div', 'amen muted', h.amenities.join(' · ')))
@@ -791,12 +795,14 @@
       g.appendChild(head)
       var fx = facts(h); if (fx) g.appendChild(el('div', 'facts', fx))
       var ex = extraInfo(h); if (ex) g.appendChild(el('div', 'facts', ex))
-      var priceEl = el('div', 'price'); g.appendChild(priceEl)
+      var priceEl = el('div', 'price'), rateEl = el('div', 'small muted'); g.appendChild(priceEl); g.appendChild(rateEl)
       card.appendChild(g)
       function showPrice() {
         var v = housePrice(h.id)
         priceEl.textContent = v != null ? 'ค่าห้อง ' + houseNights(h.id) + ' คืน ' + baht(v) + ' บาท' : ''
         priceEl.hidden = v == null
+        rateEl.textContent = v != null ? rateText(houseNightly(h.id)) : ''
+        rateEl.hidden = !rateEl.textContent
       }
       showPrice()
       var se = stayEditor(h, showPrice)
@@ -811,6 +817,21 @@
   function pickedHouses() { return site.houses.filter(function (h) { return picked.has(h.id) }) }
 
   // ---------- วันรายหลัง ----------
+  /** ราคารายคืนของคืนที่เลือก: ทุกคืนเท่ากัน = "คืนละ X บาท", ต่างกัน = "X บาท × 2 คืน · Y บาท × 1 คืน" (เรียงตามคืนแรกที่เจอ) — ไม่มีข้อมูล = '' */
+  function rateText(arr) {
+    if (!arr || !arr.length) return ''
+    var order = [], count = {}
+    arr.forEach(function (v) { if (!(v in count)) { order.push(v); count[v] = 0 } count[v]++ })
+    if (order.length === 1) return 'คืนละ ' + baht(order[0]) + ' บาท'
+    return order.map(function (v) { return baht(v) + ' บาท × ' + count[v] + ' คืน' }).join(' · ')
+  }
+  /** ราคารายคืนของหลังนี้ตามวันของหลังนั้น (ตัดจาก nightly ของช่วงรวม) */
+  function houseNightly(id) {
+    var arr = nightly[id]
+    if (!arr) return null
+    var from = nights(range.checkIn, stayOf(id)[0])
+    return arr.slice(from, from + houseNights(id))
+  }
   function stayOf(id) { return stayPick[id] || [range.checkIn, range.checkOut] }
   function houseNights(id) { var x = stayOf(id); return nights(x[0], x[1]) }
   /** ค่าห้องของหลังนี้ตามวันของหลังนั้น — null = ไม่แสดง (ปิดราคา/ไม่มีราคา/เซิร์ฟเวอร์รุ่นเก่าไม่ส่งราคารายคืน) */
