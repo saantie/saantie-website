@@ -119,6 +119,9 @@
   .quote .q-total { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 6px; font-weight: 700; }
   /* ลิงก์ติดตามบนหน้ายืนยัน + หน้าคุยกับที่พัก */
   .link-row { display: flex; gap: 8px; }
+  /* ปุ่มส่งลิงก์เข้า LINE (เจ้าของขอ 2026-11-21) — ลูกค้าเลือก Keep Memo/แชทตัวเอง เก็บลิงก์หน้าแชทไว้เปิดภายหลัง */
+  .btn.line { background: #06C755; color: #fff; border-color: #06C755; }
+  .save-link { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
   .link-row input { flex: 1; min-width: 0; font-size: .85em; }
   .row-end { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 10px; }
   .tstatus { display: inline-block; font-weight: 700; padding: 2px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); }
@@ -177,6 +180,11 @@
       <p class="small" id="t-presence" style="margin:6px 0 0;font-weight:700" hidden>🟢 ที่พักกำลังเปิดดูข้อความอยู่</p>
       <p class="pre" id="t-summary" style="margin-bottom:0"></p>
       <div class="contact" id="t-contact"></div>
+      <div class="save-link">
+        <a class="btn line" id="t-line" href="#" target="_blank" rel="noopener">ส่งลิงก์หน้านี้เก็บไว้ใน LINE</a>
+        <button type="button" class="btn" id="t-copy">คัดลอกลิงก์</button>
+      </div>
+      <p class="small muted" style="margin:6px 0 0">เก็บลิงก์ไว้กลับมาดูสถานะและคุยกับที่พักได้ทุกเมื่อ (ใน LINE เลือกส่งให้ตัวเอง/Keep Memo)</p>
     </div>
     <h2 style="margin-top:20px">ข้อความคุยกับที่พัก</h2>
     <div class="card">
@@ -274,7 +282,11 @@
           <input type="text" id="done-link-url" readonly aria-label="ลิงก์ติดตามคำขอ">
           <button type="button" class="btn" id="done-link-copy">คัดลอก</button>
         </div>
-        <p><a class="btn primary" id="done-link-open" href="#">เปิดแชทคุยกับที่พัก</a></p>
+        <div class="save-link">
+          <a class="btn line" id="done-link-line" href="#" target="_blank" rel="noopener">ส่งลิงก์เก็บไว้ใน LINE</a>
+          <a class="btn primary" id="done-link-open" href="#">เปิดแชทคุยกับที่พัก</a>
+        </div>
+        <p class="small muted" style="margin-top:6px">ใน LINE เลือกส่งให้ตัวเอง (Keep Memo) หรือแชทที่ต้องการ เพื่อเก็บลิงก์ไว้เปิดภายหลัง</p>
       </div>
       <button type="button" class="btn" id="again">ส่งคำขออื่น</button>
     </section>
@@ -904,7 +916,18 @@
     var url = threadUrl(ref)
     $('done-link-url').value = url
     $('done-link-open').href = url
+    $('done-link-line').href = lineShareUrl(propertyName(), url)
     $('done-link-note').textContent = emailed ? '(ส่งลิงก์นี้ไปที่ ' + email + ' แล้ว)' : '(กรุณาบันทึกลิงก์นี้ไว้)'
+  }
+  /** ลิงก์แชร์เข้า LINE (เปิดแอป LINE บนมือถือให้เลือกแชท/Keep Memo · คอมพิวเตอร์เปิดหน้าแชร์ของ LINE) */
+  function lineShareUrl(name, url) {
+    return 'https://line.me/R/share?text=' + encodeURIComponent('คำขอจองที่พัก' + (name ? ' ' + name : '') + '\nดูสถานะและคุยกับที่พัก: ' + url)
+  }
+  function propertyName() { return (site && site.name) || $('t-name').textContent || '' }
+  function copyText(text, btn, done) {
+    var ok = function () { btn.textContent = done }
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, function () { window.prompt('คัดลอกลิงก์นี้', text) })
+    else window.prompt('คัดลอกลิงก์นี้', text)
   }
   function threadUrl(ref) { return location.origin + '/stay/?p=' + encodeURIComponent(slug) + '&r=' + encodeURIComponent(ref) }
   $('done-link-copy').addEventListener('click', function () {
@@ -922,6 +945,7 @@
     EXPIRED: 'คำขอหมดอายุแล้ว (ที่พักไม่ได้ตอบภายในเวลา) — จองที่พักอื่นได้ทันที',
   }
   var threadTimer = null, threadSince = 0, threadSending = false
+  $('t-copy').addEventListener('click', function () { copyText(threadUrl(threadRef), $('t-copy'), 'คัดลอกแล้ว') })
 
   function loadThread(quiet) {
     if (!quiet) $('t-refresh').disabled = true
@@ -936,6 +960,7 @@
     document.title = t.property.name + ' — คำขอจองของคุณ'
     setText('t-name', t.property.name)
     showLogo('t-logo', t.property.logo, t.property.name)
+    $('t-line').href = lineShareUrl(t.property.name, threadUrl(threadRef))
     // ที่พักตอบข้อความแล้วแต่ยังไม่ได้รับ/ปฏิเสธ = กำลังคุยรายละเอียด (เวลาหมดอายุถูกเลื่อนตามการตอบ — requestThread.ts)
     var pendingText = t.staff && t.staff.replied ? 'ที่พักตอบแล้ว · รอยืนยันการจอง' : STATUS_TEXT.PENDING
     var st = $('t-status'); st.textContent = (t.request.status === 'PENDING' ? pendingText : STATUS_TEXT[t.request.status] || t.request.status) +
