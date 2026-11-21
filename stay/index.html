@@ -121,7 +121,10 @@
   .link-row { display: flex; gap: 8px; }
   /* ปุ่มส่งลิงก์เข้า LINE (เจ้าของขอ 2026-11-21) — ลูกค้าเลือก Keep Memo/แชทตัวเอง เก็บลิงก์หน้าแชทไว้เปิดภายหลัง */
   .btn.line { background: #06C755; color: #fff; border-color: #06C755; }
-  .save-link { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  /* ปุ่ม LINE + คัดลอกลิงก์ บรรทัดเดียวกันเสมอ (เจ้าของขอ 2026-11-21) — จอแคบให้ข้อความปุ่ม LINE ขึ้น 2 บรรทัดแทนการตกบรรทัด */
+  .save-link { display: flex; gap: 8px; flex-wrap: nowrap; align-items: stretch; margin-top: 10px; }
+  .save-link .btn { flex: 1 1 auto; min-width: 0; padding: 8px 12px; text-align: center; }
+  .save-link #t-copy { flex: 0 0 auto; white-space: nowrap; }
   .link-row input { flex: 1; min-width: 0; font-size: .85em; }
   .row-end { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 10px; }
   .tstatus { display: inline-block; font-weight: 700; padding: 2px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); }
