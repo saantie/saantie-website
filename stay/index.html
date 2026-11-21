@@ -156,6 +156,10 @@
   .sel .head h3 { flex: 1; min-width: 0; }
   .sel .remove { min-height: 36px; padding: 4px 12px; font-size: .9em; }
   .sel .extra-opts { grid-column: 1 / -1; margin-left: 0; }
+  /* วันเข้าพักรายหลัง (2026-11-21) — เลือกได้ภายในช่วงที่เลือกบนหน้าแรก */
+  .stay-opts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+  .stay-opts select { min-height: 40px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; }
+  .stay-opts .custom { color: var(--accent); font-weight: 600; }
   footer { margin-top: 40px; color: var(--muted); font-size: .85em; text-align: center; }
   [hidden] { display: none !important; }
 </style>
@@ -346,6 +350,8 @@
   var slug = (m && m[1]) || new URLSearchParams(location.search).get('p') || ''
   var $ = function (id) { return document.getElementById(id) }
   var site = null, available = null, interested = [], prices = {}, picked = new Set(), range = null, shownAt = Date.now()
+  // วันรายหลัง (เจ้าของขอ 2026-11-21 เหมือนในแอป): houseId → [เช็คอิน, เช็คเอาท์] เฉพาะหลังที่ไม่ใช้ช่วงรวม · nightly = ราคารายคืนจาก bookingSite
+  var stayPick = {}, nightly = {}
 
   function call(name, data) {
     return fetch(API + name, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: data }) })
@@ -463,7 +469,7 @@
     houses.forEach(function (h) { normal += normalOf(h); limit += limitOf(h) })
     var p = { known: known, normal: normal, limit: limit, extraGuests: 0, extraBeds: 0, lines: [], problem: null }
     function fail(t) { p.problem = t; p.lines = []; return p }
-    var noun = words().noun, nn = Math.max(1, n), gLines = [], bLines = [], eg = 0, eb = 0
+    var noun = words().noun, gLines = [], bLines = [], eg = 0, eb = 0
     for (var i = 0; i < houses.length; i++) {
       var h = houses[i], pk = null
       for (var j = 0; j < picks.length; j++) if (picks[j].houseId === h.id) pk = picks[j]
@@ -473,6 +479,7 @@
       if (pk.guests > more) return fail(h.name + ' พักเพิ่มได้ไม่เกิน ' + more + ' คน')
       if (pk.beds > pk.guests) return fail(h.name + ' เสริมที่นอนได้ไม่เกิน ' + pk.guests + ' ชุด (เท่าจำนวนคนที่พักเพิ่ม)')
       eg += pk.guests; eb += pk.beds
+      var nn = Math.max(1, typeof n === 'function' ? n(h.id) : n)
       if (h.extraGuestPrice > 0) gLines.push({ description: h.name + ' พักเพิ่ม ' + pk.guests + ' คน × ' + baht(h.extraGuestPrice) + ' บาท × ' + nn + ' คืน', amount: pk.guests * h.extraGuestPrice * nn })
       if (pk.beds > 0 && h.extraBedPrice > 0) bLines.push({ description: h.name + ' เสริมที่นอน ' + pk.beds + ' ชุด × ' + baht(h.extraBedPrice) + ' บาท × ' + nn + ' คืน', amount: pk.beds * h.extraBedPrice * nn })
     }
@@ -702,6 +709,7 @@
     $('check').disabled = true
     call('bookingSite', { slug: slug, checkIn: a, checkOut: b }).then(function (r) {
       site = r; available = r.available || []; interested = r.interested || []; prices = r.prices || {}; range = { checkIn: a, checkOut: b }
+      nightly = r.nightly || {}; stayPick = {}
       // บ้านที่เคยเลือกแต่ไม่ว่างในช่วงใหม่: เอาออก
       picked.forEach(function (id) { if (available.indexOf(id) < 0) { picked.delete(id); delete extraPick[id] } })
       note.className = 'range-note small'
@@ -776,15 +784,23 @@
       head.appendChild(el('h3', '', h.name))
       var rm = el('button', 'btn remove', 'เอาออก'); rm.type = 'button'
       rm.addEventListener('click', function () {
-        picked.delete(h.id); delete extraPick[h.id]
+        picked.delete(h.id); delete extraPick[h.id]; delete stayPick[h.id]
         if (picked.size === 0) goPick(); else renderDetail()
       })
       head.appendChild(rm)
       g.appendChild(head)
       var fx = facts(h); if (fx) g.appendChild(el('div', 'facts', fx))
       var ex = extraInfo(h); if (ex) g.appendChild(el('div', 'facts', ex))
-      if (prices[h.id] > 0) g.appendChild(el('div', 'price', 'ค่าห้อง ' + nights(range.checkIn, range.checkOut) + ' คืน ' + baht(prices[h.id]) + ' บาท'))
+      var priceEl = el('div', 'price'); g.appendChild(priceEl)
       card.appendChild(g)
+      function showPrice() {
+        var v = housePrice(h.id)
+        priceEl.textContent = v != null ? 'ค่าห้อง ' + houseNights(h.id) + ' คืน ' + baht(v) + ' บาท' : ''
+        priceEl.hidden = v == null
+      }
+      showPrice()
+      var se = stayEditor(h, showPrice)
+      if (se) card.appendChild(se)
       var opts = extraOptions(h)
       if (opts) card.appendChild(opts)
       box.appendChild(card)
@@ -794,18 +810,70 @@
 
   function pickedHouses() { return site.houses.filter(function (h) { return picked.has(h.id) }) }
 
+  // ---------- วันรายหลัง ----------
+  function stayOf(id) { return stayPick[id] || [range.checkIn, range.checkOut] }
+  function houseNights(id) { var x = stayOf(id); return nights(x[0], x[1]) }
+  /** ค่าห้องของหลังนี้ตามวันของหลังนั้น — null = ไม่แสดง (ปิดราคา/ไม่มีราคา/เซิร์ฟเวอร์รุ่นเก่าไม่ส่งราคารายคืน) */
+  function housePrice(id) {
+    if (!stayPick[id]) return prices[id] > 0 ? prices[id] : null
+    var arr = nightly[id]
+    if (!arr) return null
+    var from = nights(range.checkIn, stayPick[id][0]), n = houseNights(id), sum = 0
+    for (var i = from; i < from + n; i++) { if (!(arr[i] >= 0)) return null; sum += arr[i] }
+    return sum > 0 ? sum : null
+  }
+  /** ช่องเลือกวันเข้าพักของหลังนี้ (เฉพาะช่วงที่เลือก ≥ 2 คืน) — ตั้งต้น = ช่วงที่เลือกบนหน้าแรก */
+  function stayEditor(h, onChange) {
+    var total = nights(range.checkIn, range.checkOut)
+    if (total < 2) return null
+    var box = el('div', 'stay-opts'), inSel = el('select'), outSel = el('select'), info = el('span', 'small')
+    inSel.setAttribute('aria-label', 'วันเช็คอินของ' + h.name); outSel.setAttribute('aria-label', 'วันเช็คเอาท์ของ' + h.name)
+    function opts(sel, from, to, value) {
+      sel.textContent = ''
+      // ไม่ใส่ปี (ช่วงสั้น ≤ 30 คืน) ให้ 2 ช่องอยู่บรรทัดเดียวบนมือถือ
+      for (var k = from; k <= to; k = plusDays(k, 1)) { var o = el('option', '', thai(k).replace(/ \d{4}$/, '')); o.value = k; sel.appendChild(o) }
+      sel.value = value
+    }
+    function draw() {
+      var x = stayOf(h.id)
+      opts(inSel, range.checkIn, plusDays(range.checkOut, -1), x[0])
+      opts(outSel, plusDays(x[0], 1), range.checkOut, x[1])
+      var custom = !!stayPick[h.id]
+      info.className = 'small' + (custom ? ' custom' : ' muted')
+      info.textContent = '(' + houseNights(h.id) + ' คืน' + (custom ? ' · ไม่ตรงกับช่วงที่เลือก' : '') + ')'
+    }
+    function set(a, b) {
+      if (b <= a) b = plusDays(a, 1)
+      if (a === range.checkIn && b === range.checkOut) delete stayPick[h.id]; else stayPick[h.id] = [a, b]
+      draw(); onChange(); updateQuote()
+    }
+    inSel.addEventListener('change', function () { set(inSel.value, stayOf(h.id)[1]) })
+    outSel.addEventListener('change', function () { set(stayOf(h.id)[0], outSel.value) })
+    box.appendChild(el('span', 'small', 'เข้าพัก')); box.appendChild(inSel)
+    box.appendChild(el('span', 'small', 'ถึง')); box.appendChild(outSel); box.appendChild(info)
+    draw()
+    return box
+  }
+  /** ชื่อบ้านที่เลือก — หลังที่แยกวันต่อท้ายด้วยวันของหลังนั้น (หน้ายืนยัน) */
+  function pickedHousesText() {
+    return pickedHouses().map(function (h) {
+      var x = stayPick[h.id]
+      return x ? h.name + ' (' + thai(x[0]) + ' – ' + thai(x[1]) + ', ' + nights(x[0], x[1]) + ' คืน)' : h.name
+    }).join(', ')
+  }
+
   /** แผนตามที่กรอกตอนนี้ (จำนวนคนยังไม่กรอก = null) */
   function currentPlan() {
     var count = parseInt($('f-count').value, 10)
     if (!(count >= 1) || !range) return null
-    return guestPlan(pickedHouses(), count, extraPicks(), nights(range.checkIn, range.checkOut))
+    return guestPlan(pickedHouses(), count, extraPicks(), houseNights)
   }
 
   /** ค่าห้อง (ทุกหลังต้องมีราคา) — null = ไม่แสดงราคา */
   function roomTotal() {
     if (!site.showPrices) return null
     var ids = Array.from(picked), sum = 0
-    for (var i = 0; i < ids.length; i++) { if (!(prices[ids[i]] > 0)) return null; sum += prices[ids[i]] }
+    for (var i = 0; i < ids.length; i++) { var v = housePrice(ids[i]); if (v == null) return null; sum += v }
     return sum > 0 ? sum : null
   }
 
@@ -820,6 +888,7 @@
   function updateQuote() {
     var box = $('quote'), p = currentPlan(), hs = pickedHouses(), n = range ? nights(range.checkIn, range.checkOut) : 0
     var plan0 = guestPlan(hs, 0, [], n)
+    var sameNights = hs.every(function (h) { return !stayPick[h.id] })
     box.textContent = ''
     var room = roomTotal()
     if (!plan0.known && room == null) { box.hidden = true; return }
@@ -835,7 +904,7 @@
       if (extraText) box.appendChild(el('div', 'small muted', 'ที่พักจะแจ้งค่าใช้จ่ายส่วนที่พักเพิ่ม/เสริมที่นอนเมื่อติดต่อกลับ'))
       return
     }
-    qRow(box, 'ค่าห้องพัก ' + n + ' คืน', room)
+    qRow(box, sameNights ? 'ค่าห้องพัก ' + n + ' คืน' : 'ค่าห้องพัก (ตามวันของแต่ละ' + words().noun + ')', room)
     var sum = room
     if (p) p.lines.forEach(function (l) { qRow(box, l.description, l.amount); sum += l.amount })
     qRow(box, 'รวม', sum, 'q-total')
@@ -877,11 +946,11 @@
     call('submitBookingRequest', {
       slug: slug, houseIds: ids, checkIn: range.checkIn, checkOut: range.checkOut, guestName: name, guestPhone: phone, guestEmail: email,
       lineId: $('f-line').value.trim(), guestCount: count, extras: extraPicks(), note: $('f-note').value.trim(), consent: true,
+      stays: ids.filter(function (id) { return !!stayPick[id] }).map(function (id) { return { houseId: id, checkIn: stayPick[id][0], checkOut: stayPick[id][1] } }),
       website: $('f-website').value, elapsedMs: Date.now() - shownAt, turnstile: token || undefined,
     }).then(function (res) {
       showDoneLink(res && res.ref, res && res.emailed, email)
-      var names = site.houses.filter(function (h) { return picked.has(h.id) }).map(function (h) { return h.name })
-      $('done-msg').textContent = names.join(', ') + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน) · ' + count + ' คน' + doneQuoteText(plan) + '\n\n' +
+      $('done-msg').textContent = pickedHousesText() + '\n' + thai(range.checkIn) + ' – ' + thai(range.checkOut) + ' (' + nights(range.checkIn, range.checkOut) + ' คืน) · ' + count + ' คน' + doneQuoteText(plan) + '\n\n' +
         'ที่พักได้รับคำขอแล้ว และจะติดต่อกลับทางเบอร์ ' + phone + ' หรืออีเมล ' + email + ' เพื่อยืนยันการจอง\nคำขอนี้ยังไม่ใช่การยืนยันการจอง และยังไม่ต้องชำระเงิน' +
         // หมดอายุ (2026-11-13): บอกเวลาแน่นอน ลูกค้ารู้ว่ารอถึงเมื่อไร — function เก่าไม่ส่ง expiresAt = ไม่แสดง
         (res && res.expiresAt ? '\n\nที่พักจะตอบภายใน ' + deadlineText(res.expiresAt) + ' หากไม่มีคำตอบ คำขอนี้จะถูกยกเลิกอัตโนมัติ และคุณจองที่พักอื่นได้ทันที' : '')
@@ -896,7 +965,7 @@
 
   $('again').addEventListener('click', function () {
     $('done').hidden = true; $('req-sec').hidden = false; $('back-wrap').hidden = false
-    picked.clear(); extraPick = {}; range = null; available = null; interested = []; prices = {}
+    picked.clear(); extraPick = {}; range = null; available = null; interested = []; prices = {}; stayPick = {}; nightly = {}
     $('f-note').value = ''; $('f-count').value = ''
     $('range-note').textContent = ''
     history.replaceState(null, '', location.pathname + location.search)
@@ -967,7 +1036,12 @@
       (t.request.status === 'PENDING' && t.request.expiresAtMs ? ' ภายใน ' + deadlineText(t.request.expiresAtMs) : '')
     st.className = 'tstatus ' + (t.request.status === 'ACCEPTED' ? 'ok' : t.request.status === 'REJECTED' || t.request.status === 'EXPIRED' ? 'no' : 'wait')
     var r = t.request
-    setText('t-summary', r.houseNames.join(', ') + '\n' + thai(r.checkIn) + ' – ' + thai(r.checkOut) + ' (' + nights(r.checkIn, r.checkOut) + ' คืน) · ' + r.guestCount + ' คน' +
+    // หลังที่แยกวัน (2026-11-21) ต่อท้ายด้วยวันของหลังนั้น — function รุ่นเก่าไม่ส่ง stays = ชื่อบ้านอย่างเดียว
+    var houseText = r.houseNames.map(function (name) {
+      var x = (r.stays || []).filter(function (st) { return st.houseName === name })[0]
+      return x ? name + ' (' + thai(x.checkIn) + ' – ' + thai(x.checkOut) + ', ' + nights(x.checkIn, x.checkOut) + ' คืน)' : name
+    }).join(', ')
+    setText('t-summary', houseText + '\n' + thai(r.checkIn) + ' – ' + thai(r.checkOut) + ' (' + nights(r.checkIn, r.checkOut) + ' คืน) · ' + r.guestCount + ' คน' +
       (r.extraGuests > 0 ? '\n' + extraGuestText(r.extraGuests, r.extraBeds) : ''))
     var c = $('t-contact'); c.textContent = ''
     if (t.property.phone) { var a = el('a', 'btn', 'โทร ' + t.property.phone); a.href = 'tel:' + t.property.phone; c.appendChild(a) }
