@@ -1,8 +1,8 @@
 {
-    "versionCode":  103,
-    "versionName":  "0.2.101",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.101/saantie-pms-0.2.101.apk",
-    "sha256":  "d9f93e71c5987b26928ae994f1eeab11cedd2d89b04831efa4ece88d15a80955",
-    "notes":  "- แก้: หน้ารายละเอียดการจองแสดงราคาต่อคืนถูกต้อง (เดิมเอายอดหารจำนวนคืน คูณกลับไม่ได้ยอด) เช่น \"High 2 คืน × 2,000 + Low 1 คืน × 1,000 บาท\"\n- แก้: หน้าบ้านว่างแสดงราคาต่อคืนรวมยอดบวกเพิ่มของช่วง High Season",
+    "versionCode":  104,
+    "versionName":  "0.2.102",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.102/saantie-pms-0.2.102.apk",
+    "sha256":  "be0f6f1f09bf74fea9c3947a3a0e0f6d4043f6bcc6b0f4e25cb27177fef402c1",
+    "notes":  "- ใหม่: แก้ราคารายหลังในฟอร์มจองได้ (เจ้าของ/ผู้จัดการ) สำหรับราคาที่ตกลงกับลูกค้า\n- แก้: นำเข้าข้อมูลเก่าที่จองหลายหลัง ใช้ราคาจริงของแต่ละหลังแทนการหารเฉลี่ย ส่วนต่างแสดงเป็นค่าบริการ\n- ใหม่: คอมมูนิตี้ถาม-ตอบ และเมนู \"แจ้งปัญหาการใช้งาน\" ในหน้าตั้งค่า",
     "minVersionCode":  0
 }
