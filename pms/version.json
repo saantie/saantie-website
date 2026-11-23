@@ -1,8 +1,8 @@
 {
-    "versionCode":  102,
-    "versionName":  "0.2.100",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.100/saantie-pms-0.2.100.apk",
-    "sha256":  "d9aa446bf060f32dfaf31dc208fb13eb1d822fa9d2642a829640195b3825df18",
-    "notes":  "- แก้: บวกราคาเพิ่มในช่วง High Season เว้นช่อง \"บวกเพิ่มคืนละ\" ได้ ใส่ยอดเฉพาะรายหลังก็บันทึกได้ (เดิมบันทึกไม่ได้ ขึ้นให้ติ๊กอย่างน้อย 1 หลัง)",
+    "versionCode":  103,
+    "versionName":  "0.2.101",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.101/saantie-pms-0.2.101.apk",
+    "sha256":  "d9f93e71c5987b26928ae994f1eeab11cedd2d89b04831efa4ece88d15a80955",
+    "notes":  "- แก้: หน้ารายละเอียดการจองแสดงราคาต่อคืนถูกต้อง (เดิมเอายอดหารจำนวนคืน คูณกลับไม่ได้ยอด) เช่น \"High 2 คืน × 2,000 + Low 1 คืน × 1,000 บาท\"\n- แก้: หน้าบ้านว่างแสดงราคาต่อคืนรวมยอดบวกเพิ่มของช่วง High Season",
     "minVersionCode":  0
 }
