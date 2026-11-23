@@ -1,8 +1,8 @@
 {
-    "versionCode":  101,
-    "versionName":  "0.2.99",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.99/saantie-pms-0.2.99.apk",
-    "sha256":  "1acfb61cdcdbdd227962fc10e2b9258438f45138304e4bcdefc7baf48433d186",
-    "notes":  "- บวกราคาเพิ่มจากราคา High ในช่วง High Season ได้ (คืนละ X บาท แก้ยอดรายหลังได้) — ลูกค้าเห็นเป็นราคารวม ไม่แยกรายการบวกเพิ่ม\n- พื้นหลังเบลอเมื่อมีหน้าต่างป๊อปอัปเด้งขึ้น\n- ข้อผิดพลาดเก่าที่แก้แล้วไม่ค้างในหน้าตั้งค่าอีก",
+    "versionCode":  102,
+    "versionName":  "0.2.100",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.100/saantie-pms-0.2.100.apk",
+    "sha256":  "d9aa446bf060f32dfaf31dc208fb13eb1d822fa9d2642a829640195b3825df18",
+    "notes":  "- แก้: บวกราคาเพิ่มในช่วง High Season เว้นช่อง \"บวกเพิ่มคืนละ\" ได้ ใส่ยอดเฉพาะรายหลังก็บันทึกได้ (เดิมบันทึกไม่ได้ ขึ้นให้ติ๊กอย่างน้อย 1 หลัง)",
     "minVersionCode":  0
 }
