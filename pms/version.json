@@ -1,8 +1,8 @@
 {
-    "versionCode":  104,
-    "versionName":  "0.2.102",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.102/saantie-pms-0.2.102.apk",
-    "sha256":  "be0f6f1f09bf74fea9c3947a3a0e0f6d4043f6bcc6b0f4e25cb27177fef402c1",
-    "notes":  "- ใหม่: แก้ราคารายหลังในฟอร์มจองได้ (เจ้าของ/ผู้จัดการ) สำหรับราคาที่ตกลงกับลูกค้า\n- แก้: นำเข้าข้อมูลเก่าที่จองหลายหลัง ใช้ราคาจริงของแต่ละหลังแทนการหารเฉลี่ย ส่วนต่างแสดงเป็นค่าบริการ\n- ใหม่: คอมมูนิตี้ถาม-ตอบ และเมนู \"แจ้งปัญหาการใช้งาน\" ในหน้าตั้งค่า",
+    "versionCode":  105,
+    "versionName":  "0.2.103",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.103/saantie-pms-0.2.103.apk",
+    "sha256":  "b15474d23e14e7edebfcaf7f36a07bc263fa62d2a6f8c6a605b2b432d2f900f1",
+    "notes":  "- ปรับ: สรุปเช็คอินวันนี้/พรุ่งนี้ รายการค้างชำระแสดงยอดเต็มคู่กับยอดค้าง และมีเส้นแบ่งใต้หัวข้อความ",
     "minVersionCode":  0
 }
