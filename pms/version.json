@@ -1,8 +1,8 @@
 {
-    "versionCode":  107,
-    "versionName":  "0.2.105",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.105/saantie-pms-0.2.105.apk",
-    "sha256":  "c736eaf9c99252728bce4cd163c33a72c4bf0c9fd47347e8f55af44e6b3b6215",
-    "notes":  "- ใหม่: ลดราคาคืนวันอาทิตย์–พฤหัส ตามช่วงวันที่ (ตั้งค่า → จัดการข้อมูลที่พักและราคา) ลดเท่ากันทุกหลังหรือรายหลังได้ เว็บไซต์ที่พักคิดราคาลดด้วย",
+    "versionCode":  108,
+    "versionName":  "0.2.106",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.106/saantie-pms-0.2.106.apk",
+    "sha256":  "41ad1fc6c807d0b96f715b85c114ebe15689af8b1df4dc8120647e24b1b8958e",
+    "notes":  "- ใหม่: วันหยุดประจำปี (ตั้งค่า → จัดการข้อมูลที่พักและราคา) คืนก่อนวันหยุดไม่ลดราคาคืน อา.–พฤ. และคิดราคา High เหมือนคืนเสาร์\n- ใหม่: ตั้งช่วง High Season/ลดราคา แสดงราคาแต่ละหลังก่อนและหลังปรับ\n- ปรับ: รายการบ้านพักอยู่เหนือช่วงราคา และปุ่มบันทึกในหน้าแก้ไขบ้านติดขอบล่างจอ",
     "minVersionCode":  0
 }
