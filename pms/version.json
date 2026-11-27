@@ -1,8 +1,8 @@
 {
-    "versionCode":  106,
-    "versionName":  "0.2.104",
-    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.104/saantie-pms-0.2.104.apk",
-    "sha256":  "a6223bb31d7f9a140c8bea5737c0398fb56e26fbfe213c607b36ef01bb4dc1fe",
-    "notes":  "- ปรับ: เมนู \"แพ็กเกจของฉัน\" ย้ายมาอยู่ใต้ \"บัญชีและสีของแอป\" และมีไอคอนของตัวเอง",
+    "versionCode":  107,
+    "versionName":  "0.2.105",
+    "apkUrl":  "https://github.com/saantie/saantie-pms-small-hotel/releases/download/v0.2.105/saantie-pms-0.2.105.apk",
+    "sha256":  "c736eaf9c99252728bce4cd163c33a72c4bf0c9fd47347e8f55af44e6b3b6215",
+    "notes":  "- ใหม่: ลดราคาคืนวันอาทิตย์–พฤหัส ตามช่วงวันที่ (ตั้งค่า → จัดการข้อมูลที่พักและราคา) ลดเท่ากันทุกหลังหรือรายหลังได้ เว็บไซต์ที่พักคิดราคาลดด้วย",
     "minVersionCode":  0
 }
