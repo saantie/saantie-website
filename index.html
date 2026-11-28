@@ -149,7 +149,7 @@
   .applinks a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
   .applinks a:hover { border-bottom-color: var(--accent); }
   .applinks-sep { color: var(--border-lit); margin: 0 8px; }
-  /* ไอคอนเล็กหน้าลิงก์ Saantie PMS: เขียว = แอป Android, ส้ม = เวอร์ชันเว็บ (PWA) ให้เห็นว่าเป็นคนละตัว */
+  /* ไอคอนเล็กหน้าลิงก์เปิดเว็บแอป Saantie จัดการที่พัก (สีส้ม = ไอคอน PWA) */
   /* inline-block + nowrap: ไอคอนกับข้อความขึ้นบรรทัดใหม่ไปด้วยกัน (จอมือถือเคยเหลือไอคอนค้างท้ายบรรทัดแรก) */
   .applinks a.applink { display: inline-block; white-space: nowrap; }
   .applink-icon { width: 18px; height: 18px; border-radius: 5px; vertical-align: -4px; margin-right: 6px; }
@@ -328,27 +328,27 @@
     </div>
 
     <div class="card app reveal">
-      <div class="icon"><img src="assets/pms-icon.svg" alt="Saantie PMS"></div>
+      <div class="icon"><img src="assets/pms-web-icon.svg" alt="Saantie จัดการที่พัก"></div>
       <div>
-        <h3>Saantie PMS</h3>
+        <h3>Saantie จัดการที่พัก</h3>
         <p data-lang="th">
-          แอปพลิเคชัน Android สำหรับเจ้าของที่พักขนาดเล็ก บันทึกการจอง ตรวจสอบ<span class="nw">บ้านพักว่างรายวัน</span>
-          ดู<span class="nw">ปฏิทินการเข้าพัก</span> และติดตาม<span class="nw">ยอดค้างชำระ</span> โดย<b>ป้องกันการจอง<span class="nw">ซ้ำซ้อน</span>ให้โดยอัตโนมัติ</b>
-          และใช้งานร่วมกับพนักงานได้
+          เว็บแอปสำหรับเจ้าของบ้านพัก รีสอร์ท และโฮมสเตย์ขนาดเล็ก ดู<span class="nw">บ้านว่างรายวัน</span> บันทึกการจอง
+          รับเงินแนบสลิป อ่านบัตรทำ <span class="nw">ร.ร.3</span> และส่งสรุปเช็คอินเข้า LINE โดย<b>ป้องกันการจอง<span class="nw">ซ้ำซ้อน</span>ให้โดยอัตโนมัติ</b>
+          พร้อม<span class="nw">เว็บไซต์รับคำขอจอง</span>ของที่พักเอง
         </p>
         <p data-lang="en">
-          An Android app for small guesthouse owners to record bookings, check daily vacancies,
-          follow the stay calendar and track unpaid balances. <b>Double bookings are blocked
-          automatically</b>, and staff can work from the same data.
+          A web app for small guesthouses, resorts and homestays: daily vacancies, bookings, payments with slip reading,
+          ID-card check-in and a nightly LINE summary. <b>Double bookings are blocked automatically</b>, and each property
+          gets its own website for booking requests.
         </p>
-        <p class="status" data-lang="th">ดาวน์โหลดได้แล้วสำหรับ Android</p>
-        <p class="status" data-lang="en">Available now for Android</p>
-        <p class="status" data-lang="th">ใช้งานผ่านเว็บได้บน iPhone และ Android</p>
-        <p class="status" data-lang="en">Web app for iPhone and Android</p>
+        <p class="status" data-lang="th">ใช้ได้บน iPhone, Android และคอมพิวเตอร์ · ทดลองพรีเมียมฟรี 60 วัน</p>
+        <p class="status" data-lang="en">iPhone, Android and computer · 60-day free Premium trial</p>
         <div class="applinks">
-          <a class="applink" href="/pms"><img class="applink-icon" src="assets/pms-icon.svg" alt=""><span data-lang="th">รายละเอียดและดาวน์โหลด</span><span data-lang="en">Details &amp; download</span></a>
+          <a href="/pms"><span data-lang="th">ดูฟีเจอร์และราคา</span><span data-lang="en">Features &amp; pricing</span></a>
           <span class="applinks-sep">·</span>
-          <a class="applink" href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener"><img class="applink-icon" src="assets/pms-web-icon.svg" alt=""><span data-lang="th" class="nw">เปิดเวอร์ชันเว็บ (iPhone / Android)</span><span data-lang="en" class="nw">Open the web app (iPhone / Android)</span></a>
+          <a href="https://saantie-hotel-pms.web.app/manual/" target="_blank" rel="noopener"><span data-lang="th">คู่มือการใช้งาน</span><span data-lang="en">Manual</span></a>
+          <span class="applinks-sep">·</span>
+          <a class="applink" href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener"><img class="applink-icon" src="assets/pms-web-icon.svg" alt=""><span data-lang="th" class="nw">เปิดแอป / สมัครใช้งาน</span><span data-lang="en" class="nw">Open the app / sign up</span></a>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@
         ]
       },
       {
-        path: "/pms", th: "Saantie PMS", en: "Saantie PMS", full: { th: "Saantie PMS (จัดการที่พัก)", en: "Saantie PMS (bookings)" },
+        path: "/pms", th: "จัดการที่พัก", en: "Stay manager", full: { th: "Saantie จัดการที่พัก", en: "Saantie Stay Manager" },
         children: [
           { path: "/pms/import", th: "นำเข้าข้อมูลการจอง", en: "Import bookings" }
         ]

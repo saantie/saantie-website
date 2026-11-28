@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Saantie PMS — แอปพลิเคชันจัดการที่พักขนาดเล็ก | Small-property booking manager</title>
-<meta name="description" content="Saantie PMS แอปพลิเคชัน Android สำหรับเจ้าของที่พักขนาดเล็ก บันทึกการจอง ตรวจสอบบ้านพักว่าง และติดตามยอดค้างชำระ — An Android app for small guesthouses to record bookings, see vacancies and track unpaid balances.">
+<title>Saantie จัดการที่พัก — ระบบจองสำหรับบ้านพักและรีสอร์ทขนาดเล็ก | Booking manager for small stays</title>
+<meta name="description" content="Saantie จัดการที่พัก เว็บแอปสำหรับเจ้าของบ้านพัก รีสอร์ท โฮมสเตย์ขนาดเล็ก ดูบ้านว่าง กันจองซ้ำ รับเงินแนบสลิป อ่านบัตรทำ ร.ร.3 สรุปเช็คอินส่ง LINE และเว็บไซต์รับคำขอจองของที่พักเอง ใช้ได้ทั้ง iPhone Android และคอมพิวเตอร์ ทดลองพรีเมียมฟรี 60 วัน">
 <meta name="theme-color" content="#070C18">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070C18'/%3E%3Cpath d='M14 32 32 16 50 32V50H14Z' fill='none' stroke='%2338BDF8' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/pms-web-icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/crumbs.css">
 <style>
   :root {
@@ -22,6 +22,7 @@
     --accent: #38BDF8;
     --accent-2: #2563EB;
     --accent-soft: rgba(56, 189, 248, 0.12);
+    --warm: #F5AE7E; /* สีไอคอนเว็บแอป (theme-color ของ PWA) */
   }
   * { box-sizing: border-box; }
   body {
@@ -38,10 +39,11 @@
     mask-image: radial-gradient(ellipse 90% 55% at 50% 0%, #000 30%, transparent 78%);
     -webkit-mask-image: radial-gradient(ellipse 90% 55% at 50% 0%, #000 30%, transparent 78%);
   }
-  .wrap { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 20px; }
   a { color: var(--accent); }
+  .nw { white-space: nowrap; }
 
-  .langbar { max-width: 880px; margin: 0 auto; padding: 18px 20px 0; text-align: right; position: relative; z-index: 3; }
+  .langbar { max-width: 960px; margin: 0 auto; padding: 18px 20px 0; text-align: right; position: relative; z-index: 3; }
   .langbtn {
     background: rgba(14,23,48,.7); border: 1px solid var(--border); color: var(--muted);
     border-radius: 999px; padding: 7px 18px; font: inherit; font-size: .85em;
@@ -50,9 +52,12 @@
   .langbtn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
 
   header.site { position: relative; z-index: 2; border-bottom: 1px solid var(--border); }
-  .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 13px 0; }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 13px 20px; }
   .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-weight: 700; }
-  .brand svg { width: 26px; height: 26px; flex-shrink: 0; }
+  .brand img { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; }
+  .nav-links { display: flex; gap: 18px; font-size: .9em; }
+  .nav-links a { color: var(--muted); text-decoration: none; }
+  .nav-links a:hover { color: var(--accent); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: .5em;
@@ -61,28 +66,69 @@
   }
   .btn-primary { background: var(--accent); color: #06121F; }
   .btn-primary:hover { box-shadow: 0 0 0 4px var(--accent-soft); transform: translateY(-2px); }
+  .btn-ghost { border-color: var(--border-lit); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .cta-note { color: var(--muted); font-size: .88em; margin-top: 12px; }
 
-  section { padding: 48px 0; border-top: 1px solid var(--border); }
-  .hero { padding: 48px 0 40px; border-top: none; }
+  section { padding: 56px 0; border-top: 1px solid var(--border); }
+  .hero { padding: 44px 0 48px; border-top: none; display: grid; grid-template-columns: 1.25fr .75fr; gap: 36px; align-items: center; }
   .eyebrow { display: inline-block; color: var(--accent); font-size: .85em; font-weight: 600; letter-spacing: .06em; margin-bottom: 10px; }
-  h1 { font-size: clamp(1.8em, 4vw, 2.5em); margin: 0 0 12px; line-height: 1.3; }
-  h2 { font-size: 1.4em; margin: 0 0 18px; line-height: 1.4; }
-  h3 { font-size: 1.05em; margin: 0 0 6px; }
+  h1 { font-size: clamp(1.8em, 4.4vw, 2.6em); margin: 0 0 14px; line-height: 1.3; }
+  h1 .name { display: block; font-size: .55em; color: var(--warm); letter-spacing: .04em; margin-bottom: 4px; }
+  h2 { font-size: 1.45em; margin: 0 0 8px; line-height: 1.4; }
+  h3 { font-size: 1.08em; margin: 0 0 6px; }
   html[lang="th"] h1, html[lang="th"] h2, html[lang="th"] h3 { line-height: 1.7; }
   .lead { color: var(--muted); font-size: 1.08em; max-width: 620px; margin: 0 0 26px; }
+  .section-lead { color: var(--muted); margin: 0 0 30px; max-width: 640px; }
 
-  .download-box { background: var(--surface); border: 1px solid var(--border-lit); border-radius: 18px; padding: 24px; max-width: 520px; }
-  .meta { color: var(--muted); font-size: .9em; margin-top: 12px; }
-  .notes { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--accent-soft); font-size: .92em; }
-  .notes:empty { display: none; }
+  /* ภาพหน้าจอ: ข้อมูลตัวอย่างจาก emulator เท่านั้น (ชุดเดียวกับคู่มือ) — ห้ามใช้ภาพจากข้อมูลจริงของที่พัก/ลูกค้า */
+  .phone { width: 100%; max-width: 280px; border-radius: 26px; border: 6px solid #1a2540; background: #1a2540;
+           box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px var(--border-lit); display: block; height: auto; }
+  .hero .phone { margin: 0 auto; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 26px; padding: 0; list-style: none; color: var(--muted); font-size: .93em; }
+  .chips li::before { content: "✓"; color: var(--accent); font-weight: 700; margin-right: 6px; }
+
+  .feature { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: center; padding: 30px 0; }
+  .feature + .feature { border-top: 1px dashed var(--border); }
+  .feature.flip { grid-template-columns: 1fr 280px; }
+  .feature.flip figure { order: 2; }
+  .feature figure { margin: 0; }
+  .feature .tag { display: inline-block; font-size: .78em; font-weight: 600; color: var(--warm); border-bottom: 1px solid var(--warm); margin-bottom: 8px; }
+  .feature p { color: var(--muted); margin: 0 0 10px; }
+  .feature ul { color: var(--muted); margin: 0; padding-left: 1.2em; }
+  .feature li { margin-bottom: 4px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
   .card p { margin: 0; color: var(--muted); font-size: .94em; }
+  .pre { font-size: .62em; font-weight: 700; letter-spacing: .06em; color: var(--warm); vertical-align: 2px; margin-left: 4px; }
+  .card .ico { font-size: 1.5em; line-height: 1; margin-bottom: 10px; display: block; }
 
-  ol.steps { margin: 0; padding-left: 1.3em; }
-  ol.steps li { margin-bottom: 10px; }
-  .callout { margin-top: 18px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 12px 12px 0; color: var(--muted); font-size: .93em; }
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .plan { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; }
+  .plan.hi { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .plan ul { margin: 12px 0 0; padding-left: 1.2em; color: var(--muted); font-size: .95em; }
+  .plan li { margin-bottom: 5px; }
+  table.price { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .95em; }
+  table.price td { padding: 6px 0; border-bottom: 1px solid var(--border); }
+  table.price td:last-child { text-align: right; font-weight: 600; }
+  .small { color: var(--muted); font-size: .88em; margin-top: 12px; }
+
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  ol.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 18px 18px 58px; position: relative; color: var(--muted); font-size: .95em; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 16px; top: 16px; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #06121F; font-weight: 700; display: grid; place-items: center; font-size: .9em; }
+  ol.steps b { color: var(--text); }
+
+  .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .links a { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; color: var(--text); transition: .2s; }
+  .links a:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .links a span.d { display: block; color: var(--muted); font-size: .9em; }
+
+  .final { text-align: center; }
+  .final .ctas { justify-content: center; }
 
   footer.site { border-top: 1px solid var(--border); padding: 34px 0 44px; color: var(--muted); font-size: .87em; }
   .footer-row { display: flex; flex-wrap: wrap; gap: 14px 26px; justify-content: space-between; align-items: center; }
@@ -94,6 +140,16 @@
   html[lang="th"] [data-lang="th"], html[lang="en"] [data-lang="en"] { display: block; }
   html[lang="th"] span[data-lang="th"], html[lang="en"] span[data-lang="en"] { display: inline; }
   html[lang="th"] li[data-lang="th"], html[lang="en"] li[data-lang="en"] { display: list-item; }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; gap: 28px; }
+    .hero .phone { max-width: 240px; }
+    .feature, .feature.flip { grid-template-columns: 1fr; gap: 18px; }
+    .feature.flip figure { order: 0; }
+    .feature .phone { max-width: 240px; margin: 0 auto; }
+    .nav-links { display: none; }
+    section { padding: 44px 0; }
+  }
 </style>
 </head>
 <body>
@@ -107,91 +163,243 @@
 
 <header class="site">
   <div class="wrap nav">
-    <a class="brand" href="/pms">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M5 15 16 5 27 15V27H5Z" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M13 27V19H19V27" stroke="var(--accent)" stroke-width="1.8"/>
-      </svg>
-      <span>Saantie PMS</span>
-    </a>
+    <a class="brand" href="/pms"><img src="/assets/pms-web-icon.svg" alt=""><span>Saantie จัดการที่พัก</span></a>
+    <nav class="nav-links">
+      <a href="#features"><span data-lang="th">ฟีเจอร์</span><span data-lang="en">Features</span></a>
+      <a href="#pricing"><span data-lang="th">ราคา</span><span data-lang="en">Pricing</span></a>
+      <a href="https://saantie-hotel-pms.web.app/manual/" target="_blank" rel="noopener"><span data-lang="th">คู่มือ</span><span data-lang="en">Manual</span></a>
+    </nav>
   </div>
 </header>
 
 <div class="wrap">
 
   <section class="hero">
-    <span class="eyebrow">
-      <span data-lang="th">แอปพลิเคชันสำหรับอุปกรณ์ Android</span>
-      <span data-lang="en">Android application</span>
-    </span>
-    <h1>
-      <span data-lang="th">จัดการการจองที่พักขนาดเล็กได้ครบในแอปพลิเคชันเดียว</span>
-      <span data-lang="en">Run a small guesthouse’s bookings from one app</span>
-    </h1>
-    <p class="lead" data-lang="th">บันทึกการจอง ตรวจสอบบ้านพักว่างรายวัน ดูปฏิทินการเข้าพัก และติดตามยอดค้างชำระ ใช้งานร่วมกันได้ทั้งเจ้าของที่พักและพนักงาน</p>
-    <p class="lead" data-lang="en">Record bookings, check daily vacancies, follow the stay calendar and keep track of unpaid balances — shared between the owner and staff.</p>
-
-    <div class="download-box">
-      <a id="dl" class="btn btn-primary" href="https://github.com/saantie/saantie-pms-small-hotel/releases/latest">
-        <span data-lang="th">ดาวน์โหลดแอปพลิเคชัน</span>
-        <span data-lang="en">Download the app</span>
-      </a>
-      <div class="meta" id="meta">
-        <span data-lang="th">กำลังตรวจสอบเวอร์ชันล่าสุด…</span>
-        <span data-lang="en">Checking the latest version…</span>
+    <div>
+      <span class="eyebrow">
+        <span data-lang="th">สำหรับบ้านพัก รีสอร์ท โฮมสเตย์ ไม่เกิน 20 หลัง</span>
+        <span data-lang="en">For guesthouses, resorts and homestays up to 20 units</span>
+      </span>
+      <h1>
+        <span class="name">Saantie จัดการที่พัก</span>
+        <span data-lang="th">เลิกจดสมุด เลิกจองซ้ำ <span class="nw">ดูบ้านว่างได้จากมือถือ</span></span>
+        <span data-lang="en">No more notebooks or double bookings — see every room from your phone</span>
+      </h1>
+      <p class="lead" data-lang="th">บันทึกการจอง รับเงิน เช็คอิน และส่งสรุปเข้า LINE ได้ในแอปเดียว ทำมาจากการใช้งานจริงของรีสอร์ท 16 หลัง เปิดในเบราว์เซอร์ได้เลย ไม่ต้องโหลดจาก Store</p>
+      <p class="lead" data-lang="en">Bookings, payments, check-in and a nightly LINE summary in one app — built from daily use at a real 16-unit resort. It runs in your browser, so there is nothing to install from a store.</p>
+      <ul class="chips">
+        <li data-lang="th">iPhone · Android · คอมพิวเตอร์</li>
+        <li data-lang="en">iPhone · Android · computer</li>
+        <li data-lang="th">ทดลองพรีเมียมฟรี 60 วัน</li>
+        <li data-lang="en">60-day free Premium trial</li>
+        <li data-lang="th">หมดอายุแล้วข้อมูลไม่หาย</li>
+        <li data-lang="en">Your data stays if you stop paying</li>
+      </ul>
+      <div class="ctas">
+        <a class="btn btn-primary" href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener">
+          <span data-lang="th">สมัครใช้งานฟรี</span><span data-lang="en">Sign up free</span>
+        </a>
+        <a class="btn btn-ghost" href="https://saantie-hotel-pms.web.app/manual/" target="_blank" rel="noopener">
+          <span data-lang="th">อ่านคู่มือการใช้งาน</span><span data-lang="en">Read the manual</span>
+        </a>
       </div>
-      <div class="notes" id="notes"></div>
+      <p class="cta-note" data-lang="th">กด “สร้างบัญชีใหม่ (เจ้าของที่พัก)” ในหน้าเข้าสู่ระบบ ไม่ต้องใช้บัตรเครดิต</p>
+      <p class="cta-note" data-lang="en">Tap “สร้างบัญชีใหม่ (เจ้าของที่พัก)” (create owner account) on the sign-in page. No credit card needed.</p>
+    </div>
+    <img class="phone" src="/assets/pms/avail.webp" width="600" height="1298" alt="หน้าบ้านว่าง แสดงสถานะทุกหลังของคืนที่เลือก">
+  </section>
+
+  <section id="features">
+    <h2><span data-lang="th">ฟีเจอร์ที่ช่วยงานหน้าร้านจริง</span><span data-lang="en">Features that help at the front desk</span></h2>
+    <p class="section-lead" data-lang="th">ภาพทั้งหมดเป็นหน้าจอจริงของแอป ใช้ข้อมูลตัวอย่าง “บ้านสวนตัวอย่าง”</p>
+    <p class="section-lead" data-lang="en">All screenshots are from the real app, filled with sample data.</p>
+
+    <div class="feature">
+      <figure><img class="phone" src="/assets/pms/calendar.webp" width="600" height="1298" loading="lazy" alt="ปฏิทินการเข้าพัก"></figure>
+      <div>
+        <span class="tag"><span data-lang="th">ไม่มีวันจองซ้ำ</span><span data-lang="en">No double bookings</span></span>
+        <h3><span data-lang="th">บ้านว่างและปฏิทิน เห็นทุกหลังในจอเดียว</span><span data-lang="en">Vacancies and calendar for every unit on one screen</span></h3>
+        <p data-lang="th">ระบบตรวจห้องว่างทุกครั้งที่บันทึก ถ้าหลังนั้นมีคนจองแล้วจะไม่ยอมบันทึก ทั้งเจ้าของและพนักงานเห็นข้อมูลเดียวกันทันที</p>
+        <p data-lang="en">Every save checks availability first — a unit that is already taken simply cannot be booked again. Owner and staff see the same data instantly.</p>
+        <ul>
+          <li data-lang="th">ค้นหาวันว่างตามจำนวนคนและจำนวนคืน</li>
+          <li data-lang="en">Search free dates by party size and nights</li>
+          <li data-lang="th">คิดราคาให้เอง วันธรรมดา/วันหยุด/ช่วงเทศกาล</li>
+          <li data-lang="en">Prices worked out for weekdays, weekends and peak seasons</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <figure><img class="phone" src="/assets/pms/checkin.webp" width="600" height="1298" loading="lazy" alt="หน้าบันทึกเช็คอิน ร.ร.3"></figure>
+      <div>
+        <span class="tag"><span data-lang="th">ไม่ต้องพิมพ์เอง</span><span data-lang="en">Less typing</span></span>
+        <h3><span data-lang="th">ถ่ายรูปบัตร อ่านชื่อ เลขบัตร ที่อยู่ให้</span><span data-lang="en">Snap the ID card — name, number and address filled in</span></h3>
+        <p data-lang="th">เช็คอินแบบ ร.ร.3 ถ่ายรูปบัตรประชาชนแล้วแอปอ่านข้อมูลภาษาไทยให้ อ่านในเครื่องของคุณเอง ไม่ส่งรูปบัตรไปที่อื่น และทำทะเบียนผู้พัก ร.ร.4 ส่งอำเภอให้อัตโนมัติ</p>
+        <p data-lang="en">Check guests in (Thai form R.R.3) by photographing their Thai ID card — the app reads the Thai text on your own device and never uploads the card. The R.R.4 guest register for the district office is built for you.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <figure><img class="phone" src="/assets/pms/payment.webp" width="600" height="1298" loading="lazy" alt="รับเงินและยอดค้างชำระ"></figure>
+      <div>
+        <span class="tag"><span data-lang="th">เงินไม่ตกหล่น</span><span data-lang="en">No missed payments</span></span>
+        <h3><span data-lang="th">รับมัดจำ แนบสลิป แอปอ่านยอดเงินให้</span><span data-lang="en">Deposits and slips — the amount is read for you</span></h3>
+        <p data-lang="th">กดเต็มจำนวนครั้งเดียวจบ แนบรูปสลิปแล้วแอปกรอกยอดให้ เห็นยอดค้างของทุกการจองเป็นสีแดง และมีรายการลูกค้าที่ยังจ่ายไม่ครบรวมไว้ที่เดียว</p>
+        <p data-lang="en">One tap for the full amount, or attach a transfer slip and the amount is filled in. Unpaid balances stand out in red, and one list shows every guest who still owes.</p>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <figure><img class="phone" src="/assets/pms/digest.webp" width="600" height="1298" loading="lazy" alt="สรุปเช็คอินส่ง LINE"></figure>
+      <div>
+        <span class="tag"><span data-lang="th">คุยกับทีมง่ายขึ้น</span><span data-lang="en">Keep the team in sync</span></span>
+        <h3><span data-lang="th">สรุปคืนนี้ใครเข้าพัก ส่งเข้า LINE กลุ่ม</span><span data-lang="en">Tonight’s guests, ready to paste into your LINE group</span></h3>
+        <p data-lang="th">ทุกค่ำและทุกเช้าแอปเตือนพร้อมข้อความสรุป ใครเข้าหลังไหน กี่คน ยอดค้างเท่าไร กดคัดลอกแล้ววางในกลุ่มแม่บ้านได้ทันที ส่งสรุปการจองให้ลูกค้าได้ในขั้นตอนเดียวเช่นกัน</p>
+        <p data-lang="en">Every evening and morning you get a ready-made summary — who is in which unit, how many people and what is still owed. Copy it into the housekeeping group. Booking confirmations for guests are one tap too.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <figure><img class="phone" src="/assets/pms/website.webp" width="600" height="1298" loading="lazy" alt="ตั้งค่าเว็บไซต์ที่พัก"></figure>
+      <div>
+        <span class="tag"><span data-lang="th">พรีเมียม · ไม่ต้องจ้างทำเว็บ</span><span data-lang="en">Premium · no web designer needed</span></span>
+        <h3><span data-lang="th">เว็บไซต์ที่พักของคุณเอง รับคำขอจองจากลูกค้า</span><span data-lang="en">Your own property website that takes booking requests</span></h3>
+        <p data-lang="th">ได้ลิงก์ saantie.com/stay/ชื่อที่พัก แสดงบ้าน รูป ราคา และวันว่างจริงจากแอป ลูกค้าเลือกวันแล้วส่งคำขอจอง แอปเด้งแจ้งเตือน คุยกับลูกค้าในแอปได้ ไม่ต้องเขียนเว็บเอง ไม่มีค่าคอมมิชชัน</p>
+        <p data-lang="en">Get a link like saantie.com/stay/your-name showing your units, photos, prices and live availability. Guests pick dates and send a request, the app alerts you and you can chat with them — no web design, no commission.</p>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <figure><img class="phone" src="/assets/pms/report.webp" width="600" height="1298" loading="lazy" alt="รายงานสถิติ"></figure>
+      <div>
+        <span class="tag"><span data-lang="th">รู้ตัวเลขธุรกิจ</span><span data-lang="en">Know your numbers</span></span>
+        <h3><span data-lang="th">รายงานรายได้ ห้องเต็ม และลูกค้าประจำ</span><span data-lang="en">Revenue, occupancy and repeat guests</span></h3>
+        <p data-lang="th">ดูรายได้รายเดือน อัตราห้องเต็ม หลังไหนขายดี ลูกค้ากลับมาซ้ำกี่คน พร้อมข้อสังเกตที่ควรรู้ ส่งออกเป็น Excel ได้ (แพ็กเกจฟรีดูได้เฉพาะเดือนนี้)</p>
+        <p data-lang="en">Monthly revenue, occupancy, best-selling units and returning guests, with plain-language highlights, plus Excel export (the free plan shows the current month only).</p>
+      </div>
     </div>
   </section>
 
   <section>
-    <h2>
-      <span data-lang="th">ความสามารถหลัก</span>
-      <span data-lang="en">What it does</span>
-    </h2>
+    <h2><span data-lang="th">และอีกหลายอย่างที่ทำให้งานเบาลง</span><span data-lang="en">More things that save time</span></h2>
+    <p class="section-lead" data-lang="th">ออกแบบให้กดน้อยที่สุด ใช้ภาษาที่เจ้าของที่พักเข้าใจ</p>
+    <p class="section-lead" data-lang="en">Designed for as few taps as possible, in plain language.</p>
     <div class="grid">
-      <div class="card">
-        <h3><span data-lang="th">บ้านพักว่างรายวัน</span><span data-lang="en">Daily vacancies</span></h3>
-        <p data-lang="th">แสดงสถานะว่างหรือมีผู้เข้าพักของทุกหลัง เลื่อนดูวันอื่นได้ทันที</p>
-        <p data-lang="en">See which units are free or occupied each night, and swipe to other dates.</p>
+      <div class="card"><span class="ico">📱</span>
+        <h3><span data-lang="th">ไม่ต้องติดตั้งจาก Store</span><span data-lang="en">Nothing to install</span></h3>
+        <p data-lang="th">เปิดในเบราว์เซอร์ แล้วเพิ่มไว้ที่หน้าจอโทรศัพท์ ใช้เหมือนแอปทั่วไป อัปเดตเองอัตโนมัติ</p>
+        <p data-lang="en">Open it in the browser and add it to your home screen. It works like any app and updates itself.</p>
       </div>
-      <div class="card">
-        <h3><span data-lang="th">ปฏิทินและการจอง</span><span data-lang="en">Calendar and bookings</span></h3>
-        <p data-lang="th">ตรวจสอบการจองซ้ำโดยอัตโนมัติ และสร้างข้อความสรุปส่งให้ลูกค้าได้ในขั้นตอนเดียว</p>
-        <p data-lang="en">Double bookings are blocked automatically, and a booking summary for the guest is one tap away.</p>
+      <div class="card"><span class="ico">👥</span>
+        <h3><span data-lang="th">พนักงานใช้ร่วมกันได้</span><span data-lang="en">Staff accounts</span> <span class="pre">PREMIUM</span></h3>
+        <p data-lang="th">สร้างบัญชีให้พนักงาน กำหนดสิทธิ์ได้ เช่น หน้าร้านจองได้แต่ไม่เห็นรายงานเงิน</p>
+        <p data-lang="en">Give staff their own logins with set permissions — front desk can book without seeing financial reports.</p>
       </div>
-      <div class="card">
-        <h3><span data-lang="th">ติดตามยอดค้างชำระ</span><span data-lang="en">Unpaid balances</span></h3>
-        <p data-lang="th">แจ้งเตือนช่วงค่ำเมื่อผู้เข้าพักที่เช็คอินแล้วยังชำระเงินไม่ครบ</p>
-        <p data-lang="en">An evening reminder lists guests who have checked in but have not fully paid.</p>
+      <div class="card"><span class="ico">🎙️</span>
+        <h3><span data-lang="th">พูดแทนพิมพ์</span><span data-lang="en">Speak instead of typing</span> <span class="pre">PREMIUM</span></h3>
+        <p data-lang="th">กดไมค์แล้วพูดชื่อลูกค้า เบอร์ จำนวนเงิน หรือ “บ้านว่างวันศุกร์หน้า”</p>
+        <p data-lang="en">Tap the mic and say a name, phone number, amount or the date you want to check.</p>
       </div>
-      <div class="card">
-        <h3><span data-lang="th">ใช้งานร่วมกับพนักงาน</span><span data-lang="en">Staff accounts</span></h3>
-        <p data-lang="th">เจ้าของที่พักสร้างบัญชีให้พนักงาน และกำหนดสิทธิ์การใช้งานได้สามระดับ</p>
-        <p data-lang="en">The owner creates staff accounts with one of three permission levels.</p>
+      <div class="card"><span class="ico">🔔</span>
+        <h3><span data-lang="th">แจ้งเตือนการจองใหม่</span><span data-lang="en">New-booking alerts</span> <span class="pre">PREMIUM</span></h3>
+        <p data-lang="th">ใครในทีมบันทึกจอง เช็คอิน หรือยกเลิก ทุกคนในที่พักรู้ทันทีแม้ปิดแอปอยู่</p>
+        <p data-lang="en">When anyone books, checks in or cancels, everyone at the property is notified — even with the app closed.</p>
+      </div>
+      <div class="card"><span class="ico">📶</span>
+        <h3><span data-lang="th">เน็ตหลุดก็ยังดูได้</span><span data-lang="en">Works when the signal drops</span></h3>
+        <p data-lang="th">ข้อมูลการจองเก็บไว้ในเครื่องด้วย เน็ตไม่ดียังเปิดดูและรับเงินได้</p>
+        <p data-lang="en">Bookings are kept on the device too, so you can still look things up and take payments offline.</p>
+      </div>
+      <div class="card"><span class="ico">📥</span>
+        <h3><span data-lang="th">ย้ายข้อมูลจากระบบเดิม</span><span data-lang="en">Bring your old bookings</span></h3>
+        <p data-lang="th">แปลงตาราง Excel หรือ Google Sheet ที่เคยใช้เป็นไฟล์นำเข้า และสำรองข้อมูลเก็บเองได้ทุกเมื่อ</p>
+        <p data-lang="en">Convert your old Excel or Google Sheet into an import file, and back up your data whenever you like.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2><span data-lang="th">ราคา</span><span data-lang="en">Pricing</span></h2>
+    <p class="section-lead" data-lang="th">เริ่มต้นด้วยพรีเมียมเต็มรูปแบบฟรี 60 วัน ครบแล้วเลือกต่อหรือใช้ฟรีต่อได้ ข้อมูลไม่หายทั้งสองทาง</p>
+    <p class="section-lead" data-lang="en">Start with 60 days of full Premium for free. Afterwards, renew or carry on with the free plan — your data stays either way.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3><span data-lang="th">ฟรี</span><span data-lang="en">Free</span></h3>
+        <ul>
+          <li data-lang="th">บันทึกการจอง ผู้เข้าพัก และรับเงิน ไม่จำกัดจำนวน</li>
+          <li data-lang="en">Unlimited bookings, guests and payments</li>
+          <li data-lang="th">บ้านว่าง ปฏิทิน ค้นหาวันว่าง กันจองซ้ำ</li>
+          <li data-lang="en">Vacancies, calendar, date search, double-booking protection</li>
+          <li data-lang="th">อ่านบัตร เช็คอิน ร.ร.3 สรุปส่ง LINE</li>
+          <li data-lang="en">ID card reading, check-in, LINE summaries</li>
+          <li data-lang="th">เจ้าของใช้คนเดียว</li>
+          <li data-lang="en">Owner only (no staff accounts)</li>
+        </ul>
+      </div>
+      <div class="plan hi">
+        <h3><span data-lang="th">พรีเมียม</span><span data-lang="en">Premium</span></h3>
+        <table class="price">
+          <tr><td><span data-lang="th">1–4 หลัง</span><span data-lang="en">1–4 units</span></td><td><span data-lang="th">240 บาท/เดือน</span><span data-lang="en">฿240 / month</span></td></tr>
+          <tr><td><span data-lang="th">5–10 หลัง</span><span data-lang="en">5–10 units</span></td><td><span data-lang="th">380 บาท/เดือน</span><span data-lang="en">฿380 / month</span></td></tr>
+          <tr><td><span data-lang="th">11–20 หลัง</span><span data-lang="en">11–20 units</span></td><td><span data-lang="th">499 บาท/เดือน</span><span data-lang="en">฿499 / month</span></td></tr>
+        </table>
+        <ul>
+          <li data-lang="th">ทุกอย่างในแพ็กเกจฟรี และ</li>
+          <li data-lang="en">Everything in Free, plus</li>
+          <li data-lang="th">บัญชีพนักงานพร้อมกำหนดสิทธิ์</li>
+          <li data-lang="en">Staff accounts with permissions</li>
+          <li data-lang="th">เว็บไซต์ที่พักและรับคำขอจองจากเว็บ</li>
+          <li data-lang="en">Property website with booking requests</li>
+          <li data-lang="th">แจ้งเตือนแม้ปิดแอป</li>
+          <li data-lang="en">Notifications even when the app is closed</li>
+          <li data-lang="th">รายงานแบบเต็ม ส่งออก Excel และพูดแทนพิมพ์</li>
+          <li data-lang="en">Full reports, Excel export and voice input</li>
+        </ul>
+        <p class="small" data-lang="th">จ่ายรายปีจ่ายเพียง 10 เดือน · เกิน 20 หลังติดต่อสอบถาม</p>
+        <p class="small" data-lang="en">Pay yearly and get 12 months for the price of 10 · Over 20 units: contact us</p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>
-      <span data-lang="th">วิธีติดตั้งครั้งแรก</span>
-      <span data-lang="en">First-time installation</span>
-    </h2>
+    <h2><span data-lang="th">เริ่มใช้งานใน 4 ขั้นตอน</span><span data-lang="en">Get started in 4 steps</span></h2>
+    <p class="section-lead" data-lang="th">ไม่ถนัดตั้งค่าเอง ทักทาง LINE ได้ ยินดีช่วย</p>
+    <p class="section-lead" data-lang="en">Not keen on setting it up yourself? Message us on LINE and we will help.</p>
     <ol class="steps">
-      <li data-lang="th">กดปุ่ม “ดาวน์โหลดแอปพลิเคชัน” ด้านบน และรอให้ดาวน์โหลดเสร็จสิ้น</li>
-      <li data-lang="en">Tap “Download the app” above and wait for the download to finish.</li>
-      <li data-lang="th">เปิดไฟล์ที่ดาวน์โหลดจากแถบการแจ้งเตือน หรือจากแอปพลิเคชันจัดการไฟล์ในโฟลเดอร์ดาวน์โหลด</li>
-      <li data-lang="en">Open the downloaded file from the notification shade or from the Downloads folder.</li>
-      <li data-lang="th">หากระบบสอบถามเรื่องการติดตั้งแอปพลิเคชันจากแหล่งที่ไม่รู้จัก ให้อนุญาตสำหรับเบราว์เซอร์ที่ใช้งาน</li>
-      <li data-lang="en">If Android asks about installing apps from unknown sources, allow it for your browser.</li>
-      <li data-lang="th">หาก Google Play Protect แสดงคำเตือน ให้เลือก “ติดตั้งต่อไป”</li>
-      <li data-lang="en">If Google Play Protect shows a warning, choose “Install anyway”.</li>
-      <li data-lang="th">เปิดแอปพลิเคชัน และเข้าสู่ระบบด้วยอีเมลที่เจ้าของที่พักสร้างให้</li>
-      <li data-lang="en">Open the app and sign in with the email address your property owner created for you.</li>
+      <li><span data-lang="th"><b>สมัคร</b> เปิดแอป กด “สร้างบัญชีใหม่ (เจ้าของที่พัก)” ใส่อีเมลและชื่อที่พัก</span><span data-lang="en"><b>Sign up</b> — open the app, tap “create owner account” and enter your email and property name.</span></li>
+      <li><span data-lang="th"><b>รออนุมัติ</b> ผู้ดูแลตรวจและเปิดให้ใช้ แจ้งทาง LINE จะได้เร็วขึ้น</span><span data-lang="en"><b>Approval</b> — we check and switch your account on. A LINE message speeds this up.</span></li>
+      <li><span data-lang="th"><b>ใส่บ้านและราคา</b> เพิ่มชื่อบ้าน ราคา วันหยุด ทำครั้งเดียว</span><span data-lang="en"><b>Add units and prices</b> — names, rates and holidays, done once.</span></li>
+      <li><span data-lang="th"><b>เพิ่มไว้หน้าจอ</b> ใช้เหมือนแอป และชวนพนักงานมาใช้ด้วยกัน</span><span data-lang="en"><b>Add to home screen</b> — use it like an app and invite your staff.</span></li>
     </ol>
-    <p class="callout" data-lang="th">ติดตั้งเพียงครั้งเดียว เมื่อมีเวอร์ชันใหม่ แอปพลิเคชันจะแจ้งให้ทราบและอัปเดตได้จากภายในแอปพลิเคชัน รองรับ Android 8.0 ขึ้นไป (อุปกรณ์ 64 บิต)</p>
-    <p class="callout" data-lang="en">You only install it once — new versions are announced and installed from inside the app. Requires Android 8.0 or later on a 64-bit device.</p>
+  </section>
+
+  <section>
+    <h2><span data-lang="th">ลิงก์ที่เกี่ยวข้อง</span><span data-lang="en">Useful links</span></h2>
+    <div class="links" style="margin-top:18px">
+      <a href="https://saantie-hotel-pms.web.app/manual/" target="_blank" rel="noopener">
+        <span data-lang="th">📖 คู่มือการใช้งาน</span><span data-lang="en">📖 User manual (Thai)</span>
+        <span class="d" data-lang="th">อธิบายทุกหน้าพร้อมภาพหน้าจอ</span><span class="d" data-lang="en">Every screen explained, with screenshots</span>
+      </a>
+      <a href="https://saantie-hotel-pms.web.app/community/" target="_blank" rel="noopener">
+        <span data-lang="th">💬 ถาม-ตอบ / แจ้งปัญหา</span><span data-lang="en">💬 Q&amp;A / report a problem</span>
+        <span class="d" data-lang="th">คอมมูนิตี้ของผู้ใช้</span><span class="d" data-lang="en">User community (Thai)</span>
+      </a>
+      <a href="/pms/import">
+        <span data-lang="th">📥 นำเข้าข้อมูลการจอง</span><span data-lang="en">📥 Import bookings</span>
+        <span class="d" data-lang="th">แปลงข้อมูลจากระบบเดิม</span><span class="d" data-lang="en">Convert data from your old system</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2><span data-lang="th">ลองใช้กับที่พักของคุณดู ฟรี 60 วัน</span><span data-lang="en">Try it with your property — free for 60 days</span></h2>
+    <p class="section-lead" style="margin:0 auto 24px" data-lang="th">ไม่ต้องผูกบัตร ไม่ต้องติดตั้งอะไร เลิกใช้เมื่อไรก็ได้</p>
+    <p class="section-lead" style="margin:0 auto 24px" data-lang="en">No card, nothing to install, stop any time.</p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="https://saantie-hotel-pms.web.app" target="_blank" rel="noopener"><span data-lang="th">สมัครใช้งานฟรี</span><span data-lang="en">Sign up free</span></a>
+      <a class="btn btn-ghost" href="https://line.me/R/ti/p/%40341jvvzy" target="_blank" rel="noopener"><span data-lang="th">สอบถามทาง LINE</span><span data-lang="en">Ask on LINE</span></a>
+    </div>
   </section>
 
 </div>
@@ -212,23 +420,5 @@
 
 <script src="/assets/lang-toggle.js"></script>
 <script src="/assets/crumbs.js"></script>
-<script>
-  // อ่านเวอร์ชันล่าสุดจาก /pms/version.json (ไฟล์เดียวกับที่แอปพลิเคชันใช้ตรวจอัปเดต)
-  // แล้วชี้ปุ่มไปที่ไฟล์ติดตั้งโดยตรง — ถ้าอ่านไม่ได้ ปุ่มยังพาไปหน้า Release ล่าสุดบน GitHub
-  fetch("/pms/version.json", { cache: "no-store" })
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-    .then(function (v) {
-      document.getElementById("dl").href = v.apkUrl;
-      document.getElementById("meta").innerHTML =
-        '<span data-lang="th">เวอร์ชัน ' + v.versionName + ' · Android 8.0 ขึ้นไป</span>' +
-        '<span data-lang="en">Version ' + v.versionName + ' · Android 8.0 or later</span>';
-      if (v.notes) document.getElementById("notes").textContent = v.notes;
-    })
-    .catch(function () {
-      document.getElementById("meta").innerHTML =
-        '<span data-lang="th">แตะปุ่มแล้วเลือกไฟล์ที่ลงท้ายด้วย .apk</span>' +
-        '<span data-lang="en">Tap the button, then pick the file ending in .apk</span>';
-    });
-</script>
 </body>
 </html>
